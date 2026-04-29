@@ -1,0 +1,16 @@
+{
+  "name": "gymease",
+  "version": "1.0.0",
+  "description": "a SaaS-like gym management system that provides online and efficient solutions to manual gym operations.",
+  "keywords": [
+    "GymEase",
+    "FYP"
+  ],
+  "license": "ISC",
+  "author": "Zain Bashir, Kaleemullah",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
