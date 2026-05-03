@@ -1,9 +1,29 @@
 import "dotenv/config";
 import express from "express";
 import connectDB from "./db/index.js";
-import { PORT } from "./constants.js";
+import { PORT, LIMIT } from "./constants.js";
+import cors from "cors";
+import cookieParser from "cookie-parser";
 
 const app = express();
+
+app.use(cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true,
+}))
+
+app.use(express.urlencoded({
+    extended: true,
+    limit: LIMIT,
+}))
+
+app.use(express.json({
+    limit: LIMIT,
+}))
+
+app.use(express.static("public"));
+
+app.use(cookieParser());
 
 connectDB()
 .then( () => {
