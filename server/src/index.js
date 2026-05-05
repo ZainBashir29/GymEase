@@ -1,29 +1,9 @@
 import "dotenv/config";
-import express from "express";
+import app from "./app.js";
 import connectDB from "./db/index.js";
 import { PORT, LIMIT } from "./constants.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-
-const app = express();
-
-app.use(cors({
-    origin: process.env.CORS_ORIGIN,
-    credentials: true,
-}))
-
-app.use(express.urlencoded({
-    extended: true,
-    limit: LIMIT,
-}))
-
-app.use(express.json({
-    limit: LIMIT,
-}))
-
-app.use(express.static("public"));
-
-app.use(cookieParser());
 
 connectDB()
 .then( () => {
@@ -39,15 +19,3 @@ connectDB()
     console.log("Error in executing mongodb connection", error);
     throw error;
 } )
-
-app.use((err, req, res, next) => {
-    const statusCode = err.statusCode || 500;
-    const message = err.message || "Internal server error";
-
-    return res.status(statusCode).json({
-        success: false,
-        statusCode,
-        message,
-        stack: process.env.NODE_ENV === "development" ? err.stack : undefined
-    })
-})
