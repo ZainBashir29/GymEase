@@ -5,6 +5,9 @@ const Member = User.discriminator("Member", new mongoose.Schema({
     username: {
         type: String,
         required: true,
+        unique: true,
+        lowercase: true,
+        trim: true
     },
     age: {
         type: Number,

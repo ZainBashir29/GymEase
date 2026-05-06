@@ -6,12 +6,15 @@ const userSchema = new mongoose.Schema({
     fullName: {
         type: String,
         required: true,
+        trim: true,
         index: true
     },
     email: {
         type: String,
         required: true,
         unique: true,
+        lowercase: true,
+        trim: true
     },
     password: {
         type: String,
@@ -25,6 +28,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ["Member", "Trainer", "Admin"],
         required: true,
+    },
+    refreshToken: {
+        type: String
+    },
+    isProfileCompleted: {
+        type: Boolean,
+        required: true,
+        default: false
     }
 }, {
     discriminatorKey: "role",

@@ -20,11 +20,18 @@ app.use(express.static("public"));
 
 app.use(cookieParser());
 
+// routes
+import authRoutes from "./routes/authRoutes.js";
+
+app.use("/api/v1/auth", authRoutes);
+
+
+
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;
     const message = err.message || "Internal server error";
 
-    return res.status(statusCode).json({
+    res.status(statusCode).json({
         success: false,
         statusCode,
         message,
