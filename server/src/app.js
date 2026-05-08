@@ -2,8 +2,12 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { LIMIT } from "./constants.js";
+import passport from "passport";
+import "./utils/passport.js";
 
 const app = express();
+
+app.use(passport.initialize());
 
 app.use(cors({
     origin: process.env.CORS_ORIGIN,

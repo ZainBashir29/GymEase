@@ -14,8 +14,14 @@ const Member = User.discriminator("Member", new mongoose.Schema({
         required: true,
         min: 13,
     },
+    authMethod: {
+        type: String,
+        required: true,
+        enum: ["email", "google"],
+    },
     googleId: {
         type: String,
+        default: null
     }
 }))
 

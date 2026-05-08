@@ -5,6 +5,25 @@ import User from "../models/userModel.js";
 import Member from "../models/memberModel.js";
 import uploadOnCloudinary from "../utils/cloudinary.js";
 
+const generateAccessAndRefreshTokens = async (memberId) => {
+    try {
+        const member = await Member.findById(memberId);
+        const accessToken = member.generateAccessToken();
+        const refreshToken = member.generateRefreshToken();
+        member.refreshToken = refreshToken;
+        await member.save({ validateBeforeSave: false });
+        return { accessToken, refreshToken };
+    } catch (error) {
+        throw new ApiError(500, "Could not generate access and refresh tokens");
+    }
+}
+
+const cookieOptions = {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict"
+}
+
 const registerMember = asyncHandler(async (req, res) => {
     const {fullName, email, password, username, age} = req.body;
 
@@ -68,6 +87,7 @@ const registerMember = asyncHandler(async (req, res) => {
         age,
         profilePicture: profilePicture?.url || "",
         isProfileCompleted: true,
+        authMethod: "email"
     })
 
     const createdMember = await Member.findById(member._id).select("-password -refreshToken -googleId -isProfileCompleted");
@@ -79,7 +99,7 @@ const registerMember = asyncHandler(async (req, res) => {
     res.status(201).json(new ApiResponse(201, createdMember, "Member registered successfully"));
 })
 
-const loginMember = asyncHandler(async (req, res) => {
+const login = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
     if(!email) {
@@ -94,13 +114,34 @@ const loginMember = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Password is required");
     }
 
-    const member = await Member.findOne("email");
+    const user = await User.findOne({ email });
 
-    if(!member) {
-        throw new ApiError(400, "No member found")
+    if(!user) {
+        throw new ApiError(404, "No user account found");
     }
+
+    const isPasswordValid = await user.isPasswordCorrect(password);
+
+    if(!isPasswordValid) {
+        throw new ApiError(401, "Invalid user credentials");
+    }
+
+    const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
+
+    const loggedInUser = await User.findById(user._id).select("-password -refreshToken -isProfileCompleted -googleId");
+
+    res
+    .status(200)
+    .cookie("accessToken", accessToken, cookieOptions)
+    .cookie("refreshToken", refreshToken, cookieOptions)
+    .json(new ApiResponse(200, {
+        user: loggedInUser,
+        accessToken,
+        refreshToken
+    }, "User logged in successfully"));
 }) 
 
 export {
     registerMember,
+    login
 }
