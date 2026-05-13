@@ -138,10 +138,73 @@ const login = asyncHandler(async (req, res) => {
         user: loggedInUser,
         accessToken,
         refreshToken
-    }, "User logged in successfully"));
+    }, `${loggedInUser.role} logged in successfully`));
 }) 
+
+const logout = asyncHandler( async (req, res) => {
+    const updatedUser = await User.findOneAndUpdate(req.user._id, {
+        $set: {
+            refreshToken: undefined
+        },
+    },
+        {
+            new: true,
+        }
+    )
+    if(!updatedUser) {
+        throw new ApiError(500, "Could not update refreshToken");
+    }
+    res
+    .status(200)
+    .clearCookie("accessToken", cookieOptions)
+    .clearCookie("refreshToken", cookieOptions)
+    .json(new ApiResponse(200, {}, `${req.user.role} logged out successfully`));
+
+} )
+
+const googleCallback = asyncHandler( async (req, res) => {
+  const user = req.user;
+  const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
+  res
+    .cookie("accessToken", accessToken, cookieOptions)
+    .cookie("refreshToken", refreshToken, cookieOptions)
+    .redirect(
+      user.isProfileCompleted
+        ? `${process.env.CLIENT_URL}/member/dashboard`
+        : `${process.env.CLIENT_URL}/complete-profile`
+    );
+})
+
+const completeProfile = asyncHandler ( async (req, res) => {
+    const { username, age } = req.body;
+    if(!username) {
+        throw new ApiError(400, "Username is required");
+    }
+    if(!age) {
+        throw new ApiError(400, "Age is required");
+    }
+    if(age < 13) {
+        throw new ApiError(400, "Age is too small")
+    }
+    const member = await Member.findOneAndUpdate(req.user._id, {
+        $set: {
+            username, 
+            age
+        }
+    }, {
+        new: true,
+    });
+    if(!member) {
+        throw new ApiError(500, "Could not update username and age");
+    }
+    const updatedMember = await Member.findById(member._id).select("-password -refreshToken -googleId -isProfileCompleted");
+    res.status(200).json(new ApiResponse(200, updatedMember, "Member profile completed successfully"));
+} ) 
 
 export {
     registerMember,
-    login
+    login,
+    logout,
+    googleCallback,
+    completeProfile
 }
