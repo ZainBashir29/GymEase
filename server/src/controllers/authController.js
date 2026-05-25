@@ -300,6 +300,114 @@ const refreshAccessToken = asyncHandler ( async (req, res) => {
     } 
 } )
 
+const updateFullName = asyncHandler( async (req, res) => {
+    const { fullName } = req.body;
+    if(!fullName) {
+        throw new ApiError(400, "Full name is required");
+    }
+    const member = await Member.findOneAndUpdate(req.user._id, {
+        $set: {
+            fullName
+        }
+    }, {
+        returnDocument: "after"
+    }).select("-password -refreshToken -isProfileCompleted -googleId");
+    if(!member) {
+        throw new ApiError(500, "Could not update full name");
+    }
+    res.status(200).json(new ApiResponse(200, member, "Full name updated successfully"));
+})
+
+const updateUsername = asyncHandler( async (req, res) => {
+    const { username } = req.body;
+    if(!username) {
+        throw new ApiError(400, "Username is required");
+    }
+    const member = await Member.findOneAndUpdate(req.user._id, {
+        $set: {
+            username
+        }
+    }, {
+        returnDocument: "after"
+    }).select("-password -refreshToken -isProfileCompleted -googleId");
+    if(!member) {
+        throw new ApiError(500, "Could not update username");
+    }
+    res.status(200).json(new ApiResponse(200, member, "Username updated successfully"));
+})
+
+const updateEmail = asyncHandler( async (req, res) => {
+    const { email } = req.body;
+    if(!email) {
+        throw new ApiError(400, "Email is required");
+    }
+    if(!email.includes("@")) {
+        throw new ApiError(400, "Invalid email format");
+    }
+    const member = await Member.findOneAndUpdate(req.user._id, {
+        $set: {
+            email
+        }
+    }, {
+        returnDocument: "after"
+    }).select("-password -refreshToken -isProfileCompleted -googleId");
+    if(!member) {
+        throw new ApiError(500, "Could not update email");
+    }
+    res.status(200).json(new ApiResponse(200, member, "Email updated successfully"));
+})
+
+const changeCurrentPassword = asyncHandler( async (req, res) => {
+    const { oldPassword, newPassword } = req.body;
+    if(!oldPassword) {
+        throw new ApiError(400, "Old password is required");
+    }
+    if(!newPassword) {
+        throw new ApiError(400, "New password is required");
+    }
+    const member = await Member.findById(req.user._id);
+    if(!member) {
+        throw new ApiError(500, "Could not find member");
+    }
+    const isPasswordCorrect = await member.isPasswordCorrect(oldPassword);
+    if(!isPasswordCorrect) {
+        throw new ApiError(400, "Incorrect old password");
+    }
+    try {
+        member.password = newPassword;
+        await member.save( {validateBeforeSave: false} );
+        res.status(200).json(new ApiResponse(200, member, "Password changed successfully"));
+    } catch (error) {
+        throw new ApiError(500, "Could not change password");
+    }
+})
+
+const changeProfilePicture = asyncHandler( async (req, res) => {
+    const profilePictureLocalPath = req.file.path;
+    if(!profilePictureLocalPath) {
+        throw new ApiError(400, "Profile picture is required");
+    }
+    const profilePicture = await uploadOnCloudinary(profilePictureLocalPath);
+    if(!profilePicture) {
+        throw new ApiError(500, "Could not upload profile picture on cloudinary");
+    }
+    const member = await Member.findOneAndUpdate(req.user._id, {
+        $set: {
+            profilePicture: profilePicture.url || ""
+        }
+    }, {
+        returnDocument: "after"
+    }).select("-password -refreshToken -isProfileCompleted -googleId");
+    if(!member) {
+        throw new ApiError(500, "Could not change profile picture");
+    }
+    res.status(200).json(new ApiResponse(200, member, "Profile picture changed successfully"));
+})
+
+const getCurrentUser = asyncHandler( async (req, res) => {
+    res.status(200).json(new ApiResponse(200, req.user, "User fetched successfully"));
+} )
+
 export {
     registerMember,
     login,
@@ -308,5 +416,11 @@ export {
     completeProfile,
     forgotPassword,
     changePassword,
-    refreshAccessToken
+    refreshAccessToken,
+    updateFullName,
+    updateUsername,
+    updateEmail,
+    changeCurrentPassword,
+    changeProfilePicture,
+    getCurrentUser,
 }
