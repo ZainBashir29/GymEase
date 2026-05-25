@@ -1,8 +1,8 @@
 import { Router } from "express";
 import upload from "../middlewares/multerMiddleware.js";
-import { login, registerMember, logout, googleCallback, completeProfile } from "../controllers/authController.js";
+import { login, registerMember, logout, googleCallback, completeProfile, refreshAccessToken, forgotPassword, changePassword } from "../controllers/authController.js";
 import passport from "passport";
-import verifyJwt from "../middleware/authMiddleware.js";
+import verifyJwt from "../middlewares/authMiddleware.js";
 
 const router = Router();
 
@@ -21,5 +21,11 @@ router
 .get(passport.authenticate("google", { failureRedirect: "/login", session: false }), googleCallback);
 
 router.route("/complete-profile").post(verifyJwt, completeProfile);
+
+router.route("/forgot-password").post(forgotPassword);
+
+router.route("/change-password/:token").post(changePassword);
+
+router.route("/refresh-token").post(refreshAccessToken);
 
 export default router;

@@ -4,6 +4,10 @@ import ApiResponse from "../utils/ApiResponse.js";
 import User from "../models/userModel.js";
 import Member from "../models/memberModel.js";
 import uploadOnCloudinary from "../utils/cloudinary.js";
+import crypto from "crypto";
+import sendEmail from "../utils/nodemailer.js";
+import jwt from "jsonwebtoken";
+import crypto from "crypto";
 
 const generateAccessAndRefreshTokens = async (memberId) => {
     try {
@@ -148,7 +152,7 @@ const logout = asyncHandler( async (req, res) => {
         },
     },
         {
-            new: true,
+            returnDocument: "after"
         }
     )
     if(!updatedUser) {
@@ -192,7 +196,7 @@ const completeProfile = asyncHandler ( async (req, res) => {
             age
         }
     }, {
-        new: true,
+        returnDocument: "after"
     });
     if(!member) {
         throw new ApiError(500, "Could not update username and age");
@@ -201,10 +205,108 @@ const completeProfile = asyncHandler ( async (req, res) => {
     res.status(200).json(new ApiResponse(200, updatedMember, "Member profile completed successfully"));
 } ) 
 
+const forgotPassword = asyncHandler ( async (req, res) => {
+    const { email } = req.body;
+    if(!email) {
+        throw new ApiError(400, "Email is required");
+    }
+    const user = await User.findOne({ email });
+    if(!user) {
+        throw new ApiError(404, "An email was sent if the email was valid");
+    }
+    const token = crypto.randomBytes(32).toString("hex");
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+    user.resetPasswordToken = hashedToken;
+    user.resetPasswordExpiry = Date.now() + (60 * 60 * 1000);
+    await user.save({ validateBeforeSave: false });
+    const redirectUrl = `${process.env.CLIENT_URL}/change-password/${token}`
+    try {
+        await sendEmail({
+        to: user.email,
+        subject: "Password change request",
+        html: `<p><a href="${redirectUrl}">Click here</a> to change your password.</p>`
+    })
+    } catch (error) {
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpiry = undefined;
+        await user.save({ validateBeforeSave: false });
+        throw new ApiError(500, "Could not send email");
+    }
+    res.status(200).json(new ApiResponse(200, {}, "Email sent successfully"));
+});
+
+const changePassword = asyncHandler ( async (req, res) => {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    if(!password) {
+        throw new ApiError(400, "Password is required");
+    }
+
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    const user = await User.findOne({
+        resetPasswordToken: hashedToken,
+        resetPasswordExpiry: {
+            $gt: Date.now()
+        }
+    })
+
+    if(!user) {
+        throw new ApiError(400, "Invalid or expired token");
+    }
+
+    try {
+        user.password = password;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpiry = undefined;
+        await user.save({ validateBeforeSave: false });
+        res.status(200).json(new ApiResponse(200, {}, "Password changed successfully"));
+    } catch (error) {
+        throw new ApiError(500, "Could not change password");
+    }
+    
+} )
+
+const refreshAccessToken = asyncHandler ( async (req, res) => {
+    const receivedRefreshToken = req.cookies?.refreshToken || req.body.refreshToken;
+    if(!receivedRefreshToken) {
+        throw new ApiError(401, "No refresh token found");
+    }
+    try {
+        const decodedToken = jwt.verify(receivedRefreshToken, process.env.REFRESH_TOKEN_SECRET);
+        const user = await User.findById(decodedToken?._id);
+        if(!user) {
+            throw new ApiError(401, "Invalid refresh token");
+        }
+        if(receivedRefreshToken !== user.refreshToken) {
+            throw new ApiError(401, "Refresh token is expired or invalid");
+        }
+        const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(decodedToken._id);
+        res
+        .status(200)
+        .cookie("accessToken", accessToken, cookieOptions)
+        .cookie("refreshToken", refreshToken, cookieOptions)
+        .json(new ApiResponse(
+            200,
+            {
+                accessToken,
+                refreshToken,
+            },
+            "Access token refreshed successfully"
+        ))
+    } catch (error) {
+        throw new ApiError(401, error.message || "Invalid refresh token");
+    } 
+} )
+
 export {
     registerMember,
     login,
     logout,
     googleCallback,
-    completeProfile
+    completeProfile,
+    forgotPassword,
+    changePassword,
+    refreshAccessToken
 }
