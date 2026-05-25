@@ -1,6 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
-import { url } from "inspector";
+import ApiError from "./ApiError.js";
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -11,7 +11,7 @@ cloudinary.config({
 
 async function uploadOnCloudinary(localFilePath) {
     try {
-        if(!localFilePath) return "File path is required";
+        if(!localFilePath) throw new ApiError(400, "File path is required");
         const response = await cloudinary.uploader.upload(localFilePath, {
             resource_type: "auto"
         })
@@ -20,7 +20,7 @@ async function uploadOnCloudinary(localFilePath) {
         return response;
     } catch (error) {
         fs.unlinkSync(localFilePath);
-        return "Could not upload file on cloudinary";
+        throw new ApiError(500, "Could not upload file on cloudinary");
     }
 }
 

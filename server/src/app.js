@@ -1,6 +1,13 @@
 import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import { LIMIT } from "./constants.js";
+import passport from "passport";
+import "./utils/passport.js";
 
 const app = express();
+
+app.use(passport.initialize());
 
 app.use(cors({
     origin: process.env.CORS_ORIGIN,
@@ -20,11 +27,18 @@ app.use(express.static("public"));
 
 app.use(cookieParser());
 
+// routes
+import authRoutes from "./routes/authRoutes.js";
+
+app.use("/api/v1/auth", authRoutes);
+
+
+
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;
     const message = err.message || "Internal server error";
 
-    return res.status(statusCode).json({
+    res.status(statusCode).json({
         success: false,
         statusCode,
         message,

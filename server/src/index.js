@@ -1,9 +1,7 @@
 import "dotenv/config";
 import app from "./app.js";
 import connectDB from "./db/index.js";
-import { PORT, LIMIT } from "./constants.js";
-import cors from "cors";
-import cookieParser from "cookie-parser";
+import { PORT } from "./constants.js";
 
 connectDB()
 .then( () => {

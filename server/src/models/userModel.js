@@ -6,16 +6,18 @@ const userSchema = new mongoose.Schema({
     fullName: {
         type: String,
         required: true,
+        trim: true,
         index: true
     },
     email: {
         type: String,
         required: true,
         unique: true,
+        lowercase: true,
+        trim: true
     },
     password: {
         type: String,
-        required: true,
         minLength: 8
     },
     profilePicture: {
@@ -25,16 +27,29 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ["Member", "Trainer", "Admin"],
         required: true,
+    },
+    refreshToken: {
+        type: String,
+    },
+    isProfileCompleted: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
+    resetPasswordToken: {
+        type: String
+    },
+    resetPasswordExpiry: {
+        type: Date
     }
 }, {
     discriminatorKey: "role",
     timestamps: true,
 });
 
-userSchema.pre("save", async function(next) {
-    if(!bcrypt.isModified(this.password)) return next();
+userSchema.pre("save", async function() {
+    if(!this.isModified("password")) return;
     this.password = await bcrypt.hash(this.password, 10);
-    next();
 })
 
 userSchema.methods.isPasswordCorrect = async function (password) {
@@ -46,7 +61,8 @@ userSchema.methods.generateAccessToken = function () {
         {
             _id: this._id,
             email: this.email,
-            fullName: this.username,
+            fullName: this.fullName,
+            role: this.role
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
