@@ -26,7 +26,7 @@ router.route("/forgot-password").post(forgotPassword);
 
 router.route("/change-password/:token").post(changePassword);
 
-router.route("/refresh-token").post(refreshAccessToken);
+router.route("/refresh-access-token").post(refreshAccessToken);
 
 router.route("/member/update/full-name").patch(verifyJwt, updateFullName);
 

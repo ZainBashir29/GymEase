@@ -193,7 +193,7 @@ const completeProfile = asyncHandler ( async (req, res) => {
     const member = await Member.findOneAndUpdate(req.user._id, {
         $set: {
             username, 
-            age
+            age,
         }
     }, {
         returnDocument: "after"
