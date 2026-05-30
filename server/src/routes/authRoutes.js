@@ -38,6 +38,6 @@ router.route("/member/change/password").patch(verifyJwt, changeCurrentPassword);
 
 router.route("/member/change/profile-picture").patch(verifyJwt, upload.single("profilePicture"), changeProfilePicture);
 
-router.route("/get-current-user").get(verifyJwt, getCurrentUser);
+router.route("/current-user").get(verifyJwt, getCurrentUser);
 
 export default router;

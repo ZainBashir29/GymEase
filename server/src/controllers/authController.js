@@ -3,8 +3,7 @@ import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import User from "../models/userModel.js";
 import Member from "../models/memberModel.js";
-import uploadOnCloudinary from "../utils/cloudinary.js";
-import crypto from "crypto";
+import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js";
 import sendEmail from "../utils/nodemailer.js";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
@@ -90,6 +89,7 @@ const registerMember = asyncHandler(async (req, res) => {
         username: username.toLowerCase(),
         age,
         profilePicture: profilePicture?.url || "",
+        profilePicturePublicId: profilePicture?.public_id || "",
         isProfileCompleted: true,
         authMethod: "email"
     })
@@ -305,7 +305,7 @@ const updateFullName = asyncHandler( async (req, res) => {
     if(!fullName) {
         throw new ApiError(400, "Full name is required");
     }
-    const member = await Member.findOneAndUpdate(req.user._id, {
+    const member = await Member.findByIdAndUpdate(req.user._id, {
         $set: {
             fullName
         }
@@ -323,7 +323,7 @@ const updateUsername = asyncHandler( async (req, res) => {
     if(!username) {
         throw new ApiError(400, "Username is required");
     }
-    const member = await Member.findOneAndUpdate(req.user._id, {
+    const member = await Member.findByIdAndUpdate(req.user._id, {
         $set: {
             username
         }
@@ -344,7 +344,7 @@ const updateEmail = asyncHandler( async (req, res) => {
     if(!email.includes("@")) {
         throw new ApiError(400, "Invalid email format");
     }
-    const member = await Member.findOneAndUpdate(req.user._id, {
+    const member = await Member.findByIdAndUpdate(req.user._id, {
         $set: {
             email
         }
@@ -383,25 +383,50 @@ const changeCurrentPassword = asyncHandler( async (req, res) => {
 })
 
 const changeProfilePicture = asyncHandler( async (req, res) => {
-    const profilePictureLocalPath = req.file.path;
+    const profilePictureLocalPath = req.file?.path;
+
     if(!profilePictureLocalPath) {
         throw new ApiError(400, "Profile picture is required");
     }
+
+    const member = await Member.findById(req.user?._id);
+
+    if(!member) {
+        throw new ApiError(500, "Could not find member");
+    }
+
+    const previousPicturePublicId = member.profilePicturePublicId;
+
     const profilePicture = await uploadOnCloudinary(profilePictureLocalPath);
+
     if(!profilePicture) {
         throw new ApiError(500, "Could not upload profile picture on cloudinary");
     }
-    const member = await Member.findOneAndUpdate(req.user._id, {
+
+    const updatedMember = await Member.findByIdAndUpdate(req.user._id, {
         $set: {
-            profilePicture: profilePicture.url || ""
+            profilePicture: profilePicture.url || "",
+            profilePicturePublicId: profilePicture.public_id || "",
         }
     }, {
         returnDocument: "after"
     }).select("-password -refreshToken -isProfileCompleted -googleId");
-    if(!member) {
+
+    if(!updatedMember) {
         throw new ApiError(500, "Could not change profile picture");
     }
-    res.status(200).json(new ApiResponse(200, member, "Profile picture changed successfully"));
+
+    if(previousPicturePublicId) {
+
+        try {
+            const deletedPreviousPicture = await deleteFromCloudinary(previousPicturePublicId);
+        } catch (error) {
+            console.error(`Could not delete previous profile picture ${previousPicturePublicId} from cloudinary`, error);
+        }
+
+    }
+
+    res.status(200).json(new ApiResponse(200, updatedMember, "Profile picture changed successfully"));
 })
 
 const getCurrentUser = asyncHandler( async (req, res) => {
