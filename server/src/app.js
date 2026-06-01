@@ -4,9 +4,9 @@ import cookieParser from "cookie-parser";
 import { LIMIT } from "./constants.js";
 import passport from "passport";
 import "./utils/passport.js";
-
+import storeRoutes from "./routes/storeRoutes.js";
 const app = express();
-
+app.use( "/api/store", storeRoutes);
 app.use(passport.initialize());
 
 app.use(cors({
