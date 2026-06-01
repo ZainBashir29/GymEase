@@ -29,9 +29,10 @@ app.use(cookieParser());
 
 // routes
 import authRoutes from "./routes/authRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
 
 app.use("/api/v1/auth", authRoutes);
-
+app.use("/api/v1/payments", paymentRoutes);
 
 
 app.use((err, req, res, next) => {

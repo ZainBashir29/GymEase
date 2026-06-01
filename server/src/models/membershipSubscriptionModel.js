@@ -24,7 +24,7 @@ const membershipSubscriptionSchema = new mongoose.Schema({
         required: true,
         enum: ["active", "expired"],
     }
-})
+}, { timestamps: true })
 
 const MembershipPlan = mongoose.model("MembershipPlan", membershipPlanSchema);
 
