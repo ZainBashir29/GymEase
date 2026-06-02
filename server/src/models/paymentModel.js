@@ -10,7 +10,7 @@ const paymentSchema = new mongoose.Schema(
     type: {
       type: String,
       required: true,
-      enum: ["MembershipSubscription", "Order"],
+      enum: ["MembershipSubscription", "StoreOrder"],
     },
     paymentCauseId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -24,7 +24,7 @@ const paymentSchema = new mongoose.Schema(
     status: {
       type: String,
       required: true,
-      enum: ["pending", "successful", "failed", "processing"],
+      enum: ["pending", "successful", "failed"],
     },
     trackerToken: {
       type: String,
