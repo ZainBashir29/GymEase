@@ -4,24 +4,41 @@ import cookieParser from "cookie-parser";
 import { LIMIT } from "./constants.js";
 import passport from "passport";
 import "./utils/passport.js";
+import verifyJwt from "./middlewares/authMiddleware.js";
+import { verifyWebhookSignature } from "./controllers/paymentController.js";
 
 const app = express();
 
 app.use(passport.initialize());
 
-app.use(cors({
+app.use(
+  cors({
     origin: process.env.CORS_ORIGIN,
     credentials: true,
-}))
+  }),
+);
 
-app.use(express.urlencoded({
+app.use(
+  express.urlencoded({
     extended: true,
     limit: LIMIT,
-}))
+  }),
+);
 
-app.use(express.json({
+// kaleemullah ye special route hai, is ko express.raw required hai, isi liye isko express.json wali line ke uper likha hai
+
+app.post(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  verifyJwt,
+  verifyWebhookSignature,
+);
+
+app.use(
+  express.json({
     limit: LIMIT,
-}))
+  }),
+);
 
 app.use(express.static("public"));
 
@@ -34,17 +51,16 @@ import paymentRoutes from "./routes/paymentRoutes.js";
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/payments", paymentRoutes);
 
-
 app.use((err, req, res, next) => {
-    const statusCode = err.statusCode || 500;
-    const message = err.message || "Internal server error";
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "Internal server error";
 
-    res.status(statusCode).json({
-        success: false,
-        statusCode,
-        message,
-        stack: process.env.NODE_ENV === "development" ? err.stack : undefined
-    })
-})
+  res.status(statusCode).json({
+    success: false,
+    statusCode,
+    message,
+    stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
+  });
+});
 
 export default app;
