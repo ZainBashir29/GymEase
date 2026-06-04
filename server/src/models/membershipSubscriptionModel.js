@@ -23,12 +23,19 @@ const membershipSubscriptionSchema = new mongoose.Schema(
     status: {
       type: String,
       required: true,
-      enum: ["pending", "active", "expired"],
+      enum: ["pending", "active", "expired", "cancelled"],
+    },
+    paymentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Payment",
     },
   },
   { timestamps: true },
 );
 
-const MembershipSubscription = mongoose.model("MembershipSubscription", membershipSubscriptionSchema);
+const MembershipSubscription = mongoose.model(
+  "MembershipSubscription",
+  membershipSubscriptionSchema,
+);
 
 export default MembershipSubscription;

@@ -22,16 +22,65 @@ const getAllMembershipPlans = asyncHandler(async (req, res) => {
     );
 });
 
-const createMembershipSubscription = asyncHandler(async (req, res) => {
+const getMembershipPlanById = asyncHandler(async (req, res) => {
+  const { membershipPlanId } = req.params;
+
+  if (!membershipPlanId) {
+    throw new ApiError(400, "Membership plan id is required");
+  }
+
+  const membershipPlan = await MembershipPlan.findById(membershipPlanId);
+
+  if (!membershipPlan) {
+    throw new ApiError(404, "Could not find membership plan");
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        membershipPlan,
+        "Membership plan fetched successfully",
+      ),
+    );
+});
+
+const createPendingMembershipSubscription = asyncHandler(async (req, res) => {
   const { membershipPlanId } = req.body;
 
   if (!membershipPlanId) {
     throw new ApiError(400, "Membership plan id is required");
   }
 
-  const memebershipPlan = await MembershipPlan.findById(memebershipPlanId);
+  const existingMembershipSubscription = await MembershipSubscription.findOne({
+    memberId: req.user?._id,
+    status: "active",
+  });
 
-  if (!memebershipPlan) {
+  if (existingMembershipSubscription) {
+    throw new ApiError(
+      400,
+      "You already have an active membership subscription",
+    );
+  }
+
+  const existingPendingMembershipSubscription =
+    await MembershipSubscription.findOne({
+      memberId: req.user?._id,
+      status: "pending",
+    });
+
+  if (existingPendingMembershipSubscription) {
+    throw new ApiError(
+      400,
+      "You already have a pending membership subscription. Complete payment to activate it.",
+    );
+  }
+
+  const membershipPlan = await MembershipPlan.findById(membershipPlanId);
+
+  if (!membershipPlan) {
     throw new ApiError(404, "Invalid membership plan id");
   }
 
@@ -58,4 +107,114 @@ const createMembershipSubscription = asyncHandler(async (req, res) => {
     );
 });
 
-export { getAllMembershipPlans, createMembershipSubscription };
+const getCurrentMembershipSubscription = asyncHandler(async (req, res) => {
+  const membershipSubscription = await MembershipSubscription.aggregate([
+    {
+      $match: {
+        memberId: new mongoose.Types.ObjectId(req.user?._id),
+        status: "active",
+      },
+    },
+    {
+      $lookup: {
+        from: "members",
+        localField: "memberId",
+        foreignField: "_id",
+        as: "member",
+        pipeline: [
+          {
+            $project: {
+              fullName: 1,
+              username: 1,
+              email: 1,
+              profilePicture: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $addFields: {
+        member: {
+          $first: "$member",
+        },
+      },
+    },
+  ]);
+
+  if (!membershipSubscription.length) {
+    throw new ApiError(404, "No current membership subscription found");
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        membershipSubscription[0],
+        "Current membership subscription fetched successfully",
+      ),
+    );
+});
+
+const getSubscriptionHistory = asyncHandler(async (req, res) => {
+  const subscriptions = await MemberSubscription.aggregate([
+    {
+      $match: {
+        memberId: new mongoose.Types.ObjectId(req.user?._id),
+      },
+    },
+    {
+      $sort: {
+        createdAt: -1,
+      },
+    },
+    {
+      $lookup: {
+        from: "members",
+        localField: "memberId",
+        foreignField: "_id",
+        as: "member",
+        pipeline: [
+          {
+            $project: {
+              fullName: 1,
+              username: 1,
+              email: 1,
+              profilePicture: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $addFields: {
+        member: {
+          $first: "$member",
+        },
+      },
+    },
+  ]);
+
+  if (!subscriptions.length) {
+    throw new ApiError(404, "No subscription history found");
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        subscriptions,
+        "Subscription history fetched successfully",
+      ),
+    );
+});
+
+export {
+  getAllMembershipPlans,
+  getMembershipPlanById,
+  createPendingMembershipSubscription,
+  getCurrentMembershipSubscription,
+  getSubscriptionHistory,
+};

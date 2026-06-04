@@ -198,6 +198,7 @@ const verifyWebhookSignature = asyncHandler(async (req, res) => {
             {
               $set: {
                 status: "active",
+                paymentId: updatedPayment._id,
               },
             },
             {
@@ -223,6 +224,7 @@ const verifyWebhookSignature = asyncHandler(async (req, res) => {
             $set: {
               paymentStatus: "paid",
               status: "processing",
+              paymentId: updatedPayment._id,
             },
           },
           {
