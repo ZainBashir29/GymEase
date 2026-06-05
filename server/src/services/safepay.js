@@ -1,6 +1,6 @@
-import safepay, { Safepay } from "@sfpy/node-core";
+import Safepay from "@sfpy/node-core";
 
-const safepay = new Safepay(process.env.SAFEPAY_SECRET_KEY, {
+const safepay = Safepay(process.env.SAFEPAY_SECRET_KEY, {
   authType: "secret",
   host: "https://sandbox.api.getsafepay.com",
 });
@@ -21,8 +21,8 @@ async function createPaymentSession(amount, type, paymentCauseId) {
     });
 
     return response;
-  } catch (err) {
-    console.log(error);
+  } catch (error) {
+    console.error(error);
   }
 }
 
@@ -30,8 +30,8 @@ async function createAuthenticationToken() {
   try {
     const response = await safepay.auth.passport.create();
     return response;
-  } catch (err) {
-    console.log(error);
+  } catch (error) {
+    console.error(error);
   }
 }
 
@@ -47,13 +47,13 @@ async function getCheckoutUrl(trackerToken, tbt) {
       // attach a source, available options are: hosted, popup, mobile, woocommerce, and shopify
       source: "hosted",
       // the success URL to redirect your customer to after payment complete
-      redirect_url: "https://localhost:8000/api/v1/payments/success",
+      redirect_url: `${process.env.CLIENT_URL}/payment/success`,
       // the cancel URL to redirect your customer to after the customer cancels the checkout session
-      cancel_url: "https://localhost:8000/api/v1/payments/cancel",
+      cancel_url: `${process.env.CLIENT_URL}/payment/cancel`,
     });
     return checkoutURL;
-  } catch (err) {
-    console.log(error);
+  } catch (error) {
+    console.error(error);
   }
 }
 

@@ -7,10 +7,10 @@ import {
   getCheckoutUrl,
 } from "../services/safepay.js";
 import Payment from "../models/paymentModel.js";
-import safepay, { Safepay } from "@sfpy/node-core";
+import Safepay from "@sfpy/node-core";
 import MembershipSubscription from "../models/membershipSubscriptionModel.js";
 
-const safepay = new Safepay(process.env.SAFEPAY_SECRET_KEY, {
+const safepay = Safepay(process.env.SAFEPAY_SECRET_KEY, {
   authType: "secret",
   host: "https://sandbox.api.getsafepay.com",
 });
@@ -30,13 +30,17 @@ const createCheckoutUrl = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Payment amount is required");
   }
 
+  if (Number(amount) <= 0) {
+    throw new ApiError(400, "Invalid payment amount");
+  }
+
   const session = await createPaymentSession(amount, type, paymentCauseId);
 
   if (!session) {
     throw new ApiError(500, "Could not create payment session");
   }
 
-  const trackerToken = session.data.tracker.token;
+  const trackerToken = session.data?.tracker?.token;
 
   const authToken = await createAuthenticationToken();
 
@@ -87,29 +91,19 @@ const verifyPaymentStatus = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Tracker token is required");
   }
 
-  const response = safepay.reporter.payments.fetch(trackerToken);
+  const response = await safepay.reporter.payments.fetch(trackerToken);
 
   if (!response) {
     throw new ApiError(500, "Could not fetch payment status");
   }
 
-  if (response?.data.tracker.state === "TRACKER_ENDED") {
-    const updatedPaymentStatus = await Payment.findOneAndUpdate(
-      {
-        trackerToken,
-      },
-      {
-        $set: {
-          status: "successful",
-        },
-      },
-      {
-        returnDocument: "after",
-      },
-    );
+  const status = response.data?.tracker?.state;
 
-    if (!updatedPaymentStatus) {
-      throw new ApiError(500, "Could not update payment status in db");
+  if (status !== "TRACKER_ENDED") {
+    const paymentRecord = await Payment.findOne({ trackerToken });
+
+    if (!paymentRecord) {
+      throw new ApiError(404, "Payment record not found");
     }
 
     res
@@ -117,52 +111,60 @@ const verifyPaymentStatus = asyncHandler(async (req, res) => {
       .json(
         new ApiResponse(
           200,
-          updatedPaymentStatus,
-          "Payment is processed successfully",
+          paymentRecord,
+          `Payment is not complete yet. Current state: ${status}`,
         ),
       );
-  } else {
-    const updatedPaymentStatus = await Payment.findOneAndUpdate(
-      {
-        trackerToken,
-      },
-      {
-        $set: {
-          status: "failed",
-        },
-      },
-      {
-        returnDocument: "after",
-      },
-    );
-
-    if (!updatedPaymentStatus) {
-      throw new ApiError(500, "Could not update payment status in db");
-    }
-
-    throw new ApiError(500, "Payment processing failed");
   }
+
+  const updatedPaymentStatus = await Payment.findOneAndUpdate(
+    {
+      trackerToken,
+    },
+    {
+      $set: {
+        status: "successful",
+      },
+    },
+    {
+      returnDocument: "after",
+    },
+  );
+
+  if (!updatedPaymentStatus) {
+    throw new ApiError(500, "Could not update payment status in db");
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        updatedPaymentStatus,
+        "Payment is processed successfully",
+      ),
+    );
 });
 
 const verifyWebhookSignature = asyncHandler(async (req, res) => {
-  const signature = req.headers["X-SFPY-SIGNATURE"];
+  const signature = req.get("X-SFPY-SIGNATURE");
 
   if (!signature) {
     throw new ApiError(400, "Signature is required");
   }
 
-  const event = safepay.webhooks.constructEvent(
-    req.body.raw,
+  const event = await safepay.webhooks.constructEvent(
+    req.body,
     signature,
     process.env.SAFEPAY_WEBHOOK_SECRET,
   );
 
   if (!event) {
-    throw new ApiError(400, "Webhook error");
+    throw new ApiError(400, "Webhook signature verification failed");
   }
 
   switch (event.type) {
-    case "payment.succeeded":
+    case "payment.succeeded": {
       const { tracker } = event.data;
 
       if (!tracker?.token) {
@@ -184,11 +186,11 @@ const verifyWebhookSignature = asyncHandler(async (req, res) => {
       );
 
       if (!updatedPayment) {
-        console.error("Could not update payment status in db");
+        console.error("Could not update payment status to successful in db");
         break;
       }
 
-      if (updatedPayment?.type === "MembershipSubscription") {
+      if (updatedPayment.type === "MembershipSubscription") {
         const updatedMembershipStatus =
           await MembershipSubscription.findOneAndUpdate(
             {
@@ -238,8 +240,8 @@ const verifyWebhookSignature = asyncHandler(async (req, res) => {
       }
 
       break;
-
-    case "payment.failed":
+    }
+    case "payment.failed": {
       const { tracker } = event.data;
 
       if (!tracker?.token) {
@@ -261,11 +263,12 @@ const verifyWebhookSignature = asyncHandler(async (req, res) => {
       );
 
       if (!updatedPaymentStatus) {
-        console.error("Could not update payment status in db");
+        console.error("Could not update failed payment status in db");
         break;
       }
 
       break;
+    }
 
     default:
       console.log("Received unknown event type " + event.type);
