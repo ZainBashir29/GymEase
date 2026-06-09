@@ -13,13 +13,15 @@ const orderSchema = new mongoose.Schema(
                 productId: {
                     type:
                         mongoose.Schema.Types.ObjectId,
-
-                    ref: "StoreProduct",
+                        ref: "StoreProduct",
+                        required: true,
                 },
 
                 quantity: {
                     type: Number,
-                    default: 1,
+                    required: true,
+                    min: 1,
+                    // default: 1,
                 },
             },
         ],
@@ -30,9 +32,20 @@ const orderSchema = new mongoose.Schema(
         },
 
         orderStatus: {
-            type: String,
+        type: String,
+         enum: [
+                "Pending",
+                "Paid",
+                "Processing",
+                "Delivered",
+                "Cancelled",
+            ],
             default: "Pending",
-        },
+},
+        // orderStatus: {
+        //     type: String,
+        //     default: "Pending",
+        // },
     },
 
     {

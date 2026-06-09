@@ -6,7 +6,10 @@ import passport from "passport";
 import "./utils/passport.js";
 import storeRoutes from "./routes/storeRoutes.js";
 const app = express();
+
+app.use(express.json());
 app.use( "/api/store", storeRoutes);
+
 app.use(passport.initialize());
 
 app.use(cors({

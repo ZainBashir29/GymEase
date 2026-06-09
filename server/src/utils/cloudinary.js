@@ -24,4 +24,15 @@ async function uploadOnCloudinary(localFilePath) {
     }
 }
 
-export default uploadOnCloudinary;
+async function deleteFromCloudinary(publicId) {
+    try {
+        await cloudinary.uploader.destroy(publicId, { invalidate: true });
+    } catch (error) {
+        throw new ApiError(500, "Could not delete previous profile picture");
+    }
+}
+
+export {
+  uploadOnCloudinary,
+  deleteFromCloudinary,
+};
