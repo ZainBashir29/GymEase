@@ -3,6 +3,7 @@ import ApiResponse from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import MembershipPlan from "../models/membershipPlanModel.js";
 import MembershipSubscription from "../models/membershipSubscriptionModel.js";
+import { createCheckoutUrl } from "./paymentController.js";
 
 const getAllMembershipPlans = asyncHandler(async (req, res) => {
   const membershipPlans = await MembershipPlan.find({});
@@ -46,7 +47,7 @@ const getMembershipPlanById = asyncHandler(async (req, res) => {
     );
 });
 
-const createPendingMembershipSubscription = asyncHandler(async (req, res) => {
+const createMembershipSubscription = asyncHandler(async (req, res) => {
   const { membershipPlanId } = req.body;
 
   if (!membershipPlanId) {
@@ -215,7 +216,7 @@ const cancelMembershipSubscription = asyncHandler(async (req, res) => {
   const cancelledSubscripton = await MembershipSubscription.findOneAndUpdate(
     {
       memberId: req.user?._id,
-      status: active,
+      status: "active",
     },
     {
       $set: {
@@ -242,10 +243,67 @@ const cancelMembershipSubscription = asyncHandler(async (req, res) => {
     );
 });
 
+const renewMembershipSubscription = asyncHandler(async (req, res) => {
+  const { membershipPlanId } = req.body;
+
+  const currentMembershipSubscription = await MembershipSubscription.findOne({
+    memberId: req.user?._id,
+    status: { $in: ["active", "expired", "cancelled"] },
+  }).sort({ createdAt: -1 });
+
+  if (!currentMembershipSubscription) {
+    throw new ApiError(404, "Current membership subscription not found");
+  }
+
+  const membershipPlan = await MembershipPlan.findById(
+    membershipPlanId || currentMembershipSubscription.membershipPlanId,
+  );
+
+  if (!membershipPlan) {
+    throw new ApiError(404, "Membership plan not found");
+  }
+
+  const now = new Date();
+
+  const startDate =
+    currentMembershipSubscription.endDate && currentMembershipSubscription.endDate > now
+      ? new Date(currentMembershipSubscription.endDate)
+      : now;
+
+  const endDate = new Date(startDate);
+
+  endDate.setMonth(endDate.getMonth() + 1);
+
+  const updatedSubscriptionRecord = await MembershipSubscription.findOneAndUpdate({
+    memberId: req.user?._id,
+    status: "pending",
+  }, {
+    $set: {
+      membershipPlanId: membershipPlan._id,
+      startDate,
+      endDate
+    }
+  }, {
+    returnDocument: "after"
+  });
+
+  return res
+    .status(201)
+    .json(
+      new ApiResponse(
+        201,
+        updatedSubscriptionRecord,
+        "Updated renewal membership subscription data successfully",
+      ),
+    );
+});
+
 export {
   getAllMembershipPlans,
   getMembershipPlanById,
-  createPendingMembershipSubscription,
+  createMembershipSubscription,
   getCurrentMembershipSubscription,
   getSubscriptionHistory,
+  cancelMembershipSubscription,
+  renewMembershipSubscription
 };

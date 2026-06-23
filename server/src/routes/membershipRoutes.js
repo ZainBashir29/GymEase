@@ -1,11 +1,14 @@
 import { Router } from "express";
 import {
-  createPendingMembershipSubscription,
+  createMembershipSubscription,
   getAllMembershipPlans,
   getCurrentMembershipSubscription,
   getMembershipPlanById,
   getSubscriptionHistory,
+  cancelMembershipSubscription,
+  renewMembershipSubscription,
 } from "../controllers/membershipController";
+import verifyJwt from "../middlewares/authMiddleware.js"
 
 const router = Router();
 
@@ -14,11 +17,15 @@ router.route("/membership-plans").get(getAllMembershipPlans);
 router.route("/membership-plan/:membershipPlanId").get(getMembershipPlanById);
 
 router
-  .route("/create-pending-subscription")
-  .post(createPendingMembershipSubscription);
+  .route("/create")
+  .post(verifyJwt, createMembershipSubscription);
 
-router.route("/current-membership").get(getCurrentMembershipSubscription);
+router.route("/current").get(verifyJwt, getCurrentMembershipSubscription);
 
-router.route("/subscription-history").get(getSubscriptionHistory);
+router.route("/history").get(verifyJwt, getSubscriptionHistory);
+
+router.route("/cancel").post(verifyJwt, cancelMembershipSubscription);
+
+router.route("/renew").post(verifyJwt, renewMembershipSubscription);
 
 export default router;
