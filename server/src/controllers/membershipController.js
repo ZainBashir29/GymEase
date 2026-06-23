@@ -211,6 +211,37 @@ const getSubscriptionHistory = asyncHandler(async (req, res) => {
     );
 });
 
+const cancelMembershipSubscription = asyncHandler(async (req, res) => {
+  const cancelledSubscripton = await MembershipSubscription.findOneAndUpdate(
+    {
+      memberId: req.user?._id,
+      status: active,
+    },
+    {
+      $set: {
+        status: "cancelled",
+      },
+    },
+    {
+      returnDocument: "after",
+    },
+  );
+
+  if (!cancelledSubscripton) {
+    throw new ApiError(500, "Could not cancel membership subscription");
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        cancelledSubscripton,
+        "Membership subscription cancelled successfully",
+      ),
+    );
+});
+
 export {
   getAllMembershipPlans,
   getMembershipPlanById,
