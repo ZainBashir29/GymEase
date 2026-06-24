@@ -11,7 +11,7 @@ async function createPaymentSession(amount, type, paymentCauseId) {
       merchant_api_key: process.env.SAFEPAY_PUBLIC_KEY,
       intent: "CYBERSOURCE",
       mode: "payment",
-      currency: "USD",
+      currency: "PKR",
       amount: amount * 100,
       metadata: {
         type,

@@ -24,7 +24,7 @@ const paymentSchema = new mongoose.Schema(
     status: {
       type: String,
       required: true,
-      enum: ["pending", "successful", "failed"],
+      enum: ["pending", "successful", "failed", "refunded"],
     },
     trackerToken: {
       type: String,

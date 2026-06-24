@@ -279,4 +279,54 @@ const verifyWebhookSignature = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "Webhook received successfully"));
 });
 
-export { createCheckoutUrl, verifyPaymentStatus, verifyWebhookSignature };
+const refundPayment = asyncHandler(async (req, res) => {
+  const { paymentId } = req.body;
+
+  if (!paymentId && !mongoose.isVaildObjectId(paymentId)) {
+    throw new ApiError(400, "Payment ID is required");
+  }
+
+  const paymentRecord = await Payment.findOne({
+    _id: paymentId,
+    memberId: req.user?._id,
+  });
+
+  if (!paymentRecord) {
+    throw new ApiError(404, "Payment record not found");
+  }
+
+  if (paymentRecord?.status !== "successful") {
+    throw new ApiError(400, "Only successful payments can be refunded");
+  }
+
+  const refundPayment = await safepay.orders.payments.refund({
+    tracker: paymentRecord?.trackerToken,
+    payload: {
+      currency: "PKR",
+      amount: paymentRecord?.amount * 100,
+    },
+  });
+
+  if (!refundPayment) {
+    throw new ApiError(500, "Could not refund payment");
+  }
+
+  paymentRecord?.status = "refunded";
+
+  try {
+    await paymentRecord.save({ validateBeforeSave: false });
+  } catch (error) {
+    console.error(error);
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, paymentRecord, "Payment refunded successfully"));
+});
+
+export {
+  createCheckoutUrl,
+  verifyPaymentStatus,
+  verifyWebhookSignature,
+  refundPayment,
+};
