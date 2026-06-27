@@ -20,3 +20,21 @@ const getAllPopularPlans = asyncHandler(async (req, res) => {
       ),
     );
 });
+
+const getPlanById = asyncHandler(async (req, res) => {
+  const { gymPlanId } = req.params;
+
+  if (!gymPlanId || !mongoose.isValidObjectId(gymPlanId)) {
+    throw new ApiError(400, "Gym plan id is required");
+  }
+
+  const gymPlan = await GymPlan.findById(gymPlanId);
+
+  if (!gymPlan) {
+    throw new ApiError(404, "Gym plan not fonund");
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, gymPlan, "Gym plan found successfully"));
+});
