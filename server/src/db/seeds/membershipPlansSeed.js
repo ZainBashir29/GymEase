@@ -2,7 +2,7 @@ import "dotenv/config";
 import MembershipPlan from "../../models/membershipPlanModel.js";
 import connectDB from "../index.js";
 
-const plans = [
+const membershipPlans = [
     {
         name: "Basic",
         price: 2000,
@@ -24,13 +24,13 @@ const plans = [
 ]
 
 connectDB().then(async () => {
-    for(const plan of plans) {
+    for(const membershipPlan of membershipPlans) {
         await MembershipPlan.findOneAndUpdate(
             {
-                name: plan.name
+                name: membershipPlan.name
             },
             {
-                $set: plan
+                $set: membershipPlan
             },
             {
                 upsert: true
