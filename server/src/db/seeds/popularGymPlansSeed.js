@@ -1,6 +1,6 @@
 import "dotenv/config";
-import connectDB from "../index.js";
 import GymPlan from "../../models/gymPlans/gymPlanModel.js";
+import connectDB from "../index.js";
 
 const popularGymPlans = [
   {

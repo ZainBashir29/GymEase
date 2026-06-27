@@ -7,7 +7,7 @@ import {
   getSubscriptionHistory,
   cancelMembershipSubscription,
   renewMembershipSubscription,
-} from "../controllers/membershipController";
+} from "../controllers/membershipController.js";
 import verifyJwt from "../middlewares/authMiddleware.js"
 
 const router = Router();

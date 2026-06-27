@@ -311,7 +311,7 @@ const refundPayment = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Could not refund payment");
   }
 
-  paymentRecord?.status = "refunded";
+  paymentRecord.status = "refunded";
 
   try {
     await paymentRecord.save({ validateBeforeSave: false });
