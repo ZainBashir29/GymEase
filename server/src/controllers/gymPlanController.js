@@ -205,3 +205,26 @@ const getActiveMemberPlan = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, memberPlan, "Member plan found successfully"));
 });
+
+const getMemberPlanHistory = asyncHandler(async (req, res) => {
+  const planHistory = await MemberPlan.find({
+    memberId: req.user?._id,
+  }).sort({
+    createdAt: -1,
+  });
+
+  if (!planHistory) {
+    throw new ApiError(404, "Member plan history not found");
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        planHistory,
+        "Member plan history found successfully",
+      ),
+    );
+});
+
