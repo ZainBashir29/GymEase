@@ -228,3 +228,63 @@ const getMemberPlanHistory = asyncHandler(async (req, res) => {
     );
 });
 
+const cancelMemberPlan = async (req, res) => {
+  const { memberPlanId } = req.params;
+
+  const memberPlan = await MemberPlan.findById(memberPlanId);
+
+  if (!memberPlan) {
+    throw new ApiError(404, "Member plan not found");
+  }
+
+  if (memberPlan.memberId.toString() !== memberId.toString()) {
+    throw new ApiError(403, "You are not authorized to cancel this plan.");
+  }
+
+  if (memberPlan.status !== "active") {
+    throw new ApiError(
+      400,
+      `Plan is already ${memberPlan.status}. Only active plans can be cancelled.`,
+    );
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    memberPlan.status = "cancelled";
+    await memberPlan.save({ validateBeforeSave: false }, { session });
+
+    const deletedFutureSessions = await Session.deleteMany(
+      {
+        memberPlanId: memberPlan._id,
+        memberId,
+        date: { $gte: today },
+      },
+      { session },
+    );
+
+    await session.commitTransaction();
+
+    res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          cancelledPlan: memberPlan,
+          sessionsDeleted: deletedFutureSessions.deletedCount,
+        },
+        "Member's gym plan cancelled successfully",
+      ),
+    );
+  } catch (transactionError) {
+    
+    await session.abortTransaction();
+    throw new ApiError(500, "Failed to cancel member's gym plan");
+
+  } finally {
+    session.endSession();
+  }
+};
