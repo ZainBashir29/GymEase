@@ -12,15 +12,14 @@ const memberPlanSchema = new mongoose.Schema(
       ref: "Member",
       required: true,
     },
-    exercises: [
-      {
-        type: String,
-        required: true,
-      },
-    ],
     duration: {
       type: Number,
       required: true,
+    },
+    startDate: {
+      type: Date,
+      required: true,
+      default: new Date(),
     },
     status: {
       type: String,

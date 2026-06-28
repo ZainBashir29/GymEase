@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 
 const sessionSchema = new mongoose.Schema(
   {
-    gymPlanId: {
+    memberPlanId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "GymPlan",
+      ref: "MemberPlan",
       required: true,
     },
     memberId: {
@@ -13,9 +13,9 @@ const sessionSchema = new mongoose.Schema(
       required: true,
     },
     trainerId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Trainer",
-        required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Trainer",
+      required: true,
     },
     exercises: [
       {
@@ -27,6 +27,22 @@ const sessionSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    date: {
+      type: Date,
+      required: true,
+    },
+    workoutName: {
+      type: String,
+      required: true,
+    },
+    exercises: [
+      {
+        name: String,
+        sets: Number,
+        reps: Number,
+        duration: String,
+      },
+    ],
     status: {
       type: String,
       required: true,

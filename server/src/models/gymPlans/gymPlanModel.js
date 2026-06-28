@@ -20,6 +20,17 @@ const gymPlanSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    exercises: [
+      {
+        name: String,
+        exercises: {
+          name: String,
+          sets: Number,
+          reps: Number,
+          duration: String,
+        },
+      },
+    ],
     duration: {
       type: Number,
       required: true,
