@@ -228,7 +228,7 @@ const getMemberPlanHistory = asyncHandler(async (req, res) => {
     );
 });
 
-const cancelMemberPlan = async (req, res) => {
+const cancelMemberPlan = asyncHandler(async (req, res) => {
   const { memberPlanId } = req.params;
 
   const memberPlan = await MemberPlan.findById(memberPlanId);
@@ -280,11 +280,9 @@ const cancelMemberPlan = async (req, res) => {
       ),
     );
   } catch (transactionError) {
-    
     await session.abortTransaction();
     throw new ApiError(500, "Failed to cancel member's gym plan");
-
   } finally {
     session.endSession();
   }
-};
+});
