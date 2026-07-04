@@ -1,4 +1,6 @@
-const QUESTIONS = [
+import ApiError from "./ApiError.js";
+
+const questions = [
   {
     index: 0,
     question: "What is your primary fitness goal?",
@@ -21,7 +23,7 @@ const QUESTIONS = [
   },
 ];
 
-const SESSION_TEMPLATES = {
+const session_templates = {
   upper_body: {
     weight_loss: [
       {
@@ -209,3 +211,60 @@ const SESSION_TEMPLATES = {
     ],
   },
 };
+
+const validateAnswers = (answers) => {
+  if (!Array.isArray(answers)) {
+    throw new ApiError(400, "Answers must be an array");
+  }
+
+  if (answers.length != questions.length) {
+    throw new ApiError(
+      400,
+      "The count of answers must be equal to the questions",
+    );
+  }
+
+  for (const question of questions) {
+    const answer = answers[question.index];
+    if (!question.options.includes(answer)) {
+      throw new ApiError(
+        400,
+        `Invalid answer ${answer} of question ${question.index + 1}`,
+      );
+    }
+  }
+
+  return "The answers are valid";
+};
+
+const generateCustomPlan = (answers) => {
+  const [goal, level, daysPerWeek, focusArea] = answers;
+
+  const duration = parseInt(daysPerWeek) * 4;
+
+  const templatePool = session_templates.focusArea.goal;
+
+  const sessions = [];
+
+  for (let i = 0; i < duration; i++) {
+    sessions.push(templatePool[i % templatePool.length]);
+  }
+
+  const name = `${goal.replace(/_/g, " ")} — ${focusArea.replace(/_/g, " ")} (${level})`;
+
+  const description = `A personalized ${level}-level plan focused on ${goal.replace(/_/g, " ")}, targeting ${focusArea.replace(/_/g, " ")}.`;
+
+  const details = `This plan runs for ${duration} sessions over 4 weeks, training ${daysPerWeek} days per week. Designed for ${level} level members.`;
+
+  return {
+    name,
+    type: "custom",
+    description,
+    details,
+    sessions,
+    duration,
+    trainerIds: [],
+  };
+};
+
+export { questions, validateAnswers, generateCustomPlan };
