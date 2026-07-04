@@ -6,6 +6,7 @@ import MemberPlan from "../models/gymPlans/memberPlanModel.js";
 import MembershipSubscription from "../models/membershipSubscriptionModel.js";
 import Session from "../models/gymPlans/sessionModel.js";
 import { generateCustomPlan } from "../utils/questionnaire.js";
+import QuestionnaireResponse from "../models/gymPlans/questionnaireResponseModel.js";
 
 const findAvailableTrainer = async (allowedTrainers, targetDate, session) => {
   const startOfDay = new Date(targetDate);
@@ -425,4 +426,26 @@ const activateCustomPlan = asyncHandler(async (req, res) => {
   } finally {
     session.endSession();
   }
+});
+
+const getMemberQuestionnaire = asyncHandler(async (req, res) => {
+  const questionnaireResponse = await QuestionnaireResponse.findOne({
+    memberId: req.user?._id,
+  }).sort({
+    createdAt: -1,
+  });
+
+  if (!questionnaireResponse) {
+    throw new ApiError(404, "No questionnaire found");
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        questionnaireResponse,
+        "Questionnaire found successfully",
+      ),
+    );
 });
