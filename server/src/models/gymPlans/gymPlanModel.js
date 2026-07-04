@@ -23,12 +23,14 @@ const gymPlanSchema = new mongoose.Schema(
     sessions: [
       {
         name: String,
-        exercises: {
-          name: String,
-          sets: Number,
-          reps: Number,
-          duration: String,
-        },
+        exercises: [
+          {
+            name: String,
+            sets: Number,
+            reps: Number,
+            duration: String,
+          },
+        ],
       },
     ],
     duration: {
