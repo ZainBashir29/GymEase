@@ -5,6 +5,7 @@ import GymPlan from "../models/gymPlans/gymPlanModel.js";
 import MemberPlan from "../models/gymPlans/memberPlanModel.js";
 import MembershipSubscription from "../models/membershipSubscriptionModel.js";
 import Session from "../models/gymPlans/sessionModel.js";
+import { generateCustomPlan } from "../utils/questionnaire.js";
 
 const findAvailableTrainer = async (allowedTrainers, targetDate, session) => {
   const startOfDay = new Date(targetDate);
@@ -282,6 +283,145 @@ const cancelMemberPlan = asyncHandler(async (req, res) => {
   } catch (transactionError) {
     await session.abortTransaction();
     throw new ApiError(500, "Failed to cancel member's gym plan");
+  } finally {
+    session.endSession();
+  }
+});
+
+const activateCustomPlan = asyncHandler(async (req, res) => {
+  const { answers } = req.body;
+
+  const validation = validateAnswers(answers);
+
+  const existingActivePlan = await MemberPlan.findOne({
+    memberId: req.user?._id,
+    status: "active",
+  });
+
+  if (existingActivePlan) {
+    throw new ApiError(400, "You already have an active gym plan");
+  }
+
+  const subscription = await MembershipSubscription.findOne({
+    memberId: req.user?._id,
+    status: "active",
+  }).populate("membershipId");
+
+  if (!subscription) {
+    throw new ApiError(
+      400,
+      "You need an active membership to create a gym plan.",
+    );
+  }
+
+  const maxTrainers = subscription.membershipId.maxTrainers;
+
+  const trainers = await Trainer.find({}).select("_id");
+
+  if (!trainers || trainers.length === 0) {
+    throw new ApiError(
+      400,
+      "No trainers are available in the system right now",
+    );
+  }
+
+  const allTrainerIds = trainers.map((t) => t._id);
+
+  const allowedTrainers = allTrainerIds.slice(0, maxTrainers);
+
+  const customGymPlan = generateCustomPlan(answers);
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const [questionnaireResponse] = await QuestionnaireResponses.create(
+      [{ memberId: req.user?._id, answers }],
+      { session },
+    );
+
+    const [gymPlan] = await GymPlan.create(
+      [
+        {
+          name: customGymPlan.name,
+          type: customGymPlan.type,
+          description: customGymPlan.description,
+          details: customGymPlan.details,
+          sessions: customGymPlan.sessions,
+          duration: customGymPlan.duration,
+          trainerIds: allowedTrainers,
+        },
+      ],
+      { session },
+    );
+
+    const startDate = new Date();
+    const [memberPlan] = await MemberPlan.create(
+      [
+        {
+          gymPlanId: gymPlan._id,
+          memberId: req.user?._id,
+          duration: customGymPlan.duration,
+          startDate,
+          status: "active",
+        },
+      ],
+      { session },
+    );
+
+    const sessionDocuments = [];
+
+    for (let day = 1; day <= customGymPlan.sessions.length; day++) {
+      const targetDate = new Date(startDate);
+      targetDate.setDate(startDate.getDate() + (day - 1));
+
+      const trainerId = await findAvailableTrainer(allowedTrainers, targetDate);
+
+      if (!trainerId) {
+        throw new Error(
+          `No trainer is available on day ${day}, date = ${targetDate.toDateString()}`,
+        );
+      }
+
+      const workout = customGymPlan.sessions[day - 1];
+
+      sessionDocuments.push({
+        memberPlanId: memberPlan._id,
+        memberId: req.user?._id,
+        trainerId,
+        day,
+        date: targetDate,
+        workoutName: workout.name,
+        exercises: workout.exercises,
+        status: "upcoming",
+      });
+    }
+
+    const sessions = await Session.insertMany(sessionDocuments, {
+      session,
+    });
+
+    await session.commitTransaction();
+
+    res
+      .status(201)
+      .json(
+        new ApiResponse(
+          201,
+          { questionnaireResponse, gymPlan, memberPlan, sessions },
+          "Custom gym plan created successfully",
+        ),
+      );
+  } catch (transactionError) {
+    await session.abortTransaction();
+
+    if (transactionError instanceof ApiError) throw transactionError;
+
+    throw new ApiError(
+      500,
+      transactionError?.message ||
+        "Custom gym plan creation and activation failed. Please try again",
+    );
   } finally {
     session.endSession();
   }

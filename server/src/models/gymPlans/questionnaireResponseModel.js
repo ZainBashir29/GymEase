@@ -8,17 +8,20 @@ const questionnaireResponseSchema = new mongoose.Schema(
       required: true,
     },
     answers: [
-        {
-            type: String,
-            required: true,
-        }
-    ]
+      {
+        type: String,
+        required: true,
+      },
+    ],
   },
   {
     timestamps: true,
   },
 );
 
-const QuestionnaireResponse = mongoose.model("QuestionnaireResponse", questionnaireResponseSchema);
+const QuestionnaireResponse = mongoose.model(
+  "QuestionnaireResponse",
+  questionnaireResponseSchema,
+);
 
 export default QuestionnaireResponse;
