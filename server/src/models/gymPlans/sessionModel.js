@@ -17,12 +17,6 @@ const sessionSchema = new mongoose.Schema(
       ref: "Trainer",
       required: true,
     },
-    exercises: [
-      {
-        type: String,
-        required: true,
-      },
-    ],
     day: {
       type: Number,
       required: true,

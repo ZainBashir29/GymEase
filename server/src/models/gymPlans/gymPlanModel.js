@@ -20,7 +20,7 @@ const gymPlanSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    exercises: [
+    sessions: [
       {
         name: String,
         exercises: {
