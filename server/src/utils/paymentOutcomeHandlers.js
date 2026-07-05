@@ -1,6 +1,6 @@
 import Payment from "../models/paymentModel.js";
 import MembershipSubscription from "../models/membershipSubscriptionModel.js";
-import StoreOrder from "../models/storeOrderModel.js"; 
+import StoreOrder from "../models/storeOrderModel.js";
 
 const handleSuccessfulPayment = async (trackerToken) => {
   const updatedPayment = await Payment.findOneAndUpdate(
@@ -10,9 +10,7 @@ const handleSuccessfulPayment = async (trackerToken) => {
   );
 
   if (!updatedPayment) {
-    console.error(
-      `[Payment] Could not find payment for tracker ${trackerToken}`,
-    );
+    console.error(`Could not find payment for tracker ${trackerToken}`);
     return null;
   }
 
@@ -60,9 +58,7 @@ const handleFailedPayment = async (trackerToken) => {
   );
 
   if (!updatedPayment) {
-    console.error(
-      `[Payment] Could not find payment for tracker ${trackerToken}`,
-    );
+    console.error(`Could not find payment for tracker ${trackerToken}`);
   }
 
   return updatedPayment;
