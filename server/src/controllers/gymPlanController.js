@@ -449,3 +449,157 @@ const getMemberQuestionnaire = asyncHandler(async (req, res) => {
       ),
     );
 });
+
+const getMemberTodaySession = asyncHandler(async (req, res) => {
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+
+  const endOfDay = new Date();
+  endOfDay.setHours(23, 59, 59, 999);
+
+  const session = await Session.findOne({
+    memberId: req.user?._id,
+    date: {
+      $gte: startOfDay,
+      $lte: endOfDay,
+    },
+  });
+
+  if (!session) {
+    throw new ApiError(404, "Session not found");
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, session, "Session found successfully"));
+});
+
+const getTrainerTodaySessions = asyncHandler(async (req, res) => {
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+
+  const endOfDay = new Date();
+  endOfDay.setHours(23, 59, 59, 999);
+
+  const trainerTodaySessions = await Session.find({
+    trainerId: req.user?._id,
+    date: {
+      $gte: startOfDay,
+      $lte: endOfDay,
+    },
+  });
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        trainerTodaySessions,
+        "Trainer's today sessions found successfully",
+      ),
+    );
+});
+
+const getAllSessionsForPlan = asyncHandler(async (req, res) => {
+  const { memberPlanId } = req.params;
+
+  if (!memberPlanId || !mongoose.isValidObjectId(memberPlanId)) {
+    throw new ApiError(400, "No or invalid member plan id");
+  }
+
+  const sessions = await Session.find({
+    memberPlanId,
+  });
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, sessions, "Sessions found successfully"));
+});
+
+const getTrainerAllSessions = asyncHandler(async (req, res) => {
+  const trainerSessions = await Session.find({
+    trainerId: req.user?._id,
+  });
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        trainerSessions,
+        "Trainer sessions found successfully",
+      ),
+    );
+});
+
+const markSessionComplete = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id || !mongoose.isValidObjectId(id)) {
+    throw new ApiError(400, "No or invalid session id");
+  }
+
+  const session = await Session.findById(id);
+
+  if (!session) {
+    throw new ApiError(404, "Session not found");
+  }
+
+  if (session.memberId.toString() !== req.user._id.toString()) {
+    throw new ApiError(403, "You are not authorized to update this session");
+  }
+
+  try {
+    session.status = "completed";
+    await session.save({ validateBeforeSave: false });
+  } catch (error) {
+    throw new ApiError(
+      500,
+      error?.message || "Could not update session status to completed",
+    );
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        completedSession,
+        "Session marked as completed successfully",
+      ),
+    );
+});
+
+// const markSessionMissed = asyncHandler(async (req, res) => {
+//   const { id } = req.params;
+
+//   if (!id || !mongoose.isValidObjectId(id)) {
+//     throw new ApiError(400, "No or invalid session id");
+//   }
+
+//   const completedSession = await Sessions.findByIdAndUpdate(
+//     id,
+//     {
+//       $set: {
+//         status: "missed",
+//       },
+//     },
+//     {
+//       returnDocument: "after",
+//     },
+//   );
+
+//   if (!completedSession) {
+//     throw new ApiError(500, "Could not mark session as missed");
+//   }
+
+//   res
+//     .status(200)
+//     .json(
+//       new ApiResponse(
+//         200,
+//         completedSession,
+//         "Session marked as missed successfully",
+//       ),
+//     );
+// });
