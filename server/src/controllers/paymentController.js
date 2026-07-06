@@ -9,6 +9,10 @@ import {
 import Payment from "../models/paymentModel.js";
 import Safepay from "@sfpy/node-core";
 import MembershipSubscription from "../models/membershipSubscriptionModel.js";
+import {
+  handleSuccessfulPayment,
+  handleFailedPayment,
+} from "../utils/paymentOutcomeHandlers.js";
 
 const safepay = Safepay(process.env.SAFEPAY_SECRET_KEY, {
   authType: "secret",
@@ -106,7 +110,7 @@ const verifyPaymentStatus = asyncHandler(async (req, res) => {
       throw new ApiError(404, "Payment record not found");
     }
 
-    res
+    return res
       .status(200)
       .json(
         new ApiResponse(
@@ -163,6 +167,117 @@ const verifyWebhookSignature = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Webhook signature verification failed");
   }
 
+  // switch (event.type) {
+  //   case "payment.succeeded": {
+  //     const { tracker } = event.data;
+
+  //     if (!tracker?.token) {
+  //       throw new ApiError(500, "Could not find tracker token in webhook data");
+  //     }
+
+  //     const updatedPayment = await Payment.findOneAndUpdate(
+  //       {
+  //         trackerToken: tracker.token,
+  //       },
+  //       {
+  //         $set: {
+  //           status: "successful",
+  //         },
+  //       },
+  //       {
+  //         returnDocument: "after",
+  //       },
+  //     );
+
+  //     if (!updatedPayment) {
+  //       console.error("Could not update payment status to successful in db");
+  //       break;
+  //     }
+
+  //     if (updatedPayment.type === "MembershipSubscription") {
+  //       const updatedMembershipStatus =
+  //         await MembershipSubscription.findOneAndUpdate(
+  //           {
+  //             membershipPlanId: updatedPayment.paymentCauseId,
+  //             memberId: updatedPayment.memberId,
+  //           },
+  //           {
+  //             $set: {
+  //               status: "active",
+  //               paymentId: updatedPayment._id,
+  //             },
+  //           },
+  //           {
+  //             returnDocument: "after",
+  //           },
+  //         );
+
+  //       if (!updatedMembershipStatus) {
+  //         throw new ApiError(
+  //           500,
+  //           "Could not update membership subscription status in db",
+  //         );
+  //       }
+  //     }
+
+  //     if (updatedPayment?.type === "StoreOrder") {
+  //       const updatedStoreOrderStatus = await StoreOrder.findOneAndUpdate(
+  //         {
+  //           _id: updatedPayment.paymentCauseId,
+  //           memberId: updatedPayment.memberId,
+  //         },
+  //         {
+  //           $set: {
+  //             paymentStatus: "paid",
+  //             status: "processing",
+  //             paymentId: updatedPayment._id,
+  //           },
+  //         },
+  //         {
+  //           returnDocument: "after",
+  //         },
+  //       );
+
+  //       if (!updatedStoreOrderStatus) {
+  //         throw new ApiError(500, "Could not update store order status in db");
+  //       }
+  //     }
+
+  //     break;
+  //   }
+  //   case "payment.failed": {
+  //     const { tracker } = event.data;
+
+  //     if (!tracker?.token) {
+  //       throw new ApiError(500, "Could not find tracker token in webhook data");
+  //     }
+
+  //     const updatedPaymentStatus = await Payment.findOneAndUpdate(
+  //       {
+  //         trackerToken: tracker.token,
+  //       },
+  //       {
+  //         $set: {
+  //           status: "failed",
+  //         },
+  //       },
+  //       {
+  //         returnDocument: "after",
+  //       },
+  //     );
+
+  //     if (!updatedPaymentStatus) {
+  //       console.error("Could not update failed payment status in db");
+  //       break;
+  //     }
+
+  //     break;
+  //   }
+
+  //   default:
+  //     console.log("Received unknown event type " + event.type);
+  // }
+
   switch (event.type) {
     case "payment.succeeded": {
       const { tracker } = event.data;
@@ -171,76 +286,15 @@ const verifyWebhookSignature = asyncHandler(async (req, res) => {
         throw new ApiError(500, "Could not find tracker token in webhook data");
       }
 
-      const updatedPayment = await Payment.findOneAndUpdate(
-        {
-          trackerToken: tracker.token,
-        },
-        {
-          $set: {
-            status: "successful",
-          },
-        },
-        {
-          returnDocument: "after",
-        },
-      );
+      const updatedPayment = await handleSuccessfulPayment(tracker.token);
 
       if (!updatedPayment) {
-        console.error("Could not update payment status to successful in db");
-        break;
-      }
-
-      if (updatedPayment.type === "MembershipSubscription") {
-        const updatedMembershipStatus =
-          await MembershipSubscription.findOneAndUpdate(
-            {
-              membershipPlanId: updatedPayment.paymentCauseId,
-              memberId: updatedPayment.memberId,
-            },
-            {
-              $set: {
-                status: "active",
-                paymentId: updatedPayment._id,
-              },
-            },
-            {
-              returnDocument: "after",
-            },
-          );
-
-        if (!updatedMembershipStatus) {
-          throw new ApiError(
-            500,
-            "Could not update membership subscription status in db",
-          );
-        }
-      }
-
-      if (updatedPayment?.type === "StoreOrder") {
-        const updatedStoreOrderStatus = await StoreOrder.findOneAndUpdate(
-          {
-            _id: updatedPayment.paymentCauseId,
-            memberId: updatedPayment.memberId,
-          },
-          {
-            $set: {
-              paymentStatus: "paid",
-              status: "processing",
-              paymentId: updatedPayment._id,
-            },
-          },
-          {
-            returnDocument: "after",
-          },
-        );
-
-        if (!updatedStoreOrderStatus) {
-          throw new ApiError(500, "Could not update store order status in db");
-        }
+        console.error("Could not process successful payment from webhook");
       }
 
       break;
     }
+
     case "payment.failed": {
       const { tracker } = event.data;
 
@@ -248,25 +302,7 @@ const verifyWebhookSignature = asyncHandler(async (req, res) => {
         throw new ApiError(500, "Could not find tracker token in webhook data");
       }
 
-      const updatedPaymentStatus = await Payment.findOneAndUpdate(
-        {
-          trackerToken: tracker.token,
-        },
-        {
-          $set: {
-            status: "failed",
-          },
-        },
-        {
-          returnDocument: "after",
-        },
-      );
-
-      if (!updatedPaymentStatus) {
-        console.error("Could not update failed payment status in db");
-        break;
-      }
-
+      await handleFailedPayment(tracker.token);
       break;
     }
 
@@ -311,7 +347,7 @@ const refundPayment = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Could not refund payment");
   }
 
-  paymentRecord?.status = "refunded";
+  paymentRecord.status = "refunded";
 
   try {
     await paymentRecord.save({ validateBeforeSave: false });
