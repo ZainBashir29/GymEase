@@ -55,4 +55,4 @@ const warnExpiringMemberships = async () => {
   }
 };
 
-export { warnExpiringMemberships };
+export default warnExpiringMemberships;

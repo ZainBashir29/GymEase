@@ -10,14 +10,10 @@ const safepay = Safepay(process.env.SAFEPAY_SECRET_KEY, {
   host: "https://sandbox.api.getsafepay.com",
 });
 
-// how old a pending payment must be before we bother checking it
-// gives the webhook a fair chance to arrive on its own first
 const minutes = 30;
 
 const reconcilePayments = async () => {
-  const timeToReconcile = new Date(
-    Date.now() - minutes * 60 * 1000,
-  );
+  const timeToReconcile = new Date(Date.now() - minutes * 60 * 1000);
 
   const stalePayments = await Payment.find({
     status: "pending",
@@ -38,24 +34,15 @@ const reconcilePayments = async () => {
       const state = response?.data?.tracker?.state;
 
       if (state === "TRACKER_ENDED") {
-    
         await handleSuccessfulPayment(payment.trackerToken);
         console.log(`Reconciled payment ${payment._id} as successful`);
-
       } else if (state === "TRACKER_CANCELLED" || state === "TRACKER_EXPIRED") {
-
         await handleFailedPayment(payment.trackerToken);
         console.log(`Reconciled payment ${payment._id} as failed`);
-
       } else {
-
-        console.log(
-          `Payment ${payment._id} still pending, state: ${state}`,
-        );
-
+        console.log(`Payment ${payment._id} still pending, state: ${state}`);
       }
     } catch (error) {
-
       console.error(
         `Failed to reconcile payment ${payment._id}`,
         error.message,
@@ -64,4 +51,4 @@ const reconcilePayments = async () => {
   }
 };
 
-export { reconcileStalePayments };
+export default reconcileStalePayments;

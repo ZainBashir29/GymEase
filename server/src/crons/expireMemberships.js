@@ -22,9 +22,7 @@ const expireMemberships = async () => {
     { $set: { status: "expired" } },
   );
 
-  console.log(
-    `Expired ${expiredSubscriptions.length} subscription/s`,
-  );
+  console.log(`Expired ${expiredSubscriptions.length} subscription/s`);
 };
 
-export { expireMemberships };
+export default expireMemberships;
