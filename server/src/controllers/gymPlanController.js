@@ -603,3 +603,19 @@ const markSessionComplete = asyncHandler(async (req, res) => {
 //       ),
 //     );
 // });
+
+export {
+  getAllPopularPlans,
+  getPlanById,
+  activatePopularPlan,
+  getActiveMemberPlan,
+  getMemberPlanHistory,
+  cancelMemberPlan,
+  activateCustomPlan,
+  getMemberQuestionnaire,
+  getMemberTodaySession,
+  getTrainerTodaySessions,
+  getAllSessionsForPlan,
+  getTrainerAllSessions,
+  markSessionComplete,
+}

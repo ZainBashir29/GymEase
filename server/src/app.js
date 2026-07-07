@@ -47,10 +47,12 @@ app.use(cookieParser());
 import authRoutes from "./routes/authRoutes.js";
 import membershipRoutes from "./routes/membershipRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
+import gymPlanRoutes from "./routes/gymPlanRoutes.js";
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/memberships", membershipRoutes);
 app.use("/api/v1/payments", paymentRoutes);
+app.use("/api/v1/gym-plans", gymPlanRoutes);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
