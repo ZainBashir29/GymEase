@@ -12,6 +12,7 @@ import {
   getPlanById,
   getTrainerAllSessions,
   getTrainerTodaySessions,
+  markSessionComplete,
 } from "../controllers/gymPlanController.js";
 import verifyJwt from "../middlewares/authMiddleware.js";
 
@@ -31,9 +32,7 @@ router.route("/:id/cancel").post(verifyJwt, cancelMemberPlan);
 
 router.route("/custom/activate").post(verifyJwt, activateCustomPlan);
 
-router
-  .route("/questionnaire")
-  .get(verifyJwt, getMemberQuestionnaire);
+router.route("/questionnaire").get(verifyJwt, getMemberQuestionnaire);
 
 router.route("/sessions/member/today").get(verifyJwt, getMemberTodaySession);
 
@@ -43,6 +42,6 @@ router.route("/:id/sessions/").get(verifyJwt, getAllSessionsForPlan);
 
 router.route("/sessions/trainer").get(verifyJwt, getTrainerAllSessions);
 
-
+router.route("/sessions/:id/complete").post(verifyJwt, markSessionComplete);
 
 export default router;
