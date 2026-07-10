@@ -5,7 +5,7 @@ import {
   getCurrentMembershipSubscription,
   getMembershipPlanById,
   getSubscriptionHistory,
-} from "../controllers/membershipController";
+} from "../controllers/membershipController.js";
 
 const router = Router();
 

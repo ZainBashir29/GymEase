@@ -6,41 +6,32 @@ import passport from "passport";
 import "./utils/passport.js";
 import verifyJwt from "./middlewares/authMiddleware.js";
 import { verifyWebhookSignature } from "./controllers/paymentController.js";
-
+import chatRoutes from "./routes/chatRoutes.js";
+import trainerRoutes from "./routes/trainerRoutes.js";
+import sessionRoutes from "./routes/sessionRoutes.js";
+import attendanceRoutes from "./routes/attendanceRoutes.js";
+import progressRoutes from "./routes/progressRoutes.js";
+import conversationRoutes from "./routes/conversationRoutes.js";
+import messageRoutes from "./routes/messageRoutes.js";
 const app = express();
 
+
+app.use("/api/messages",messageRoutes);
+app.use("/api/conversations",conversationRoutes);
+app.use("/api/progress",progressRoutes);
+app.use("/api/attendance",attendanceRoutes);
+app.use("/api/sessions",sessionRoutes);
+app.use("/api/trainers",trainerRoutes);
 app.use(passport.initialize());
-
-app.use(
-  cors({
-    origin: process.env.CORS_ORIGIN,
-    credentials: true,
-  }),
-);
-
-app.use(
-  express.urlencoded({
-    extended: true,
-    limit: LIMIT,
-  }),
-);
+app.use( "/api/chat",chatRoutes);
+app.use(cors({origin: process.env.CORS_ORIGIN,credentials: true,}),);
+app.use(express.urlencoded({extended: true,limit: LIMIT,}),);
 
 // kaleemullah ye special route hai, is ko express.raw required hai, isi liye isko express.json wali line ke uper likha hai
+app.post( "api/v1/payments/webhook",express.raw({ type: "application/json" }),verifyWebhookSignature,);
 
-app.post(
-  "api/v1/payments/webhook",
-  express.raw({ type: "application/json" }),
-  verifyWebhookSignature,
-);
-
-app.use(
-  express.json({
-    limit: LIMIT,
-  }),
-);
-
+app.use(express.json({limit: LIMIT,}),);
 app.use(express.static("public"));
-
 app.use(cookieParser());
 
 // routes
