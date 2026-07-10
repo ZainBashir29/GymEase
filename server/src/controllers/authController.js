@@ -511,7 +511,7 @@ const changeProfilePicture = asyncHandler(async (req, res) => {
       new ApiResponse(
         200,
         updatedMember,
-        "Profile picture changed successfully",
+        "Profile picture uploaded or changed successfully",
       ),
     );
 });
