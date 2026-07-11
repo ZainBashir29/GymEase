@@ -22,7 +22,17 @@ const Member = User.discriminator("Member", new mongoose.Schema({
     googleId: {
         type: String,
         default: null
-    }
+    },
+    assignedTrainerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Trainer",
+        default: null,
+    },
+    trainerAssignmentStatus: {
+        type: String,
+        enum: ["Pending", "Assigned","Approved",],
+        default: "Pending",
+    },
 }))
 
 export default Member;
