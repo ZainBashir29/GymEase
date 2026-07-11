@@ -4,10 +4,13 @@ import cookieParser from "cookie-parser";
 import { LIMIT } from "./constants.js";
 import passport from "passport";
 import "./utils/passport.js";
+import storeRoutes from "./routes/storeRoutes.js";
 import verifyJwt from "./middlewares/authMiddleware.js";
 import { verifyWebhookSignature } from "./controllers/paymentController.js";
 
 const app = express();
+
+app.use( "/api/store", storeRoutes);
 
 app.use(passport.initialize());
 
@@ -54,6 +57,7 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/memberships", membershipRoutes);
 app.use("/api/v1/payments", paymentRoutes);
 app.use("/api/v1/gym-plans", gymPlanRoutes);
+
 app.use("/api/v1/admin", adminRoutes);
 
 app.use((err, req, res, next) => {

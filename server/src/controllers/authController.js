@@ -3,13 +3,10 @@ import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import User from "../models/userModel.js";
 import Member from "../models/memberModel.js";
-import {
-  uploadOnCloudinary,
-  deleteFromCloudinary,
-} from "../utils/cloudinary.js";
+import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js";
 import sendEmail from "../utils/nodemailer.js";
 import jwt from "jsonwebtoken";
-import crypto from "crypto";
+
 
 const generateAccessAndRefreshTokens = async (memberId) => {
   try {
@@ -108,12 +105,62 @@ const registerMember = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Could not create member");
   }
 
-  res
-    .status(201)
-    .json(
-      new ApiResponse(201, createdMember, "Member registered successfully"),
-    );
-});
+    if(!username) {
+        throw new ApiError(400, "Username is required");
+    }
+
+    if(!age) {
+        throw new ApiError(400, "Age is required");
+    }
+
+    if(age < 13) {
+        throw new ApiError(400, "Invalid age");
+    }
+
+    const existingMember = await Member.findOne({
+        $or: [{email}, {username}]
+    })
+
+    if(existingMember) {
+        throw new ApiError(409, "Member with the same email or username already exists");
+    }
+
+    let profilePicture;
+
+    if(req.file) {
+        const pfpLocalPath = req.file.path;
+
+        // if(!pfpLocalPath) {
+        //     throw new ApiError(400, "No profile picture found");
+        // }
+
+        profilePicture = await uploadOnCloudinary(pfpLocalPath);
+
+        if(!profilePicture) {
+            throw new ApiError(500, "Could not upload file on cloudinary");
+        }
+    }
+
+    const member = await Member.create({
+        fullName,
+        email,
+        password,
+        username: username.toLowerCase(),
+        age,
+        profilePicture: profilePicture?.url || "",
+        profilePicturePublicId: profilePicture?.public_id || "",
+        isProfileCompleted: true,
+        authMethod: "email"
+    })
+
+    const createdMember = await Member.findById(member._id).select("-password -refreshToken -googleId -isProfileCompleted");
+
+    if(!createdMember) {
+        throw new ApiError(500, "Could not create member");
+    }
+
+    res.status(201).json(new ApiResponse(201, createdMember, "Member registered successfully"));
+})
 
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -516,11 +563,138 @@ const changeProfilePicture = asyncHandler(async (req, res) => {
     );
 });
 
-const getCurrentUser = asyncHandler(async (req, res) => {
-  res
-    .status(200)
-    .json(new ApiResponse(200, req.user, "User fetched successfully"));
-});
+const updateFullName = asyncHandler( async (req, res) => {
+    const { fullName } = req.body;
+    if(!fullName) {
+        throw new ApiError(400, "Full name is required");
+    }
+    const member = await Member.findByIdAndUpdate(req.user._id, {
+        $set: {
+            fullName
+        }
+    }, {
+        returnDocument: "after"
+    }).select("-password -refreshToken -isProfileCompleted -googleId");
+    if(!member) {
+        throw new ApiError(500, "Could not update full name");
+    }
+    res.status(200).json(new ApiResponse(200, member, "Full name updated successfully"));
+})
+
+const updateUsername = asyncHandler( async (req, res) => {
+    const { username } = req.body;
+    if(!username) {
+        throw new ApiError(400, "Username is required");
+    }
+    const member = await Member.findByIdAndUpdate(req.user._id, {
+        $set: {
+            username
+        }
+    }, {
+        returnDocument: "after"
+    }).select("-password -refreshToken -isProfileCompleted -googleId");
+    if(!member) {
+        throw new ApiError(500, "Could not update username");
+    }
+    res.status(200).json(new ApiResponse(200, member, "Username updated successfully"));
+})
+
+const updateEmail = asyncHandler( async (req, res) => {
+    const { email } = req.body;
+    if(!email) {
+        throw new ApiError(400, "Email is required");
+    }
+    if(!email.includes("@")) {
+        throw new ApiError(400, "Invalid email format");
+    }
+    const member = await Member.findByIdAndUpdate(req.user._id, {
+        $set: {
+            email
+        }
+    }, {
+        returnDocument: "after"
+    }).select("-password -refreshToken -isProfileCompleted -googleId");
+    if(!member) {
+        throw new ApiError(500, "Could not update email");
+    }
+    res.status(200).json(new ApiResponse(200, member, "Email updated successfully"));
+})
+
+const changeCurrentPassword = asyncHandler( async (req, res) => {
+    const { oldPassword, newPassword } = req.body;
+    if(!oldPassword) {
+        throw new ApiError(400, "Old password is required");
+    }
+    if(!newPassword) {
+        throw new ApiError(400, "New password is required");
+    }
+    const member = await Member.findById(req.user._id);
+    if(!member) {
+        throw new ApiError(500, "Could not find member");
+    }
+    const isPasswordCorrect = await member.isPasswordCorrect(oldPassword);
+    if(!isPasswordCorrect) {
+        throw new ApiError(400, "Incorrect old password");
+    }
+    try {
+        member.password = newPassword;
+        await member.save( {validateBeforeSave: false} );
+        res.status(200).json(new ApiResponse(200, member, "Password changed successfully"));
+    } catch (error) {
+        throw new ApiError(500, "Could not change password");
+    }
+})
+
+const changeProfilePicture = asyncHandler( async (req, res) => {
+    const profilePictureLocalPath = req.file?.path;
+
+    if(!profilePictureLocalPath) {
+        throw new ApiError(400, "Profile picture is required");
+    }
+
+    const member = await Member.findById(req.user?._id);
+
+    if(!member) {
+        throw new ApiError(500, "Could not find member");
+    }
+
+    const previousPicturePublicId = member.profilePicturePublicId;
+
+    const profilePicture = await uploadOnCloudinary(profilePictureLocalPath);
+
+    if(!profilePicture) {
+        throw new ApiError(500, "Could not upload profile picture on cloudinary");
+    }
+
+    const updatedMember = await Member.findByIdAndUpdate(req.user._id, {
+        $set: {
+            profilePicture: profilePicture.url || "",
+            profilePicturePublicId: profilePicture.public_id || "",
+        }
+    }, {
+        returnDocument: "after"
+    }).select("-password -refreshToken -isProfileCompleted -googleId");
+
+    if(!updatedMember) {
+        throw new ApiError(500, "Could not change profile picture");
+    }
+
+    if(previousPicturePublicId) {
+
+        try {
+            const deletedPreviousPicture = await deleteFromCloudinary(previousPicturePublicId);
+        } catch (error) {
+            console.error(`Could not delete previous profile picture ${previousPicturePublicId} from cloudinary`, error);
+        }
+
+    }
+
+    res.status(200).json(new ApiResponse(200, updatedMember, "Profile picture changed successfully"));
+})
+
+const getCurrentUser = asyncHandler( async (req, res) => {
+    res.status(200).json(new ApiResponse(200, req.user, "User fetched successfully"));
+} )
 
 export {
   registerMember,
