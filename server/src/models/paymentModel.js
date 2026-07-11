@@ -1,48 +1,41 @@
 import mongoose from "mongoose";
 
 const paymentSchema = new mongoose.Schema(
-    {
-        memberId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Member",
-            required: true,
-        },
-
-        orderId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Order",
-            required: true,
-        },
-
-        amount: {
-            type: Number,
-            required: true,
-        },
-
-        paymentMethod: {
-            type: String,
-            default: "SadaPay",
-        },
-
-        paymentStatus: {
-            type: String,
-            default: "Pending",
-        },
-
-        transactionId: {
-            type: String,
-            required: true,
-        },
+  {
+    memberId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Member",
+      required: true,
     },
-
-    {
-        timestamps: true,
-    }
+    type: {
+      type: String,
+      required: true,
+      enum: ["MembershipSubscription", "StoreOrder"],
+    },
+    paymentCauseId: {
+      type: mongoose.Schema.Types.ObjectId,
+      refPath: "type",
+      required: true,
+    },
+    amount: {
+      type: Number,
+      required: true,
+    },
+    status: {
+      type: String,
+      required: true,
+      enum: ["pending", "successful", "failed", "refunded"],
+    },
+    trackerToken: {
+      type: String,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  },
 );
 
-const Payment = mongoose.model(
-    "Payment",
-    paymentSchema
-);
+const Payment = mongoose.model("Payment", paymentSchema);
 
 export default Payment;

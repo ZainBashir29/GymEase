@@ -19,7 +19,7 @@ try {
 const sendEmail = async ({ to, subject, html }) => {
   try {
     await transporter.sendMail({
-      from: `"GymEase" <${process.env.NODEMAILER_HOST}>`,
+      from: `"GymEase" <${process.env.NODEMAILER_USER}>`,
       to,
       subject,
       html,
