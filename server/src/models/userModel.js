@@ -44,6 +44,10 @@ const userSchema = new mongoose.Schema({
     },
     resetPasswordExpiry: {
         type: Date
+    },
+    isActive: {
+        type: Boolean,
+        default: true
     }
 }, {
     discriminatorKey: "role",

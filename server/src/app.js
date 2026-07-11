@@ -15,6 +15,12 @@ import conversationRoutes from "./routes/conversationRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 const app = express();
 
+import storeRoutes from "./routes/storeRoutes.js";
+import verifyJwt from "./middlewares/authMiddleware.js";
+import { verifyWebhookSignature } from "./controllers/paymentController.js";
+
+
+app.use( "/api/store", storeRoutes);
 
 app.use("/api/messages",messageRoutes);
 app.use("/api/conversations",conversationRoutes);
@@ -38,10 +44,15 @@ app.use(cookieParser());
 import authRoutes from "./routes/authRoutes.js";
 import membershipRoutes from "./routes/membershipRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
+import gymPlanRoutes from "./routes/gymPlanRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/memberships", membershipRoutes);
 app.use("/api/v1/payments", paymentRoutes);
+app.use("/api/v1/gym-plans", gymPlanRoutes);
+
+app.use("/api/v1/admin", adminRoutes);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
