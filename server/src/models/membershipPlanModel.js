@@ -25,6 +25,10 @@ const membershipPlanSchema = new mongoose.Schema({
         type: Number,
         required: true,
         default: 1,
+    },
+    isActive: {
+        type: Boolean,
+        default: true,
     }
 }, { timestamps: true })
 

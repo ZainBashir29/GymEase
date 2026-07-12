@@ -43,6 +43,10 @@ const gymPlanSchema = new mongoose.Schema(
         ref: "Trainer",
       },
     ],
+    isActive: {
+      type: Boolean,
+      default: true,
+    }
   },
   {
     timestamps: true,
