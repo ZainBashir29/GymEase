@@ -157,7 +157,7 @@ const updateTrainer = asyncHandler(async (req, res) => {
     "fullName",
     "email",
     "profilePicture",
-    "profilePictuePublicId",
+    "profilePicturePublicId",
     "expertise",
   ];
 
@@ -263,6 +263,72 @@ const deleteTrainer = asyncHandler(async (req, res) => {
   res
     .status(200)
     .json(new ApiResponse(200, trainer, "Trainer deactivated successfully"));
+});
+
+const getTrainerPerformance = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id || !mongoose.isValidObjectId(id)) {
+    throw new ApiError(400, "No or invalid trainer id");
+  }
+
+  const trainer = await Trainer.findById(id).select(
+    "-password -refreshToken -isProfileCompleted -resetPasswordToken -resetPasswordExpiry",
+  );
+
+  if (!trainer) {
+    throw new ApiError(404, "Trainer not found");
+  }
+
+  const trainerStats = await Session.aggregate([
+    {
+      $match: {
+        trainerId: new mongoose.Types.ObjectId(id),
+      },
+    },
+    {
+      $group: {
+        _id: "$status",
+        count: {
+          $sum: 1,
+        },
+      },
+    },
+  ]);
+
+  const statusCounts = {
+    completed: 0,
+    missed: 0,
+    upcoming: 0,
+  };
+
+  trainerStats.forEach((stat) => {
+    statusCounts[stat._id] = stat.count;
+  });
+
+  const resolvedSessions = statusCounts.completed + statusCounts.missed;
+
+  const completionRate =
+    resolvedSessions == 0
+      ? null
+      : Number(((statusCounts.completed / resolvedSessions) * 100).toFixed(1));
+
+  const uniqueMemberIds = await Session.distinct("memberId", {
+    trainerId: id,
+  });
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        trainer,
+        sessionStats: statusCounts,
+        completionRate,
+        totalMembersAssigned: uniqueMemberIds.length,
+      },
+      "Trainer performance fetched successfully",
+    ),
+  );
 });
 
 const getSystemOverview = asyncHandler(async (req, res) => {
@@ -598,3 +664,21 @@ const deleteMembershipPlan = asyncHandler(async (req, res) => {
       ),
     );
 });
+
+export {
+  getAllMembers,
+  getMemberById,
+  deleteMember,
+  getAllTrainers,
+  getTrainerById,
+  updateTrainer,
+  deleteTrainer,
+  getTrainerPerformance,
+  getSystemOverview,
+  getRevenueSummary,
+  addGymPlan,
+  updateGymPlan,
+  deleteGymPlan,
+  updateMembershipPlan,
+  deleteMembershipPlan,
+};
