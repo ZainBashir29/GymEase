@@ -107,7 +107,20 @@ const activatePopularPlan = asyncHandler(async (req, res) => {
   }
 
   const maxTrainers = activeMember.membershipPlanId?.maxTrainers;
+
   const allowedTrainers = gymPlan.trainerIds.slice(0, maxTrainers);
+
+  const validTrainers = await Trainer.find({
+    _id: { $in: trainerIds },
+    isActive: true,
+  });
+
+  if (validTrainers.length !== trainerIds.length) {
+    throw new ApiError(
+      400,
+      "One or more trainerIds do not match an active trainer",
+    );
+  }
 
   const startDate = new Date();
   const sessionDocuments = [];
@@ -239,7 +252,7 @@ const cancelMemberPlan = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Member plan not found");
   }
 
-  if (memberPlan.memberId.toString() !== memberId.toString()) {
+  if (memberPlan.memberId.toString() !== req.user._id.toString()) {
     throw new ApiError(403, "You are not authorized to cancel this plan.");
   }
 
@@ -263,7 +276,7 @@ const cancelMemberPlan = asyncHandler(async (req, res) => {
     const deletedFutureSessions = await Session.deleteMany(
       {
         memberPlanId: memberPlan._id,
-        memberId,
+        memberId: req.user._id,
         date: { $gte: today },
       },
       { session },
@@ -326,9 +339,21 @@ const activateCustomPlan = asyncHandler(async (req, res) => {
     );
   }
 
-  const allTrainerIds = trainers.map((t) => t._id);
+  const allTrainerIds = trainers.map((trainer) => t._id);
 
   const allowedTrainers = allTrainerIds.slice(0, maxTrainers);
+
+  const validTrainers = await Trainer.find({
+    _id: { $in: allowedTrainers },
+    isActive: true,
+  });
+
+  if (validTrainers.length !== allowedTrainers.length) {
+    throw new ApiError(
+      400,
+      "One or more trainerIds do not match an active trainer",
+    );
+  }
 
   const customGymPlan = generateCustomPlan(answers);
 
@@ -618,4 +643,4 @@ export {
   getAllSessionsForPlan,
   getTrainerAllSessions,
   markSessionComplete,
-}
+};

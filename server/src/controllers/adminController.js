@@ -380,6 +380,7 @@ const addGymPlan = asyncHandler(async (req, res) => {
     _id: { $in: trainerIds },
     isActive: true,
   });
+
   if (validTrainers.length !== trainerIds.length) {
     throw new ApiError(
       400,
@@ -484,8 +485,8 @@ const deleteGymPlan = asyncHandler(async (req, res) => {
 
   const gymPlan = await GymPlan.findById(id);
 
-  if (!gymPlan) { 
-    throw new ApiError(404, "Gym plan not found"); 
+  if (!gymPlan) {
+    throw new ApiError(404, "Gym plan not found");
   }
 
   if (!gymPlan.isActive) {
@@ -498,11 +499,102 @@ const deleteGymPlan = asyncHandler(async (req, res) => {
   } catch (error) {
     console.error(
       "Error occurred in saving updated gym plan to the database: ",
-      error
+      error,
     );
   }
 
   res
     .status(200)
     .json(new ApiResponse(200, gymPlan, "Gym plan deactivated successfully"));
+});
+
+const updateMembershipPlan = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id || !mongoose.isValidObjectId(id)) {
+    throw new ApiError(400, "No or invalid membership plan id");
+  }
+
+  const updateFields = [
+    "name",
+    "price",
+    "duration",
+    "details",
+    "maxTrainers",
+    "isActive",
+  ];
+
+  const updates = {};
+
+  for (const field of updateFields) {
+    if (req.body[field] !== undefined) {
+      updates[field] = req.body[field];
+    }
+  }
+
+  if (Object.keys(updates).length === 0) {
+    throw new ApiError(400, "No valid fields provided to update");
+  }
+
+  if (updates.price !== undefined && updates.price <= 0) {
+    throw new ApiError(400, "Price must be greater than 0");
+  }
+
+  if (updates.maxTrainers !== undefined && updates.maxTrainers < 1) {
+    throw new ApiError(400, "maxTrainers must be at least 1");
+  }
+
+  const updatedPlan = await MembershipPlan.findByIdAndUpdate(
+    id,
+    { $set: updates },
+    { returnDocument: "after" },
+  );
+
+  if (!updatedPlan) {
+    throw new ApiError(404, "Membership plan not found");
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, updatedPlan, "Membership plan updated successfully"),
+    );
+});
+
+const deleteMembershipPlan = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id || !mongoose.isValidObjectId(id)) {
+    throw new ApiError(400, "No or invalid membership plan id");
+  }
+
+  const membershipPlan = await MembershipPlan.findById(id);
+
+  if (!membershipPlan) {
+    throw new ApiError(404, "Membership plan not found");
+  }
+
+  if (!membershipPlan.isActive) {
+    throw new ApiError(400, "Membership plan is already deactivated");
+  }
+
+  try {
+    membershipPlan.isActive = false;
+    await membershipPlan.save({ validateBeforeSave: false });
+  } catch (error) {
+    console.error(
+      "Error occurred in saving updated membership plan to the database: ",
+      error,
+    );
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        membershipPlan,
+        "Membership plan deactivated successfully",
+      ),
+    );
 });
