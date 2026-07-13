@@ -39,7 +39,7 @@ import chatRoutes from "./routes/chatRoutes.js";
 import trainerRoutes from "./routes/trainerRoutes.js";
 import sessionRoutes from "./routes/sessionRoutes.js";
 import attendanceRoutes from "./routes/attendanceRoutes.js";
-import progressRoutes from "./routes/progressRoutes.js";
+import progressDataRoutes from "./routes/progressDataRoutes.js";
 import conversationRoutes from "./routes/conversationRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 
@@ -48,14 +48,14 @@ app.use("/api/v1/memberships", membershipRoutes);
 app.use("/api/v1/payments", paymentRoutes);
 app.use("/api/v1/gym-plans", gymPlanRoutes);
 app.use("/api/v1/admin", adminRoutes);
-app.use("/api/store", storeRoutes);
-app.use("/api/chat", chatRoutes);
-app.use("/api/trainers", trainerRoutes);
-app.use("/api/sessions", sessionRoutes);
-app.use("/api/attendance", attendanceRoutes);
-app.use("/api/progress", progressRoutes);
-app.use("/api/conversations", conversationRoutes);
-app.use("/api/messages", messageRoutes);
+app.use("/api/v1/store", storeRoutes);
+app.use("/api/v1/chat", chatRoutes);
+app.use("/api/v1/trainers", trainerRoutes);
+app.use("/api/v1/sessions", sessionRoutes);
+app.use("/api/v1/attendance", attendanceRoutes);
+app.use("/api/v1/progress-data", progressDataRoutes);
+app.use("/api/v1/conversations", conversationRoutes);
+app.use("/api/v1/messages", messageRoutes);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
