@@ -181,12 +181,28 @@ const activatePopularPlan = asyncHandler(async (req, res) => {
 
     await session.commitTransaction();
 
+    const firstSessionTrainerId = sessionDocuments[0]?.trainerId;
+
+    const [progressData] = await ProgressData.create(
+      [
+        {
+          memberPlanId: memberPlan._id,
+          memberId: req.user?._id,
+          trainerId: firstSessionTrainerId,
+          remainingDays: gymPlan.duration,
+          completedSessions: 0,
+        },
+      ],
+      { session },
+    );
+
     res.status(200).json(
       new ApiResponse(
         200,
         {
           memberPlan,
           sessions,
+          progressData,
         },
         "Gym plan activated successfully",
       ),
@@ -427,17 +443,36 @@ const activateCustomPlan = asyncHandler(async (req, res) => {
       session,
     });
 
+    const firstSessionTrainerId = sessionDocuments[0]?.trainerId;
+
+    const [progressData] = await ProgressData.create(
+      [
+        {
+          memberPlanId: memberPlan._id,
+          memberId: req.user?._id,
+          trainerId: firstSessionTrainerId,
+          remainingDays: gymPlan.duration,
+          completedSessions: 0,
+        },
+      ],
+      { session },
+    );
+
     await session.commitTransaction();
 
-    res
-      .status(201)
-      .json(
-        new ApiResponse(
-          201,
-          { questionnaireResponse, gymPlan, memberPlan, sessions },
-          "Custom gym plan created successfully",
-        ),
-      );
+    res.status(201).json(
+      new ApiResponse(
+        201,
+        {
+          questionnaireResponse,
+          gymPlan,
+          memberPlan,
+          sessions,
+          progressData,
+        },
+        "Custom gym plan created successfully",
+      ),
+    );
   } catch (transactionError) {
     await session.abortTransaction();
 
@@ -574,9 +609,40 @@ const markSessionComplete = asyncHandler(async (req, res) => {
     throw new ApiError(403, "You are not authorized to update this session");
   }
 
+  if (session.status != "upcoming") {
+    throw new ApiError(400, `Session is already marked as ${session.status}`);
+  }
+
   try {
     session.status = "completed";
     await session.save({ validateBeforeSave: false });
+
+    const nextUpcomingSession = await Session.findOne({
+      memberPlanId: session.memberPlanId,
+      status: "upcoming",
+    }).sort({ date: 1 });
+
+    if (!nextUpcomingSession) {
+      await MemberPlan.findByIdAndUpdate(
+        session.memberPlanId,
+        { $set: { status: "completed" } },
+        { returnDocument: "after" },
+      );
+    }
+
+    const updatedProgressData = await ProgressData.findOneAndUpdate(
+      { memberPlanId: session.memberPlanId },
+      {
+        $inc: { completedSessions: 1, remainingDays: -1 },
+        $set: {
+          date: new Date(),
+          ...(nextUpcomingSession && {
+            trainerId: nextUpcomingSession.trainerId,
+          }),
+        },
+      },
+      { returnDocument: "after" },
+    );
   } catch (error) {
     throw new ApiError(
       500,
@@ -589,7 +655,10 @@ const markSessionComplete = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        completedSession,
+        {
+          completedSession: session,
+          progressData: 
+        },
         "Session marked as completed successfully",
       ),
     );
