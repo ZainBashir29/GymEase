@@ -96,4 +96,60 @@ const getMemberProgress = asyncHandler(async (req, res) => {
   );
 });
 
-export { getMemberProgress };
+const getTrainerProgress = asyncHandler(async (req, res) => {
+  const trainerId = req.user?._id;
+
+  const startOfMonth = new Date();
+  startOfMonth.setDate(1);
+  startOfMonth.setHours(0, 0, 0, 0);
+
+  const endOfMonth = new Date();
+  endOfMonth.setMonth(endOfMonth.getMonth() + 1, 0);
+  endOfMonth.setHours(23, 59, 59, 999);
+
+  const monthlySessions = await Session.find({
+    trainerId,
+    date: { $gte: startOfMonth, $lte: endOfMonth },
+  });
+
+  const completedThisMonth = monthlySessions.filter(
+    (session) => session.status === "completed",
+  ).length;
+
+  const missedThisMonth = monthlySessions.filter(
+    (session) => session.status === "missed",
+  ).length;
+
+  const upcomingThisMonth = monthlySessions.filter(
+    (session) => session.status === "upcoming",
+  ).length;
+
+  const resolvedThisMonth = completedThisMonth + missedThisMonth;
+
+  const completionRate =
+    resolvedThisMonth === 0
+      ? 0
+      : Number(((completedThisMonth / resolvedThisMonth) * 100).toFixed(2));
+
+  const uniqueMembersThisMonth = await Session.distinct("memberId", {
+    trainerId,
+    date: { $gte: startOfMonth, $lte: endOfMonth },
+  });
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        totalSessionsThisMonth: monthlySessions.length,
+        completedThisMonth,
+        missedThisMonth,
+        upcomingThisMonth,
+        completionRate,
+        uniqueMembersThisMonth: uniqueMembersThisMonth.length,
+      },
+      "Trainer progress fetched successfully",
+    ),
+  );
+});
+
+export { getMemberProgress, getTrainerProgress };
