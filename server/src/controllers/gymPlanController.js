@@ -5,8 +5,11 @@ import GymPlan from "../models/gymPlans/gymPlanModel.js";
 import MemberPlan from "../models/gymPlans/memberPlanModel.js";
 import MembershipSubscription from "../models/membershipSubscriptionModel.js";
 import Session from "../models/gymPlans/sessionModel.js";
-import { generateCustomPlan } from "../utils/questionnaire.js";
+import { validateAnswers, generateCustomPlan } from "../utils/questionnaire.js";
 import QuestionnaireResponse from "../models/gymPlans/questionnaireResponseModel.js";
+import ProgressData from "../models/progressDataModel.js";
+import mongoose from "mongoose";
+import Trainer from "../models/trainerModel.js";
 
 const findAvailableTrainer = async (allowedTrainers, targetDate, session) => {
   const startOfDay = new Date(targetDate);
@@ -650,18 +653,16 @@ const markSessionComplete = asyncHandler(async (req, res) => {
     );
   }
 
-  res
-    .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        {
-          completedSession: session,
-          progressData: 
-        },
-        "Session marked as completed successfully",
-      ),
-    );
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        completedSession: session,
+        progressData: updatedProgressData,
+      },
+      "Session marked as completed successfully",
+    ),
+  );
 });
 
 // const markSessionMissed = asyncHandler(async (req, res) => {

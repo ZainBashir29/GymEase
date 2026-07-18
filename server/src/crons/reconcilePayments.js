@@ -51,4 +51,4 @@ const reconcilePayments = async () => {
   }
 };
 
-export default reconcileStalePayments;
+export default reconcilePayments;

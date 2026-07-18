@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true, limit: LIMIT }));
 
 // kaleemullah ye special route hai, is ko express.raw required hai, isi liye isko express.json wali line ke uper likha hai
 app.post(
-  "api/v1/payments/webhook",
+  "/api/v1/payments/webhook",
   express.raw({ type: "application/json" }),
   verifyWebhookSignature,
 );

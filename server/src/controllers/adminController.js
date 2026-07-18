@@ -1,6 +1,7 @@
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
+import mongoose from "mongoose";
 import Member from "../models/memberModel.js";
 import Trainer from "../models/trainerModel.js";
 import Session from "../models/gymPlans/sessionModel.js";

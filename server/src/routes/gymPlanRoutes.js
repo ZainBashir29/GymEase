@@ -22,13 +22,13 @@ router.route("/").get(getAllPopularPlans);
 
 router.route("/:id").get(getPlanById);
 
-router.route("/:id/activate").post(verifyJwt, activatePopularPlan);
+router.route("/activate/:id").post(verifyJwt, activatePopularPlan);
 
 router.route("/active").get(verifyJwt, getActiveMemberPlan);
 
 router.route("/member-history").get(verifyJwt, getMemberPlanHistory);
 
-router.route("/:id/cancel").post(verifyJwt, cancelMemberPlan);
+router.route("/cancel/:id").post(verifyJwt, cancelMemberPlan);
 
 router.route("/custom/activate").post(verifyJwt, activateCustomPlan);
 
@@ -38,7 +38,7 @@ router.route("/sessions/member/today").get(verifyJwt, getMemberTodaySession);
 
 router.route("/sessions/trainer/today").get(verifyJwt, getTrainerTodaySessions);
 
-router.route("/:id/sessions/").get(verifyJwt, getAllSessionsForPlan);
+router.route("/sessions/:id").get(verifyJwt, getAllSessionsForPlan);
 
 router.route("/sessions/trainer").get(verifyJwt, getTrainerAllSessions);
 
