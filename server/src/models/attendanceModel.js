@@ -23,7 +23,7 @@ const attendanceSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 attendanceSchema.index({ userId: 1, date: 1 }, { unique: true });

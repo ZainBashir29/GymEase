@@ -1,132 +1,75 @@
-import Attendance from "../models/attendanceModel.js";
-import Session from "../models/sessionModel.js";
+import mongoose from "mongoose";
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
+import Attendance from "../models/attendanceModel.js";
 
-/* Mark attendance for a session */
 const markAttendance = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
+  const role = req.user?.role;
 
-    const {
-        sessionId,
-        status,
-        remarks,
-    } = req.body;
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
 
-    if (!sessionId || !status) {
-        throw new ApiError(
-            400,
-            "Session ID and status are required"
-        );
-    }
+  const endOfDay = new Date();
+  endOfDay.setHours(23, 59, 59, 999);
 
-    const session = await Session.findById(sessionId);
+  const existingAttendance = await Attendance.findOne({
+    userId,
+    date: { $gte: startOfDay, $lte: endOfDay },
+  });
 
-    if (!session) {
-        throw new ApiError(
-            404,
-            "Session not found"
-        );
-    }
+  if (existingAttendance) {
+    throw new ApiError(400, "Attendance already marked for today");
+  }
 
-    if (
-        session.trainerId.toString() !==
-        req.user._id.toString()
-    ) {
-        throw new ApiError(
-            403,
-            "Access denied"
-        );
-    }
+  const attendance = await Attendance.create({
+    role,
+    userId,
+    status: "present",
+    date: new Date(),
+  });
 
-    const existingAttendance = await Attendance.findOne({
-        sessionId,
-        memberId: session.memberId,
-    });
-
-    if (existingAttendance) {
-        throw new ApiError(
-            400,
-            "Attendance already marked"
-        );
-    }
-
-    const attendance = await Attendance.create({
-        sessionId,
-        trainerId: session.trainerId,
-        memberId: session.memberId,
-        status,
-        remarks: remarks || "",
-    });
-
-    return res.status(201).json(
-        new ApiResponse(
-            201,
-            attendance,
-            "Attendance marked successfully"
-        )
-    );
-
+  res
+    .status(201)
+    .json(new ApiResponse(201, attendance, "Attendance marked successfully"));
 });
 
-/* Get trainer attendance */
-const getTrainerAttendance = asyncHandler(async (req, res) => {
+const getMyAttendance = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
 
-    const attendance = await Attendance.find({
-        trainerId: req.user._id,
-    })
-        .populate(
-            "memberId",
-            "fullName username"
-        )
-        .populate(
-            "sessionId",
-            "sessionType sessionDate"
-        )
-        .sort({
-            createdAt: -1,
-        });
+  const records = await Attendance.find({ userId }).sort({ date: -1 });
 
-    return res.status(200).json(
-        new ApiResponse(
-            200,
-            attendance,
-            "Trainer attendance fetched successfully"
-        )
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, records, "Attendance history fetched successfully"),
     );
-
 });
 
-/* Get member attendance */
-const getMemberAttendance = asyncHandler(async (req, res) => {
+const getTodayAttendanceStatus = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
 
-    const attendance = await Attendance.find({
-        memberId: req.user._id,
-    })
-        .populate(
-            "trainerId",
-            "fullName expertise"
-        )
-        .populate(
-            "sessionId",
-            "sessionType sessionDate"
-        )
-        .sort({
-            createdAt: -1,
-        });
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
 
-    return res.status(200).json(
-        new ApiResponse(
-            200,
-            attendance,
-            "Member attendance fetched successfully"
-        )
+  const endOfDay = new Date();
+  endOfDay.setHours(23, 59, 59, 999);
+
+  const todayRecord = await Attendance.findOne({
+    userId,
+    date: { $gte: startOfDay, $lte: endOfDay },
+  });
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { marked: !!todayRecord, record: todayRecord || null },
+        "Today's attendance status fetched successfully",
+      ),
     );
-
 });
 
-export {
-    markAttendance,
-    getTrainerAttendance,
-    getMemberAttendance,
-};
+export { markAttendance, getMyAttendance, getTodayAttendanceStatus };
