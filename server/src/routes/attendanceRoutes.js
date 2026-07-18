@@ -1,37 +1,20 @@
-import { Router } from "express";
-
+import express from "express";
 import verifyJwt from "../middlewares/authMiddleware.js";
-
+import role from "../middlewares/roleMiddleware.js";
 import {
-    markAttendance,
-    getTrainerAttendance,
-    getMemberAttendance,
+  markAttendance,
+  getMyAttendance,
+  getTodayAttendanceStatus,
 } from "../controllers/attendanceController.js";
 
-const router = Router();
+const router = express.Router();
 
-/* Mark attendance */
-router
-    .route("/mark")
-    .post(
-        verifyJwt,
-        markAttendance
-    );
+router.use(verifyJwt, role("member", "trainer"));
 
-/* Get trainer attendance */
-router
-    .route("/trainer")
-    .get(
-        verifyJwt,
-        getTrainerAttendance
-    );
+router.route("/mark").post(markAttendance);
 
-/* Get member attendance */
-router
-    .route("/member")
-    .get(
-        verifyJwt,
-        getMemberAttendance
-    );
+router.route("/me").get(getMyAttendance);
+
+router.route("/today-status").get(getTodayAttendanceStatus);
 
 export default router;
