@@ -10,7 +10,7 @@ const router = Router();
 
 router.use(verifyJwt);
 
-router.route("/member").get(role("member"), getMemberProgress);
-router.route("/trainer").get(role("trainer"), getTrainerProgress);
+router.route("/member").get(role("Member"), getMemberProgress);
+router.route("/trainer").get(role("Trainer"), getTrainerProgress);
 
 export default router;

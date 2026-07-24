@@ -5,7 +5,7 @@ const attendanceSchema = new mongoose.Schema(
     role: {
       type: String,
       required: true,
-      enum: ["member", "trainer"],
+      enum: ["Member", "Trainer"],
     },
     status: {
       type: String,

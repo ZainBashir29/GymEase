@@ -22,7 +22,7 @@ import {
 
 const router = Router();
 
-router.use(verifyJwt, role("admin"));
+router.use(verifyJwt, role("Admin"));
 
 router.route("/members").get(getAllMembers);
 

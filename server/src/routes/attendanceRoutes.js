@@ -9,7 +9,7 @@ import {
 
 const router = express.Router();
 
-router.use(verifyJwt, role("member", "trainer"));
+router.use(verifyJwt, role("Member", "Trainer"));
 
 router.route("/mark").post(markAttendance);
 
