@@ -13,83 +13,131 @@ const getMemberProgress = asyncHandler(async (req, res) => {
     status: "active",
   });
 
-  if (!activePlan) {
-    throw new ApiError(404, "No active gym plan found");
+  if (activePlan) {
+    const progressData = await ProgressData.findOne({
+      memberPlanId: activePlan._id,
+    });
+
+    if (!progressData) {
+      throw new ApiError(404, "Progress data not found for this plan.");
+    }
+
+    const totalSessions = await Session.countDocuments({
+      memberPlanId: activePlan._id,
+    });
+
+    const completedSessions = await Session.countDocuments({
+      memberPlanId: activePlan._id,
+      status: "completed",
+    });
+
+    const missedSessions = await Session.countDocuments({
+      memberPlanId: activePlan._id,
+      status: "missed",
+    });
+
+    const upcomingSessions = await Session.countDocuments({
+      memberPlanId: activePlan._id,
+      status: "upcoming",
+    });
+
+    const attendancePercentage =
+      totalSessions == 0
+        ? 0
+        : Number(((completedSessions / totalSessions) * 100).toFixed(2));
+
+    const resolvedSessions = completedSessions + missedSessions;
+
+    const completionRate =
+      resolvedSessions == 0
+        ? 0
+        : Number(((completedSessions / resolvedSessions) * 100).toFixed(2));
+
+    const recentActivity = await Session.find({ memberPlanId: activePlan._id })
+      .select("workoutName date status")
+      .sort({ date: -1 })
+      .limit(5);
+
+    const lastCompletedSession = await Session.findOne({
+      memberPlanId: activePlan._id,
+      status: "completed",
+    })
+      .select("workoutName date")
+      .sort({ date: -1 });
+
+    const nextSession = await Session.findOne({
+      memberPlanId: activePlan._id,
+      status: "upcoming",
+    })
+      .select("workoutName date")
+      .sort({ date: 1 });
+
+    res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          memberPlanId: activePlan._id,
+          remainingDays: progressData.remainingDays,
+          totalSessions,
+          completedSessions,
+          missedSessions,
+          upcomingSessions,
+          attendancePercentage,
+          completionRate,
+          recentActivity,
+          lastCompletedSession,
+          nextSession,
+        },
+        "Member progress fetched successfully",
+      ),
+    );
   }
 
-  const progressData = await ProgressData.findOne({
-    memberPlanId: activePlan._id,
-  });
+  const subscription = await MembershipSubscription.findOne({
+    memberId,
+    status: "active",
+  }).populate("membershipId", "name price duration");
 
-  if (!progressData) {
-    throw new ApiError(404, "Progress data not found for this plan.");
+  if (!subscription) {
+    throw new ApiError(
+      400,
+      "You do not have an active membership subscription",
+    );
   }
 
-  const totalSessions = await Session.countDocuments({
-    memberPlanId: activePlan._id,
+  const startOfMonth = new Date();
+  startOfMonth.setDate(1);
+  startOfMonth.setHours(0, 0, 0, 0);
+
+  const visitsThisMonth = await Attendance.countDocuments({
+    userId: memberId,
+    role: "member",
+    status: "present",
+    date: { $gte: startOfMonth },
   });
 
-  const completedSessions = await Session.countDocuments({
-    memberPlanId: activePlan._id,
-    status: "completed",
-  });
-
-  const missedSessions = await Session.countDocuments({
-    memberPlanId: activePlan._id,
-    status: "missed",
-  });
-
-  const upcomingSessions = await Session.countDocuments({
-    memberPlanId: activePlan._id,
-    status: "upcoming",
-  });
-
-  const attendancePercentage =
-    totalSessions == 0
-      ? 0
-      : Number(((completedSessions / totalSessions) * 100).toFixed(2));
-
-  const resolvedSessions = completedSessions + missedSessions;
-
-  const completionRate =
-    resolvedSessions == 0
-      ? 0
-      : Number(((completedSessions / resolvedSessions) * 100).toFixed(2));
-
-  const recentActivity = await Session.find({ memberPlanId: activePlan._id })
-    .select("workoutName date status")
-    .sort({ date: -1 })
-    .limit(5);
-
-  const lastCompletedSession = await Session.findOne({
-    memberPlanId: activePlan._id,
-    status: "completed",
+  const lastVisit = await Attendance.findOne({
+    userId: memberId,
+    role: "member",
+    status: "present",
   })
-    .select("workoutName date")
+    .select("date")
     .sort({ date: -1 });
 
-  const nextSession = await Session.findOne({
-    memberPlanId: activePlan._id,
-    status: "upcoming",
-  })
-    .select("workoutName date")
-    .sort({ date: 1 });
-
-  return res.status(200).json(
+  res.status(200).json(
     new ApiResponse(
       200,
       {
-        memberPlanId: activePlan._id,
-        remainingDays: progressData.remainingDays,
-        totalSessions,
-        completedSessions,
-        missedSessions,
-        upcomingSessions,
-        attendancePercentage,
-        completionRate,
-        recentActivity,
-        lastCompletedSession,
-        nextSession,
+        hasActivePlan: false,
+        message:
+          "You don't have an active gym plan yet. Select or create one for detailed session tracking.",
+        membership: {
+          plan: subscription.membershipId?.name,
+          status: subscription.status,
+          endDate: subscription.endDate,
+        },
+        visitsThisMonth,
+        lastVisit: lastVisit?.date || null,
       },
       "Member progress fetched successfully",
     ),

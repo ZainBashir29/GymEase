@@ -4,6 +4,7 @@ import expireMemberships from "./expireMemberships.js";
 import markMissedSessions from "./markMissedSessions.js";
 import completeFinishedMemberPlans from "./completeFinishedMemberPlans.js";
 import reconcilePayments from "./reconcilePayments.js";
+import markAbsentees from "./markAbsentees.js";
 
 const runDailyBatch = async () => {
   console.log("Starting daily batch: ", new Date().toISOString);
@@ -24,6 +25,8 @@ const startCronJobs = () => {
   cron.schedule("5 0 * * *", runDailyBatch);
 
   cron.schedule("0 */2 * * *", reconcilePayments);
+
+  cron.schedule("55 23 * * *", markAbsentees);
 
   console.log("All cron jobs scheduled");
 };
