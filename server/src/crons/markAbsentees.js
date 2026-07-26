@@ -20,8 +20,8 @@ const markAbsentees = async () => {
   const roleMap = new Map();
 
   for (const session of todaysSessions) {
-    roleMap.set(session.memberId.toString(), "member");
-    roleMap.set(session.trainerId.toString(), "trainer");
+    roleMap.set(session.memberId.toString(), "Member");
+    roleMap.set(session.trainerId.toString(), "Trainer");
   }
 
   const alreadyMarked = await Attendance.find({

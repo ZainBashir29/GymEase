@@ -111,14 +111,14 @@ const getMemberProgress = asyncHandler(async (req, res) => {
 
   const visitsThisMonth = await Attendance.countDocuments({
     userId: memberId,
-    role: "member",
+    role: "Member",
     status: "present",
     date: { $gte: startOfMonth },
   });
 
   const lastVisit = await Attendance.findOne({
     userId: memberId,
-    role: "member",
+    role: "Member",
     status: "present",
   })
     .select("date")
