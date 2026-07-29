@@ -12,6 +12,7 @@ import MembershipSubscription from "../models/membershipSubscriptionModel.js";
 import {
   handleSuccessfulPayment,
   handleFailedPayment,
+  handleRefundedPayment,
 } from "../utils/paymentOutcomeHandlers.js";
 
 const safepay = Safepay(process.env.SAFEPAY_SECRET_KEY, {
@@ -318,7 +319,7 @@ const verifyWebhookSignature = asyncHandler(async (req, res) => {
 const refundPayment = asyncHandler(async (req, res) => {
   const { paymentId } = req.body;
 
-  if (!paymentId && !mongoose.isVaildObjectId(paymentId)) {
+  if (!paymentId || !mongoose.isValidObjectId(paymentId)) {
     throw new ApiError(400, "Payment ID is required");
   }
 
@@ -347,17 +348,15 @@ const refundPayment = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Could not refund payment");
   }
 
-  paymentRecord.status = "refunded";
+  const updatedPayment = await handleRefundedPayment(paymentId);
 
-  try {
-    await paymentRecord.save({ validateBeforeSave: false });
-  } catch (error) {
-    console.error(error);
+  if (!updatedPayment) {
+    throw new ApiError(500, "Could not update payment status to refunded in db");
   }
 
   res
     .status(200)
-    .json(new ApiResponse(200, paymentRecord, "Payment refunded successfully"));
+    .json(new ApiResponse(200, updatedPayment, "Payment refunded successfully"));
 });
 
 export {

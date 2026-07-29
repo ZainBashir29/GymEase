@@ -1,93 +1,54 @@
 import express from "express";
+import { verifyJwt } from "../middlewares/authMiddleware.js";
+import { role } from "../middlewares/roleMiddleware.js";
 import {
-    addProduct,
-    getProducts,
-    getSingleProduct,
-
-    addToCart,
-    getCart,
-    updateCartQuantity,
-    removeCartItem,
-    clearCart,
-
-    checkout,
-    createOrder,
-
-    getMemberOrders,
-
-    getAllOrders,
-    updateOrderStatus,
+  addProduct,
+  updateProduct,
+  deleteProduct,
+  getProducts,
+  getSingleProduct,
+  addToCart,
+  getCart,
+  updateCartQuantity,
+  removeCartItem,
+  clearCart,
+  checkout,
+  createOrder,
+  getMemberOrders,
+  getAllOrders,
+  updateOrderStatus,
 } from "../controllers/storeController.js";
+
 const router = express.Router();
 
-// Add product
-router.post(
-    "/products",
-    addProduct
-);
-// Get all products
-router.get(
-    "/products",
-    getProducts
-);
-// Get single product
-router.get(
-    "/products/:id",
-    getSingleProduct
-);
-// Add product to cart
-router.post(
-    "/cart",
-    addToCart
-);
-//Get cart
-router.get(
-    "/cart/:memberId",
-    getCart
-);
-//update cart quantity
-router.patch(
-    "/cart/update",
-    updateCartQuantity
-);
-//Remove from cart
-router.delete(
-    "/cart/remove",
-    removeCartItem
-);
-//clear cart
-router.delete(
-    "/cart/clear",
-    clearCart
-);
-// Checkout
+router.route("/products").get(getProducts);
+router.route("/products/:id").get(getSingleProduct);
 
-router.get(
-    "/checkout/:memberId",
-    checkout
-);
+router.route("/products/add").post(verifyJwt, role("Admin"), addProduct);
+router
+  .route("/products/update/:id")
+  .patch(verifyJwt, role("Admin"), updateProduct);
+router
+  .route("/products/delete/:id")
+  .delete(verifyJwt, role("Admin"), deleteProduct);
 
-// Create order
+router.route("/cart/add").post(verifyJwt, role("Member"), addToCart);
+router.route("/cart").get(verifyJwt, role("Member"), getCart);
+router
+  .route("/cart/update")
+  .patch(verifyJwt, role("Member"), updateCartQuantity);
+router
+  .route("/cart/remove/:productId")
+  .delete(verifyJwt, role("Member"), removeCartItem);
+router.route("/cart/clear").delete(verifyJwt, role("Member"), clearCart);
 
-router.post(
-    "/orders",
-    createOrder
-);
+router.route("/checkout").get(verifyJwt, role("Member"), checkout);
+router.route("/orders/create").post(verifyJwt, role("Member"), createOrder);
+router.route("/orders/me").get(verifyJwt, role("Member"), getMemberOrders);
 
-// Get member orders
-router.get(
-    "/orders/:memberId",
-    getMemberOrders
-);
-// Admin orders
+router.route("/orders").get(verifyJwt, role("Admin"), getAllOrders);
+router
+  .route("/orders/update-status/:orderId")
+  .patch(verifyJwt, role("Admin"), updateOrderStatus);
 
-router.get(
-    "/admin/orders",
-    getAllOrders
-);
-
-router.patch(
-    "/admin/orders/:orderId/status",
-    updateOrderStatus
-);
 export default router;
