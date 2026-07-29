@@ -28,6 +28,11 @@ const storeProductSchema = new mongoose.Schema(
       required: true,
     },
 
+    imagePublicId: {
+      type: String,
+      required: true,
+    },
+
     category: {
       type: String,
       enum: ["Supplement", "Gym Gear"],

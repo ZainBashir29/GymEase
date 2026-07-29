@@ -1,6 +1,6 @@
 import Payment from "../models/paymentModel.js";
 import MembershipSubscription from "../models/membershipSubscriptionModel.js";
-import StoreOrder from "../models/storeOrderModel.js";
+import Order from "../models/orderModel.js";
 
 const handleSuccessfulPayment = async (trackerToken) => {
   const updatedPayment = await Payment.findOneAndUpdate(
@@ -31,7 +31,7 @@ const handleSuccessfulPayment = async (trackerToken) => {
   }
 
   if (updatedPayment.type === "StoreOrder") {
-    await StoreOrder.findOneAndUpdate(
+    await Order.findOneAndUpdate(
       {
         _id: updatedPayment.paymentCauseId,
         memberId: updatedPayment.memberId,
@@ -39,7 +39,7 @@ const handleSuccessfulPayment = async (trackerToken) => {
       {
         $set: {
           paymentStatus: "paid",
-          status: "processing",
+          orderStatus: "processing",
           paymentId: updatedPayment._id,
         },
       },

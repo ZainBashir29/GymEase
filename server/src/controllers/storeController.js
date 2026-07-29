@@ -1,545 +1,487 @@
+import mongoose from "mongoose";
 import Cart from "../models/cartModel.js";
-import ApiError from "../utils/ApiError.js";
-import ApiResponse from "../utils/ApiResponse.js";
-import asyncHandler from "../utils/asyncHandler.js";
 import Order from "../models/orderModel.js";
 import StoreProduct from "../models/storeProductModel.js";
+import Payment from "../models/paymentModel.js";
+import asyncHandler from "../utils/asyncHandler.js";
+import ApiError from "../utils/ApiError.js";
+import ApiResponse from "../utils/ApiResponse.js";
+import {
+  createPaymentSession,
+  createAuthenticationToken,
+  getCheckoutUrl,
+} from "../services/safepay.js";
+import {
+  uploadOnCloudinary,
+  deleteFromCloudinary,
+} from "../utils/cloudinary.js";
 
-// Add product
-const addProduct = asyncHandler(
-    async (request, response) => {
-        const { name, description, price, stock, imageUrl, category,} = request.body;
-        if ( !name || !description ||  !price || !imageUrl || !category )
-             {
-            throw new ApiError(
-                400,
-                "All fields are required"
-            );
-        }
-        const createdProduct =
-            await StoreProduct.create({
-                name,
-                description,
-                price,
-                stock,
-                imageUrl,
-                category,
-            });
-        return response.status(201).json(
-            new ApiResponse(
-                201,
-                createdProduct,
-                "Product added successfully"
-            )
-        );
+const addProduct = asyncHandler(async (req, res) => {
+  const { name, description, price, stock, category } = req.body;
+
+  if (!name || !description || !price || !category) {
+    throw new ApiError(400, "All fields are required");
+  }
+
+  if (price <= 0) {
+    throw new ApiError(400, "Price must be greater than 0");
+  }
+
+  const imagePath = req.file?.path;
+
+  if (!imagePath) {
+    throw new ApiError(400, "Product image is required");
+  }
+
+  const productImage = await uploadOnCloudinary(imagePath);
+
+  const createdProduct = await StoreProduct.create({
+    name,
+    description,
+    price,
+    stock,
+    imageUrl: productImage?.url || "",
+    imagePublicId: productImage?.public_id || "",
+    category,
+  });
+
+  res
+    .status(201)
+    .json(new ApiResponse(201, createdProduct, "Product added successfully"));
+});
+
+const updateProduct = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id || !mongoose.isValidObjectId(id)) {
+    throw new ApiError(400, "No or invalid product id");
+  }
+
+  const allowedUpdateFields = [
+    "name",
+    "description",
+    "price",
+    "stock",
+    "category",
+    "isActive",
+  ];
+
+  const product = await StoreProduct.findById(id);
+
+  if (!product) {
+    throw new ApiError(404, "Product not found");
+  }
+
+  const updates = {};
+  for (const field of allowedUpdateFields) {
+    if (req.body[field] !== undefined) {
+      updates[field] = req.body[field];
     }
-);
+  }
 
-// Get all products
+  const productImageLocalPath = req.file?.path;
+  const previousPublicId = product.imagePublicId;
 
-const getProducts = asyncHandler(
-    async (request, response) => {
-        const products =
-            await StoreProduct.find();
+  if (productImageLocalPath) {
+    const productImage = await uploadOnCloudinary(productImageLocalPath);
 
-        return response.status(200).json(
-            new ApiResponse(
-                200,
-                products,
-                "Products fetched successfully"
-            )
-        );
+    if (!productImage) {
+      throw new ApiError(500, "Could not upload product image to cloudinary");
     }
-);
 
-// Get single product
+    updates.imageUrl = productImage?.url || "";
+    updates.imagePublicId = productImage?.public_id || "";
+  }
 
-const getSingleProduct = asyncHandler(
-    async (request, response) => {
-        const product =
-            await StoreProduct.findById(
-                request.params.id
-            );
+  if (Object.keys(updates).length === 0) {
+    throw new ApiError(400, "No valid fields provided to update");
+  }
 
-        if (!product) {
-            throw new ApiError(
-                404,
-                "Product not found"
-            );
-        }
+  if (updates.price !== undefined && updates.price <= 0) {
+    throw new ApiError(400, "Price must be greater than 0");
+  }
 
-        return response.status(200).json(
-            new ApiResponse(
-                200,
-                product,
-                "Product fetched successfully"
-            )
-        );
-    }
-);
+  const updatedProduct = await StoreProduct.findByIdAndUpdate(
+    id,
+    { $set: updates },
+    { returnDocument: "after" },
+  );
 
-// Add product to cart
-const addToCart = asyncHandler(
-    async (request, response) => {
-        const {memberId, productId, quantity, } = request.body;
-        console.log("Add To Cart Member ID:", memberId);
-        if (!memberId || !productId) {
-            throw new ApiError(
-                400,
-                "Member id and product id are required"
-            );
-        }
-        const product =
-            await StoreProduct.findById(
-                productId
-            );
-        if (quantity > product.stock) {
-            throw new ApiError(
-                      400,
-                        "Requested quantity exceeds available stock"
-            );
-        }
-        else if (!product) {
-            throw new ApiError(
-                404,
-                "Product not found"
-            );
-        }
+  if (!updatedProduct) {
+    throw new ApiError(500, "Could not update product");
+  }
 
-        let cart =
-            await Cart.findOne({
-                memberId,
-            });
+  res
+    .status(200)
+    .json(new ApiResponse(200, updatedProduct, "Product updated successfully"));
+});
 
-        if (!cart) {
-            cart =
-                await Cart.create({
-                    memberId,
-                    products: [
-                        {
-                            productId,
-                            quantity:
-                                quantity || 1,
-                        },
-                    ],
-                });
-        } else {
-            const existingProduct =
-                cart.products.find(
-                    (item) =>
-                        item.productId.toString() ===
-                        productId
-                );
+const deleteProduct = asyncHandler(async (req, res) => {
+  const { id } = req.params;
 
-            if (existingProduct) 
-                {existingProduct.quantity += quantity || 1;} 
-                else {
-                cart.products.push({
-                    productId, quantity:quantity || 1,
-                });
-            }
-            await cart.save();
-        }
-        return response.status(200).json(
-            new ApiResponse(
-                200,
-                cart,
-                "Product added to cart"
-            )
-        );
-    }
-);
+  if (!id || !mongoose.isValidObjectId(id)) {
+    throw new ApiError(400, "No or invalid product id");
+  }
 
-// Get cart
-const getCart = asyncHandler(
-    async (request, response) => {
-        const { memberId } = request.params;
-        const cart = await Cart.findOne({
-            memberId,
-        }).populate(
-            "products.productId"
-        );
-        if (!cart) {
-            throw new ApiError(
-                404,
-                "Cart not found"
-            );
-        }
-        return response.status(200).json(
-            new ApiResponse(
-                200,
-                cart,
-                "Cart fetched successfully"
-            )
-        );
-    }
-);
+  const product = await StoreProduct.findById(id);
 
-// Update cart quantity
-const updateCartQuantity =
-    asyncHandler(
-        async (
-            request,
-            response
-        ) => {
-            const {
-                memberId,
-                productId,
-                quantity,
-            } = request.body;
-            const cart =
-                await Cart.findOne({
-                    memberId,
-                });
-            if (!cart) {
-                throw new ApiError(
-                    404,
-                    "Cart not found"
-                );
-            }
-            const cartItem =
-                cart.products.find(
-                    (item) =>
-                        item.productId.toString() ===
-                        productId
-                );
-            if (quantity > product.stock) {
-                     throw new ApiError(
-                          400,
-                         "Requested quantity exceeds available stock"
-                    );
-                }
-            if (!cartItem) {
-                throw new ApiError(
-                    404,
-                    "Product not found in cart"
-                );
-            }
-            cartItem.quantity =
-                quantity;
-            await cart.save();
-            return response
-                .status(200)
-                .json(
-                    new ApiResponse(
-                        200,
-                        cart,
-                        "Quantity updated successfully"
-                    )
-                );
-        }
+  if (!product) throw new ApiError(404, "Product not found");
+
+  if (!product.isActive)
+    throw new ApiError(400, "Product is already deactivated");
+
+  product.isActive = false;
+
+  await product.save({ validateBeforeSave: false });
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, product, "Product deactivated successfully"));
+});
+
+const getProducts = asyncHandler(async (req, res) => {
+  const filter = req.query.includeInactive === "true" ? {} : { isActive: true };
+
+  const products = await StoreProduct.find(filter);
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, products, "Products fetched successfully"));
+});
+
+const getSingleProduct = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id || !mongoose.isValidObjectId(id)) {
+    throw new ApiError(400, "No or invalid product id");
+  }
+
+  const product = await StoreProduct.findById(id);
+
+  if (!product) throw new ApiError(404, "Product not found");
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, product, "Product fetched successfully"));
+});
+
+const addToCart = asyncHandler(async (req, res) => {
+  const memberId = req.user?._id;
+  const { productId, quantity } = req.body;
+
+  if (!productId || !mongoose.isValidObjectId(productId)) {
+    throw new ApiError(400, "No or invalid product id");
+  }
+
+  const product = await StoreProduct.findById(productId);
+
+  if (!product || !product.isActive) {
+    throw new ApiError(404, "Product not found");
+  }
+
+  const requestedQuantity = quantity || 1;
+
+  if (requestedQuantity > product.stock) {
+    throw new ApiError(400, "Requested quantity exceeds available stock");
+  }
+
+  let cart = await Cart.findOne({ memberId });
+
+  if (!cart) {
+    cart = await Cart.create({
+      memberId,
+      products: [{ productId, quantity: requestedQuantity }],
+    });
+  } else {
+    const existingProduct = cart.products.find(
+      (item) => item.productId.toString() == productId,
     );
 
-// Remove cart item
-const removeCartItem =
-    asyncHandler(
-        async (
-            request,
-            response
-        ) => {
-            const {
-                memberId,
-                productId,
-            } = request.body;
-            const cart =
-                await Cart.findOne({
-                    memberId,
-                });
-            if (!cart) {
-                throw new ApiError(
-                    404,
-                    "Cart not found"
-                );
-            }
-            cart.products =
-                cart.products.filter(
-                    (item) =>
-                        item.productId.toString() !==
-                        productId
-                );
-            await cart.save();
-            return response
-                .status(200)
-                .json(
-                    new ApiResponse(
-                        200,
-                        cart,
-                        "Product removed successfully"
-                    )
-                );
-        }
+    if (existingProduct) {
+      existingProduct.quantity += requestedQuantity;
+    } else {
+      cart.products.push({ productId, quantity: requestedQuantity });
+    }
+    await cart.save();
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, cart, "Product added to cart successfully"));
+});
+
+const getCart = asyncHandler(async (req, res) => {
+  const memberId = req.user?._id;
+
+  const cart = await Cart.findOne({ memberId }).populate("products.productId");
+
+  if (!cart) {
+    return res
+      .status(200)
+      .json(new ApiResponse(200, { products: [] }, "Cart is empty"));
+  }
+
+  res.status(200).json(new ApiResponse(200, cart, "Cart fetched successfully"));
+});
+
+const updateCartQuantity = asyncHandler(async (req, res) => {
+  const memberId = req.user?._id;
+  const { productId, quantity } = req.body;
+
+  if (!productId || !quantity) {
+    throw new ApiError(400, "Product id and quantity are required");
+  }
+
+  const cart = await Cart.findOne({ memberId });
+
+  if (!cart) throw new ApiError(404, "Cart not found");
+
+  const cartItem = cart.products.find(
+    (item) => item.productId.toString() == productId,
+  );
+
+  if (!cartItem) throw new ApiError(404, "Product not found in cart");
+
+  const product = await StoreProduct.findById(productId);
+
+  if (!product) throw new ApiError(404, "Product no longer exists");
+
+  if (quantity > product.stock) {
+    throw new ApiError(400, "Requested quantity exceeds available stock");
+  }
+
+  cartItem.quantity = quantity;
+  await cart.save({ validateBeforeSave: false });
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, cart, "Quantity updated successfully"));
+});
+
+const removeCartItem = asyncHandler(async (req, res) => {
+  const memberId = req.user?._id;
+  const { productId } = req.params;
+
+  const cart = await Cart.findOne({ memberId });
+
+  if (!cart) throw new ApiError(404, "Cart not found");
+
+  cart.products = cart.products.filter(
+    (item) => item.productId.toString() !== productId,
+  );
+
+  await cart.save({ validateBeforeSave: false });
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, cart, "Product removed successfully"));
+});
+
+const clearCart = asyncHandler(async (req, res) => {
+  const memberId = req.user?._id;
+
+  const cart = await Cart.findOne({ memberId });
+
+  if (!cart) throw new ApiError(404, "Cart not found");
+
+  cart.products = [];
+  await cart.save({ validateBeforeSave: false });
+
+  res.status(200).json(new ApiResponse(200, cart, "Cart cleared successfully"));
+});
+
+const checkout = asyncHandler(async (req, res) => {
+  const memberId = req.user?._id;
+
+  const cart = await Cart.findOne({ memberId }).populate("products.productId");
+
+  if (!cart || cart.products.length === 0) {
+    throw new ApiError(400, "Cart is empty");
+  }
+
+  let subtotal = 0;
+  for (const item of cart.products) {
+    const product = item.productId;
+    if (item.quantity > product.stock) {
+      throw new ApiError(400, `${product.name} is out of stock`);
+    }
+    subtotal += product.price * item.quantity;
+  }
+
+  const deliveryFee = 200;
+  const totalAmount = subtotal + deliveryFee;
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { subtotal, deliveryFee, totalAmount },
+        "Checkout preview generated successfully",
+      ),
     );
+});
 
-// Clear cart
-const clearCart =
-    asyncHandler(
-        async (
-            request,
-            response
-        ) => {
-            const {
-                memberId,
-            } = request.body;
-            const cart =
-                await Cart.findOne({
-                    memberId,
-                });
-            if (!cart) {
-                throw new ApiError(
-                    404,
-                    "Cart not found"
-                );
-            }
-            cart.products = [];
-            await cart.save();
-            return response
-                .status(200)
-                .json(
-                    new ApiResponse(
-                        200,
-                        cart,
-                        "Cart cleared successfully"
-                    )
-                );
-        }
+const createOrder = asyncHandler(async (req, res) => {
+  const memberId = req.user?._id;
+
+  const cart = await Cart.findOne({ memberId }).populate("products.productId");
+
+  if (!cart || cart.products.length === 0) {
+    throw new ApiError(400, "Cart is empty");
+  }
+
+  let totalAmount = 0;
+  for (const item of cart.products) {
+    const product = item.productId;
+    if (!product || !product.isActive) {
+      throw new ApiError(400, `A product in your cart is no longer available`);
+    }
+    if (item.quantity > product.stock) {
+      throw new ApiError(400, `${product.name} is out of stock`);
+    }
+    totalAmount += product.price * item.quantity;
+  }
+
+  const deliveryFee = 200;
+  const finalAmount = totalAmount + deliveryFee;
+
+  const order = await Order.create({
+    memberId,
+    products: cart.products.map((item) => ({
+      productId: item.productId?._id,
+      quantity: item.quantity,
+    })),
+    totalAmount: finalAmount,
+    orderStatus: "Pending",
+    paymentStatus: "pending",
+  });
+
+  if (!order) {
+    throw new ApiError(500, "Could not create order");
+  }
+
+  const session = await createPaymentSession(
+    finalAmount,
+    "StoreOrder",
+    order._id,
+  );
+
+  if (!session) {
+    throw new ApiError(500, "Could not create payment session");
+  }
+
+  const trackerToken = session.data?.tracker?.token;
+  const authToken = await createAuthenticationToken();
+
+  if (!authToken) {
+    throw new ApiError(
+      500,
+      "Could not create authentication token for payment",
     );
-// Create order
+  }
 
-const createOrder = asyncHandler(
-    async (request, response) => {
-        const { memberId } = request.body;
-        const cart = await Cart.findOne({memberId,}).populate("products.productId");
-        console.log("Create Order Member ID:", memberId);
-        console.log("Cart Data:", JSON.stringify(cart, null, 2));
-        if (!cart) {
-            throw new ApiError(
-                404,
-                "Cart not found"
-            );
-        }
-        if (
-            cart.products.length === 0
-        ) {
-            throw new ApiError( 400, "Cart is empty");
-        }
-        let totalAmount = 0;
-        for (const item of cart.products) {
-            const product =
-                item.productId;
-            if (
-                item.quantity >
-                product.stock
-            ) {
-                throw new ApiError(
-                    400,
-                    `${product.name} is out of stock`
-                );
-            }
-            totalAmount +=
-                product.price *
-                item.quantity;
-        }
-        const order =
-            await Order.create({
-                memberId,
-                products:
-                    cart.products,
-                totalAmount,
-                orderStatus:
-                    "Pending",
-            });
+  const checkoutUrl = await getCheckoutUrl(trackerToken, authToken.data);
 
-        for (const item of cart.products) {
-            const product =
-                await StoreProduct.findById(
-                    item.productId._id
-                );
+  if (!checkoutUrl) {
+    throw new ApiError(500, "Could not create checkout url");
+  }
 
-            product.stock -=
-                item.quantity;
+  const pendingPaymentRecord = await Payment.create({
+    memberId,
+    type: "StoreOrder",
+    paymentCauseId: order._id,
+    amount: finalAmount,
+    status: "pending",
+    trackerToken,
+  });
 
-            await product.save();
-        }
+  if (!pendingPaymentRecord) {
+    throw new ApiError(500, "Could not create payment record in db");
+  }
 
-        cart.products = [];
+  cart.products = [];
+  await cart.save({ validateBeforeSave: false });
 
-        await cart.save();
-
-        return response.status(201).json(
-            new ApiResponse(
-                201,
-                order,
-                "Order created successfully"
-            )
-        );
-    }
-);
-// Checkout cart
-
-const checkout = asyncHandler(
-    async (request, response) => {
-        const { memberId } = request.params;
-
-        const cart =
-            await Cart.findOne({
-                memberId,
-            }).populate(
-                "products.productId"
-            );
-
-        if (!cart) {
-            throw new ApiError(
-                404,
-                "Cart not found"
-            );
-        }
-
-        if (
-            cart.products.length === 0
-        ) {
-            throw new ApiError(
-                400,
-                "Cart is empty"
-            );
-        }
-        let subtotal = 0;
-        for (const item of cart.products) {
-            const product =
-                item.productId;
-            if (
-                item.quantity >
-                product.stock
-            ) {
-                throw new ApiError(
-                    400,
-                    `${product.name} is out of stock`
-                );
-            }
-            subtotal += product.price * item.quantity;
-        }
-        const deliveryFee = 200;
-        const totalAmount = subtotal + deliveryFee;
-        return response.status(200).json(
-            new ApiResponse(
-                200,
-                {
-                    subtotal,
-                    deliveryFee,
-                    totalAmount,
-                },
-                "Checkout successful"
-            )
-        );
-    }
-);
-// Get member orders
-
-const getMemberOrders = asyncHandler(
-    async (request, response) => {
-        const { memberId } =
-            request.params;
-
-        const orders =
-            await Order.find({
-                memberId,
-            })
-                .populate(
-                    "products.productId"
-                )
-                .sort({
-                    createdAt: -1,
-                });
-
-        return response.status(200).json(
-            new ApiResponse(
-                200,
-                orders,
-                "Orders fetched successfully"
-            )
-        );
-    }
-);
-// Get all orders
-
-const getAllOrders = asyncHandler(
-    async (request, response) => {
-        const orders =
-            await Order.find()
-                .populate(
-                    "memberId"
-                )
-                .populate(
-                    "products.productId"
-                )
-                .sort({
-                    createdAt: -1,
-                });
-
-        return response.status(200).json(
-            new ApiResponse(
-                200,
-                orders,
-                "Orders fetched successfully"
-            )
-        );
-    }
-);
-// Update order status
-
-const updateOrderStatus =
-    asyncHandler(
-        async (
-            request,
-            response
-        ) => {
-            const {
-                orderStatus,
-            } = request.body;
-
-            const order =
-                await Order.findById(
-                    request.params.orderId
-                );
-
-            if (!order) {
-                throw new ApiError(
-                    404,
-                    "Order not found"
-                );
-            }
-
-            order.orderStatus =
-                orderStatus;
-
-            await order.save();
-
-            return response
-                .status(200)
-                .json(
-                    new ApiResponse(
-                        200,
-                        order,
-                        "Order status updated successfully"
-                    )
-                );
-        }
+  res
+    .status(201)
+    .json(
+      new ApiResponse(
+        201,
+        { order, paymentRecord: pendingPaymentRecord, checkoutUrl },
+        "Order created successfully, proceed to checkout url to complete payment",
+      ),
     );
+});
+
+const getMemberOrders = asyncHandler(async (req, res) => {
+  const memberId = req.user?._id;
+
+  const orders = await Order.find({ memberId })
+    .populate("products.productId")
+    .sort({ createdAt: -1 });
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, orders, "Member's orders fetched successfully"));
+});
+
+const getAllOrders = asyncHandler(async (req, res) => {
+  const orders = await Order.find({})
+    .populate("memberId", "fullName email")
+    .populate("products.productId")
+    .sort({ createdAt: -1 });
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, orders, "Orders fetched successfully"));
+});
+
+const updateOrderStatus = asyncHandler(async (req, res) => {
+  const { orderId } = req.params;
+  const { orderStatus } = req.body;
+
+  if (!orderId || !mongoose.isValidObjectId(orderId)) {
+    throw new ApiError(400, "No or invalid order id");
+  }
+
+  const validStatuses = [
+    "Pending",
+    "Paid",
+    "Processing",
+    "Delivered",
+    "Cancelled",
+  ];
+  if (!orderStatus || !validStatuses.includes(orderStatus)) {
+    throw new ApiError(400, "Invalid order status");
+  }
+
+  const order = await Order.findById(orderId);
+
+  if (!order) throw new ApiError(404, "Order not found");
+
+  order.orderStatus = orderStatus;
+  await order.save({ validateBeforeSave: false });
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, order, "Order status updated successfully"));
+});
+
 export {
-    addProduct,
-    getProducts,
-    getSingleProduct,
-
-    addToCart,
-    getCart,
-    updateCartQuantity,
-    removeCartItem,
-    clearCart,
-
-    checkout,
-    createOrder,
-
-    getMemberOrders,
-
-    getAllOrders,
-    updateOrderStatus,
+  addProduct,
+  updateProduct,
+  deleteProduct,
+  getProducts,
+  getSingleProduct,
+  addToCart,
+  getCart,
+  updateCartQuantity,
+  removeCartItem,
+  clearCart,
+  checkout,
+  createOrder,
+  getMemberOrders,
+  getAllOrders,
+  updateOrderStatus,
 };

@@ -154,13 +154,7 @@ const updateTrainer = asyncHandler(async (req, res) => {
     throw new ApiError(400, "No or invalid trainer id");
   }
 
-  const allowedFields = [
-    "fullName",
-    "email",
-    "profilePicture",
-    "profilePicturePublicId",
-    "expertise",
-  ];
+  const allowedFields = ["fullName", "email", "expertise"];
 
   const trainer = await Trainer.findById(id);
 
@@ -180,14 +174,14 @@ const updateTrainer = asyncHandler(async (req, res) => {
   const previousPublicId = trainer.profilePicturePublicId;
 
   if (profilePictureLocalPath) {
-    const cloudinary = await uploadOnCloudinary(localFilePath);
+    const profilePicture = await uploadOnCloudinary(profilePictureLocalPath);
 
-    if (!cloudinary) {
+    if (!profilePicture) {
       throw new ApiError(500, "Could not upload profile picture to cloudinary");
     }
 
-    updates.profilePicture = cloudinary?.url || "";
-    updates.profilePicturePublicId = cloudinary?.public_id || "";
+    updates.profilePicture = profilePicture?.url || "";
+    updates.profilePicturePublicId = profilePicture?.public_id || "";
   }
 
   if (Object.keys(updates).length == 0) {
