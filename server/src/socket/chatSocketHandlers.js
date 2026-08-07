@@ -41,4 +41,4 @@ const registerChatHandlers = (io, socket, onlineUsers) => {
   });
 };
 
-export { registerChatHandlers };
+export default registerChatHandlers;
