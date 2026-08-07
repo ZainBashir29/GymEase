@@ -5,7 +5,7 @@ import GymPlan from "../models/gymPlans/gymPlanModel.js";
 import MemberPlan from "../models/gymPlans/memberPlanModel.js";
 import MembershipSubscription from "../models/membershipSubscriptionModel.js";
 import Session from "../models/gymPlans/sessionModel.js";
-import { validateAnswers, generateCustomPlan } from "../utils/questionnaire.js";
+import { validateAnswers, generateCustomPlan } from "../services/questionnaire.js";
 import QuestionnaireResponse from "../models/gymPlans/questionnaireResponseModel.js";
 import ProgressData from "../models/progressDataModel.js";
 import mongoose from "mongoose";

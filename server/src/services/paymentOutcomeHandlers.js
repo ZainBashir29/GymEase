@@ -2,6 +2,12 @@ import Payment from "../models/paymentModel.js";
 import MembershipSubscription from "../models/membershipSubscriptionModel.js";
 import Order from "../models/orderModel.js";
 import StoreProduct from "../models/storeProductModel.js";
+import Safepay from "@sfpy/node-core";
+
+const safepay = Safepay(process.env.SAFEPAY_SECRET_KEY, {
+  authType: "secret",
+  host: "https://sandbox.api.getsafepay.com",
+});
 
 const handleSuccessfulPayment = async (trackerToken) => {
   const updatedPayment = await Payment.findOneAndUpdate(
@@ -41,32 +47,55 @@ const handleSuccessfulPayment = async (trackerToken) => {
       return updatedPayment;
     }
 
+    const decrementedItems = [];
+    let stockFailure = null;
+
     for (const item of order.products) {
-      const updated = await StoreProduct.findOneAndUpdate(
+      const updatedOrderItem = await StoreProduct.findOneAndUpdate(
         { _id: item.productId._id, stock: { $gte: item.quantity } },
         { $inc: { stock: -item.quantity } },
       );
 
-      if (!updated) {
-        console.error(
-          `Insufficient stock for product ${item.productId._id} on order ${order._id}`,
-        );
-
-        const refundPayment = await safepay.orders.payments.refund({
-          tracker: updatedPayment?.trackerToken,
-          payload: {
-            currency: "PKR",
-            amount: item.quantity * item.price * 100,
-          },
-        });
-
-        if (!refundPayment) {
-          throw new ApiError(
-            500,
-            "Could not refund payment for the product out of stock",
-          );
-        }
+      if (!updatedOrderItem) {
+        stockFailure = item.productId.name;
+        break;
       }
+
+      decrementedItems.push({
+        productId: item.productId._id,
+        quantity: item.quantity,
+      });
+    }
+
+    if (stockFailure) {
+      for (const item of decrementedItems) {
+        await StoreProduct.findByIdAndUpdate(item.productId, {
+          $inc: { stock: item.quantity },
+        });
+      }
+
+      try {
+        await safepay.orders.payments.refund({
+          tracker: updatedPayment.trackerToken,
+          payload: { currency: "PKR", amount: updatedPayment.amount * 100 },
+        });
+      } catch (error) {
+        console.error(`Refund failed for order ${order._id}:`, error?.message);
+      }
+
+      await Order.findByIdAndUpdate(order._id, {
+        $set: {
+          orderStatus: "Cancelled",
+          paymentStatus: "refunded",
+          paymentId: updatedPayment._id,
+        },
+      });
+
+      console.log(
+        `Order ${order._id} cancelled and refunded. ${stockFailure} was out of stock at the processing time.`,
+      );
+
+      return updatedPayment;
     }
 
     await Order.findByIdAndUpdate(order._id, {
@@ -90,37 +119,55 @@ const handleFailedPayment = async (trackerToken) => {
 
   if (!updatedPayment) {
     console.error(`Could not find payment for tracker ${trackerToken}`);
+    return null;
+  }
+
+  if (updatedPayment.type === "MembershipSubscription") {
+    await MembershipSubscription.findOneAndDelete({
+      membershipPlanId: updatedPayment.paymentCauseId,
+      memberId: updatedPayment.memberId,
+      status: "pending",
+    });
+  }
+
+  if (updatedPayment.type === "StoreOrder") {
+    await Order.findByIdAndUpdate(updatedPayment?.paymentCauseId, {
+      $set: {
+        orderStatus: "Cancelled",
+        paymentStatus: "failed",
+      },
+    });
   }
 
   return updatedPayment;
 };
 
 const handleRefundedPayment = async (paymentId) => {
-  const payment = await Payment.findByIdAndUpdate(
+  const updatedPayment = await Payment.findByIdAndUpdate(
     paymentId,
     { $set: { status: "refunded" } },
     { returnDocument: "after" },
   );
 
-  if (!payment) {
+  if (!updatedPayment) {
     console.error(`Could not find payment ${paymentId} to mark as refunded`);
     return null;
   }
 
-  if (payment.type === "MembershipSubscription") {
+  if (updatedPayment.type === "MembershipSubscription") {
     const subscription = await MembershipSubscription.findOneAndUpdate(
       {
-        membershipPlanId: payment.paymentCauseId,
-        memberId: payment.memberId,
+        membershipPlanId: updatedPayment.paymentCauseId,
+        memberId: updatedPayment.memberId,
       },
       { $set: { status: "cancelled" } },
       { returnDocument: "after" },
     );
   }
 
-  if (payment.type === "StoreOrder") {
+  if (updatedPayment.type === "StoreOrder") {
     const order = await Order.findByIdAndUpdate(
-      payment.paymentCauseId,
+      updatedPayment.paymentCauseId,
       {
         $set: {
           orderStatus: "Cancelled",
@@ -139,7 +186,7 @@ const handleRefundedPayment = async (paymentId) => {
     }
   }
 
-  return payment;
+  return updatedPayment;
 };
 
 export { handleSuccessfulPayment, handleFailedPayment, handleRefundedPayment };

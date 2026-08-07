@@ -6,8 +6,8 @@ import Member from "../models/memberModel.js";
 import {
   uploadOnCloudinary,
   deleteFromCloudinary,
-} from "../utils/cloudinary.js";
-import sendEmail from "../utils/nodemailer.js";
+} from "../services/cloudinary.js";
+import sendEmail from "../services/nodemailer.js";
 import jwt from "jsonwebtoken";
 
 const generateAccessAndRefreshTokens = async (memberId) => {

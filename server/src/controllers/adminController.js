@@ -10,7 +10,7 @@ import MemberPlan from "../models/gymPlans/memberPlanModel.js";
 import {
   uploadOnCloudinary,
   deleteFromCloudinary,
-} from "../utils/cloudinary.js";
+} from "../services/cloudinary.js";
 
 const getAllMembers = asyncHandler(async (req, res) => {
   const { includeInactive } = req.query;

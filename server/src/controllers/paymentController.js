@@ -13,7 +13,7 @@ import {
   handleSuccessfulPayment,
   handleFailedPayment,
   handleRefundedPayment,
-} from "../utils/paymentOutcomeHandlers.js";
+} from "../services/paymentOutcomeHandlers.js";
 
 const safepay = Safepay(process.env.SAFEPAY_SECRET_KEY, {
   authType: "secret",
@@ -351,12 +351,17 @@ const refundPayment = asyncHandler(async (req, res) => {
   const updatedPayment = await handleRefundedPayment(paymentId);
 
   if (!updatedPayment) {
-    throw new ApiError(500, "Could not update payment status to refunded in db");
+    throw new ApiError(
+      500,
+      "Could not update payment status to refunded in db",
+    );
   }
 
   res
     .status(200)
-    .json(new ApiResponse(200, updatedPayment, "Payment refunded successfully"));
+    .json(
+      new ApiResponse(200, updatedPayment, "Payment refunded successfully"),
+    );
 });
 
 export {
