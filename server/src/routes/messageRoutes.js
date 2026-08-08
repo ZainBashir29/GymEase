@@ -1,37 +1,24 @@
 import { Router } from "express";
-
 import verifyJwt from "../middlewares/authMiddleware.js";
-
+import role from "../middlewares/roleMiddleware.js";
 import {
-    sendMessage,
-    getConversationMessages,
-    markMessagesAsRead,
+  sendMessage,
+  getConversationMessages,
+  markMessagesAsRead,
 } from "../controllers/messageController.js";
 
 const router = Router();
 
-/* Send Message */
 router
-    .route("/send")
-    .post(
-        verifyJwt,
-        sendMessage
-    );
+  .route("/send")
+  .post(verifyJwt, role("Member", "Trainer", "Admin"), sendMessage);
 
-/* Get Messages of Conversation */
 router
-    .route("/:conversationId")
-    .get(
-        verifyJwt,
-        getConversationMessages
-    );
+  .route("/:conversationId")
+  .get(verifyJwt, role("Member", "Trainer", "Admin"), getConversationMessages);
 
-/* Mark Messages as Read */
 router
-    .route("/read/:conversationId")
-    .patch(
-        verifyJwt,
-        markMessagesAsRead
-    );
+  .route("/read/:conversationId")
+  .patch(verifyJwt, role("Member", "Trainer", "Admin"), markMessagesAsRead);
 
 export default router;

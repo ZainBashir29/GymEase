@@ -5,7 +5,7 @@ import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 
-const getTrainerProfile = asyncHandler(async (req, res) => {
+const getTrainerById = asyncHandler(async (req, res) => {
   const trainer = await Trainer.findById(req.user?._id).select(
     "-password -refreshToken -isProfileCompleted refreshPasswordToken refreshPasswordExpiry",
   );
@@ -16,9 +16,7 @@ const getTrainerProfile = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(
-      new ApiResponse(200, trainer, "Trainer profile fetched successfully"),
-    );
+    .json(new ApiResponse(200, trainer, "Trainer fetched successfully"));
 });
 
 const getAssignedMembers = asyncHandler(async (req, res) => {
@@ -43,4 +41,4 @@ const getAssignedMembers = asyncHandler(async (req, res) => {
     );
 });
 
-export { getTrainerProfile, getAssignedMembers };
+export { getTrainerById, getAssignedMembers };

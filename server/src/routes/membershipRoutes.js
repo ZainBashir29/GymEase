@@ -8,24 +8,35 @@ import {
   cancelMembershipSubscription,
   renewMembershipSubscription,
 } from "../controllers/membershipController.js";
-import verifyJwt from "../middlewares/authMiddleware.js"
+import verifyJwt from "../middlewares/authMiddleware.js";
+import role from "../middlewares/roleMiddleware.js";
 
 const router = Router();
 
-router.route("/membership-plans").get(getAllMembershipPlans);
+router
+  .route("/plans")
+  .get(role("Member", "Trainer", "Admin"), getAllMembershipPlans);
 
-router.route("/membership-plan/:membershipPlanId").get(getMembershipPlanById);
+router
+  .route("/plan/:id")
+  .get(role("Member", "Trainer", "Admin"), getMembershipPlanById);
 
 router
   .route("/create")
-  .post(verifyJwt, createMembershipSubscription);
+  .post(verifyJwt, role("Member"), createMembershipSubscription);
 
-router.route("/current").get(verifyJwt, getCurrentMembershipSubscription);
+router
+  .route("/current")
+  .get(verifyJwt, role("Member"), getCurrentMembershipSubscription);
 
-router.route("/history").get(verifyJwt, getSubscriptionHistory);
+router.route("/history").get(verifyJwt, role("Member"), getSubscriptionHistory);
 
-router.route("/cancel").post(verifyJwt, cancelMembershipSubscription);
+router
+  .route("/cancel")
+  .post(verifyJwt, role("Member"), cancelMembershipSubscription);
 
-router.route("/renew").post(verifyJwt, renewMembershipSubscription);
+router
+  .route("/renew")
+  .post(verifyJwt, role("Member"), renewMembershipSubscription);
 
 export default router;

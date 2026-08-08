@@ -39,6 +39,41 @@ const registerChatHandlers = (io, socket, onlineUsers) => {
       });
     }
   });
+
+  socket.on("markAsRead", async (payload, callback) => {
+    try {
+      const { conversationId } = payload;
+
+      if (!conversationId) {
+        return callback?.({
+          success: false,
+          message: "conversationId is required",
+        });
+      }
+
+      const result = await markMessagesRead({
+        conversationId,
+        readerId: socket.user._id,
+      });
+
+      callback?.({ success: true, ...result });
+
+      for (const senderId of result?.senderIds) {
+        const senderSocketId = onlineUsers.get(senderId);
+        if (senderSocketId) {
+          io.to(senderSocketId).emit("messagesRead", {
+            conversationId,
+            readBy: socket.user._id,
+          });
+        }
+      }
+    } catch (error) {
+      callback?.({
+        success: false,
+        message: error?.message || "Failed to mark messages as read",
+      });
+    }
+  });
 };
 
 export default registerChatHandlers;

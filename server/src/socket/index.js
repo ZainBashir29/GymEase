@@ -44,12 +44,21 @@ const initializeSocket = (httpServer) => {
       `${socket.user?.fullName} connected with socket id: ${socket.id}`,
     );
 
+    socket.broadcast.emit("userOnline", { userId });
+
     registerChatHandlers(io, socket, onlineUsers);
+
+    socket.on("checkOnlineStatus", ({ userId: targetUserId }, callback) => {
+      const isOnline = onlineUsers.has(targetUserId);
+      callback?.({ userId: targetUserId, isOnline });   
+    });
 
     socket.on("disconnect", () => {
       onlineUsers.delete(userId);
       console.log(`${socket.user?.fullName} disconnected`);
     });
+
+    socket.broadcast.emit("userOffline", { userId });
   });
 
   return io;

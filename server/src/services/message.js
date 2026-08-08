@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Message from "../models/messageModel.js";
 import Conversation from "../models/conversationModel.js";
 import ApiError from "../utils/ApiError.js";
@@ -58,4 +59,41 @@ const createMessage = async ({
   return message;
 };
 
-export default createMessage;
+const markMessagesRead = async ({ conversationId, readerId }) => {
+  const conversation = await Conversation.findById(conversationId);
+
+  if (!conversation) {
+    throw new ApiError(404, "Conversation not found");
+  }
+
+  const isParticipant = conversation.participants.some(
+    (p) => p.toString() === readerId.toString(),
+  );
+
+  if (!isParticipant) {
+    throw new ApiError(403, "Access denied");
+  }
+
+  const unreadMessages = await Message.find({
+    conversationId,
+    receiverId: readerId,
+    isRead: false,
+  }).select("senderId");
+
+  if (unreadMessages.length == 0) {
+    return { updatedCount: 0, senderIds: [] };
+  }
+
+  await Message.updateMany(
+    { conversationId, receiverId: readerId, isRead: false },
+    { $set: { isRead: true } },
+  );
+
+  const senderIds = [
+    ...new Set(unreadMessages.map((message) => message.senderId.toString())),
+  ];
+
+  return { updatedCount: unreadMessages.length, senderIds };
+};
+
+export { createMessage, markMessagesRead };

@@ -4,7 +4,7 @@ import Conversation from "../models/conversationModel.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
-import createMessage from "../services/message.js";
+import { createMessage, markMessagesRead } from "../services/message.js";
 
 const sendMessage = asyncHandler(async (req, res) => {
   const { conversationId, receiverId, messageText } = req.body;
@@ -82,34 +82,14 @@ const markMessagesAsRead = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid conversation id");
   }
 
-  const conversation = await Conversation.findById(conversationId);
+  const updatedMessages = await markMessagesRead({
+    conversationId,
+    readerId: req.user?._id,
+  });
 
-  if (!conversation) {
-    throw new ApiError(404, "Conversation not found");
-  }
-
-  const isParticipant = conversation.participants.some(
-    (participant) => participant.toString() === req.user?._id.toString(),
-  );
-
-  if (!isParticipant) {
-    throw new ApiError(403, "Access denied");
-  }
-
-  await Message.updateMany(
-    {
-      conversationId,
-      receiverId: req.user?._id,
-      isRead: false,
-    },
-    {
-      $set: {
-        isRead: true,
-      },
-    },
-  );
-
-  res.status(200).json(new ApiResponse(200, {}, "Messages marked as read"));
+  res
+    .status(200)
+    .json(new ApiResponse(200, updatedMessages, "Messages marked as read"));
 });
 
 export { sendMessage, getConversationMessages, markMessagesAsRead };

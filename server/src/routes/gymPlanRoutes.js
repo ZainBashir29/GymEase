@@ -15,33 +15,52 @@ import {
   markSessionComplete,
 } from "../controllers/gymPlanController.js";
 import verifyJwt from "../middlewares/authMiddleware.js";
+import role from "../middlewares/roleMiddleware.js";
 
 const router = Router();
 
-router.route("/").get(getAllPopularPlans);
+router.route("/").get(role("Member", "Trainer", "Admin"), getAllPopularPlans);
 
-router.route("/:id").get(getPlanById);
+router.route("/:id").get(role("Member", "Trainer", "Admin"), getPlanById);
 
-router.route("/activate/:id").post(verifyJwt, activatePopularPlan);
+router
+  .route("/activate/:id")
+  .post(verifyJwt, role("Member"), activatePopularPlan);
 
-router.route("/active").get(verifyJwt, getActiveMemberPlan);
+router.route("/active").get(verifyJwt, role("Member"), getActiveMemberPlan);
 
-router.route("/member-history").get(verifyJwt, getMemberPlanHistory);
+router
+  .route("/member-history")
+  .get(verifyJwt, role("Member"), getMemberPlanHistory);
 
-router.route("/cancel/:id").post(verifyJwt, cancelMemberPlan);
+router.route("/cancel/:id").post(verifyJwt, role("Member"), cancelMemberPlan);
 
-router.route("/custom/activate").post(verifyJwt, activateCustomPlan);
+router
+  .route("/custom/activate")
+  .post(verifyJwt, role("Member"), activateCustomPlan);
 
-router.route("/questionnaire").get(verifyJwt, getMemberQuestionnaire);
+router
+  .route("/questionnaire")
+  .get(verifyJwt, role("Member"), getMemberQuestionnaire);
 
-router.route("/sessions/member/today").get(verifyJwt, getMemberTodaySession);
+router
+  .route("/sessions/member/today")
+  .get(verifyJwt, role("Member"), getMemberTodaySession);
 
-router.route("/sessions/trainer/today").get(verifyJwt, getTrainerTodaySessions);
+router
+  .route("/sessions/trainer/today")
+  .get(verifyJwt, role("Trainer"), getTrainerTodaySessions);
 
-router.route("/sessions/:id").get(verifyJwt, getAllSessionsForPlan);
+router
+  .route("/sessions/:id")
+  .get(verifyJwt, role("Member", "Trainer", "Admin"), getAllSessionsForPlan);
 
-router.route("/sessions/trainer").get(verifyJwt, getTrainerAllSessions);
+router
+  .route("/sessions/trainer")
+  .get(verifyJwt, role("Trainer"), getTrainerAllSessions);
 
-router.route("/sessions/:id/complete").post(verifyJwt, markSessionComplete);
+router
+  .route("/sessions/:id/complete")
+  .post(verifyJwt, role("Member", "Trainer"), markSessionComplete);
 
 export default router;
