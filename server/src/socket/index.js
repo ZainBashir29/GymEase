@@ -1,7 +1,7 @@
 import { Server } from "socket.io";
 import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
-import { registerChatHandlers } from "./chatSocketHandlers.js";
+import registerChatHandlers from "./chatSocketHandlers.js";
 
 const onlineUsers = new Map();
 
@@ -50,7 +50,7 @@ const initializeSocket = (httpServer) => {
 
     socket.on("checkOnlineStatus", ({ userId: targetUserId }, callback) => {
       const isOnline = onlineUsers.has(targetUserId);
-      callback?.({ userId: targetUserId, isOnline });   
+      callback?.({ userId: targetUserId, isOnline });
     });
 
     socket.on("disconnect", () => {

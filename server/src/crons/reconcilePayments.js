@@ -3,7 +3,7 @@ import Payment from "../models/paymentModel.js";
 import {
   handleSuccessfulPayment,
   handleFailedPayment,
-} from "../utils/paymentOutcomeHandlers.js";
+} from "../services/paymentOutcomeHandlers.js";
 
 const safepay = Safepay(process.env.SAFEPAY_SECRET_KEY, {
   authType: "secret",

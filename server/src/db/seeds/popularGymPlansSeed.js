@@ -1,4 +1,5 @@
-import "dotenv/config";
+import dotenv from "dotenv";
+dotenv.config();
 import GymPlan from "../../models/gymPlans/gymPlanModel.js";
 import connectDB from "../index.js";
 
@@ -43,7 +44,11 @@ const popularGymPlans = [
       },
     ],
     duration: 8 * 7,
-    trainerIds: [],
+    trainerIds: [
+      "6a65063f4932a35571922c78",
+      "6a6506424932a35571922c7d",
+      "6a6506454932a35571922c83",
+    ],
   },
   {
     name: "PPL - Push Pull Legs",
@@ -115,7 +120,11 @@ const popularGymPlans = [
       },
     ],
     duration: 12 * 7,
-    trainerIds: [],
+    trainerIds: [
+      "6a65063e4932a35571922c75",
+      "6a65063f4932a35571922c77",
+      "6a6506404932a35571922c7a",
+    ],
   },
   {
     name: "StrongLifts 5x5",
@@ -143,7 +152,11 @@ const popularGymPlans = [
       },
     ],
     duration: 16 * 7,
-    trainerIds: [],
+    trainerIds: [
+      "6a65063b4932a35571922c70",
+      "6a65063d4932a35571922c72",
+      "6a65063d4932a35571922c73",
+    ],
   },
   {
     name: "HIIT Fat Burner",
@@ -195,7 +208,11 @@ const popularGymPlans = [
       },
     ],
     duration: 6 * 7,
-    trainerIds: [],
+    trainerIds: [
+      "6a6506424932a35571922c7d",
+      "6a6506444932a35571922c81",
+      "6a6506424932a35571922c7c",
+    ],
   },
   {
     name: "Classic Bodybuilding Hypertrophy Split",
@@ -257,7 +274,11 @@ const popularGymPlans = [
       },
     ],
     duration: 12 * 7,
-    trainerIds: [],
+    trainerIds: [
+      "6a6506434932a35571922c7f",
+      "6a6506454932a35571922c82",
+      "6a65063d4932a35571922c74",
+    ],
   },
   {
     name: "12-Week Body Recomposition",
@@ -324,7 +345,11 @@ const popularGymPlans = [
       },
     ],
     duration: 12 * 7,
-    trainerIds: [],
+    trainerIds: [
+      "6a6506454932a35571922c83",
+      "6a65063e4932a35571922c75",
+      "6a65063f4932a35571922c76",
+    ],
   },
   {
     name: "Upper/Lower Power & Hypertrophy",
@@ -377,7 +402,11 @@ const popularGymPlans = [
       },
     ],
     duration: 10 * 7,
-    trainerIds: [],
+    trainerIds: [
+      "6a6506454932a35571922c83",
+      "6a6506444932a35571922c81",
+      "6a6506434932a35571922c7f",
+    ],
   },
   {
     name: "Athletic Performance & Conditioning",
@@ -438,7 +467,11 @@ const popularGymPlans = [
       },
     ],
     duration: 9 * 7,
-    trainerIds: [],
+    trainerIds: [
+      "6a6506444932a35571922c80",
+      "6a6506444932a35571922c81",
+      "6a6506434932a35571922c7e",
+    ],
   },
   {
     name: "Core Strength & Mobility",
@@ -489,7 +522,11 @@ const popularGymPlans = [
       },
     ],
     duration: 6 * 7,
-    trainerIds: [],
+    trainerIds: [
+      "6a6506414932a35571922c7b",
+      "6a6506404932a35571922c7a",
+      "6a6506424932a35571922c7d",
+    ],
   },
   {
     name: "Powerlifting Peaking Program",
@@ -531,7 +568,11 @@ const popularGymPlans = [
       },
     ],
     duration: 10 * 7,
-    trainerIds: [],
+    trainerIds: [
+      "6a65063d4932a35571922c73",
+      "6a6506404932a35571922c79",
+      "6a6506454932a35571922c82",
+    ],
   },
 ];
 

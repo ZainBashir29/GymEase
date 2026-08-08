@@ -14,7 +14,7 @@ import {
 import {
   uploadOnCloudinary,
   deleteFromCloudinary,
-} from "../utils/cloudinary.js";
+} from "../services/cloudinary.js";
 
 const addProduct = asyncHandler(async (req, res) => {
   const { name, description, price, stock, category } = req.body;

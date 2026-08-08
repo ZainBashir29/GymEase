@@ -1,4 +1,4 @@
-import MembershipSubscription from "../models/MembershipSubscription.model.js";
+import MembershipSubscription from "../models/membershipSubscriptionModel.js";
 
 const expireMemberships = async () => {
   const now = new Date();

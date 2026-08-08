@@ -1,5 +1,5 @@
 import MembershipSubscription from "../models/membershipSubscriptionModel.js";
-import sendEmail from "../utils/nodemailer.js";
+import sendEmail from "../services/nodemailer.js";
 
 const days = 3;
 

@@ -1,4 +1,4 @@
-import MemberPlan from "../models/gymPlans/memberPlanModel";
+import MemberPlan from "../models/gymPlans/memberPlanModel.js";
 import Session from "../models/gymPlans/sessionModel.js";
 
 const completeFinishedMemberPlans = async () => {

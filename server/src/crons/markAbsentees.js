@@ -1,4 +1,4 @@
-import Session from "../models/gyPlans/sessionModel.js";
+import Session from "../models/gymPlans/sessionModel.js";
 import Attendance from "../models/attendanceModel.js";
 
 const markAbsentees = async () => {
