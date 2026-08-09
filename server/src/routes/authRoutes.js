@@ -60,7 +60,7 @@ router
   .post(verifyJwt, role("Admin"), changePassword);
 
 router
-  .route("/refresh-access-token")
+  .route("/refresh-token")
   .post(role("Member", "Trainer", "Admin"), refreshAccessToken);
 
 router
