@@ -15,7 +15,7 @@ const router = Router();
 
 router
   .route("/plans")
-  .get(role("Member", "Trainer", "Admin"), getAllMembershipPlans);
+  .get(getAllMembershipPlans);
 
 router
   .route("/plan/:id")
