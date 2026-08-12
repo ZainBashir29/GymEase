@@ -24,9 +24,9 @@ const router = Router();
 
 router
   .route("/member/register")
-  .post(role("Member"), upload.single("profilePicture"), registerMember);
+  .post(upload.single("profilePicture"), registerMember);
 
-router.route("/login").post(role("Member", "Trainer", "Admin"), login);
+router.route("/login").post(login);
 
 router
   .route("/logout")

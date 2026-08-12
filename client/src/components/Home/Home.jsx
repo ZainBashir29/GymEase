@@ -6,14 +6,10 @@ import CtaBanner from "./CtaBanner.jsx";
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-white">
-      <Navbar />
-      <main>
-        <Hero />
-        <Services />
-        <CtaBanner />
-      </main>
-      <Footer />
+    <div className="bg-white">
+      <Hero />
+      <Services />
+      <CtaBanner />
     </div>
   );
 };

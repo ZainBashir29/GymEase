@@ -165,7 +165,7 @@ const login = asyncHandler(async (req, res) => {
           accessToken,
           refreshToken,
         },
-        `${loggedInUser.role} logged in successfully`,
+        `${loggedInUser?.role} logged in successfully`,
       ),
     );
 });
