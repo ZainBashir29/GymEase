@@ -1,0 +1,213 @@
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Loader2, CheckCircle2 } from "lucide-react";
+import api from "../../lib/axios.js";
+import AuthLayout from "./AuthLayout.jsx";
+import FormInput from "./FormInput.jsx";
+
+const MIN_AGE = 13;
+
+const INITIAL_FORM = {
+  fullName: "",
+  username: "",
+  email: "",
+  age: "",
+  password: "",
+  confirmPassword: "",
+};
+
+const Register = () => {
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState(INITIAL_FORM);
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [serverError, setServerError] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setFieldErrors((prev) => ({ ...prev, [e.target.name]: "" }));
+  };
+
+  const validate = () => {
+    const errors = {};
+
+    if (!formData.fullName.trim()) errors.fullName = "Full name is required";
+    if (!formData.username.trim()) errors.username = "Username is required";
+    if (!formData.email.trim()) errors.email = "Email is required";
+
+    if (!formData.age) {
+      errors.age = "Age is required";
+    } else if (Number(formData.age) < MIN_AGE) {
+      errors.age = `You must be at least ${MIN_AGE} years old`;
+    }
+
+    if (!formData.password) {
+      errors.password = "Password is required";
+    } else if (formData.password.length < 8) {
+      errors.password = "Password must be at least 8 characters";
+    }
+
+    if (formData.confirmPassword !== formData.password) {
+      errors.confirmPassword = "Passwords do not match";
+    }
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setServerError("");
+
+    if (!validate()) return;
+
+    setIsSubmitting(true);
+
+    try {
+      const { confirmPassword, ...payload } = formData;
+
+      await api.post("/auth/member/register", {
+        ...payload,
+        age: Number(payload.age),
+      });
+      setIsSuccess(true);
+    } catch (err) {
+      setServerError(
+        err.response?.data?.message ||
+          "Something went wrong. Please try again.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (isSuccess) {
+    return (
+      <AuthLayout
+        title="Account created"
+        subtitle="Your GymEase account is ready"
+      >
+        <div className="flex flex-col items-center text-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-50">
+            <CheckCircle2 className="h-7 w-7 text-brand-600" strokeWidth={2} />
+          </div>
+          <p className="mt-4 text-sm text-slate-600">
+            Log in with your new account to purchase a membership and get
+            started.
+          </p>
+          <button
+            onClick={() => navigate("/login")}
+            className="mt-6 w-full rounded-lg bg-brand-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
+          >
+            Go to login
+          </button>
+        </div>
+      </AuthLayout>
+    );
+  }
+
+  return (
+    <AuthLayout
+      title="Create your account"
+      subtitle="Start your GymEase membership today"
+    >
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {serverError && (
+          <div className="rounded-lg border border-danger/20 bg-danger/5 px-4 py-3 text-sm text-danger">
+            {serverError}
+          </div>
+        )}
+
+        <FormInput
+          id="fullName"
+          name="fullName"
+          type="text"
+          label="Full name"
+          placeholder="John Doe"
+          value={formData.fullName}
+          onChange={handleChange}
+          error={fieldErrors.fullName}
+        />
+
+        <FormInput
+          id="username"
+          name="username"
+          type="text"
+          label="Username"
+          placeholder="johndoe"
+          value={formData.username}
+          onChange={handleChange}
+          error={fieldErrors.username}
+        />
+
+        <FormInput
+          id="email"
+          name="email"
+          type="email"
+          label="Email"
+          placeholder="you@example.com"
+          value={formData.email}
+          onChange={handleChange}
+          error={fieldErrors.email}
+        />
+
+        <FormInput
+          id="age"
+          name="age"
+          type="number"
+          label="Age"
+          placeholder="25"
+          min={MIN_AGE}
+          value={formData.age}
+          onChange={handleChange}
+          error={fieldErrors.age}
+        />
+
+        <FormInput
+          id="password"
+          name="password"
+          type="password"
+          label="Password"
+          placeholder="At least 8 characters"
+          value={formData.password}
+          onChange={handleChange}
+          error={fieldErrors.password}
+        />
+
+        <FormInput
+          id="confirmPassword"
+          name="confirmPassword"
+          type="password"
+          label="Confirm password"
+          placeholder="••••••••"
+          value={formData.confirmPassword}
+          onChange={handleChange}
+          error={fieldErrors.confirmPassword}
+        />
+
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+          {isSubmitting ? "Creating account..." : "Create account"}
+        </button>
+      </form>
+
+      <p className="mt-6 text-center text-sm text-slate-500">
+        Already have an account?{" "}
+        <Link
+          to="/login"
+          className="font-semibold text-brand-600 hover:text-brand-700"
+        >
+          Log in
+        </Link>
+      </p>
+    </AuthLayout>
+  );
+};
+
+export default Register;
