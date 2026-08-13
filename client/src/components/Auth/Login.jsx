@@ -31,7 +31,7 @@ const Login = () => {
       const role = data.data.user.role;
       if (role === "Admin") navigate("/admin/dashboard");
       else if (role === "Trainer") navigate("/trainer/dashboard");
-      else navigate("/dashboard");
+      else navigate("/member/dashboard");
     } catch (err) {
       setError(
         err.response?.data?.message ||

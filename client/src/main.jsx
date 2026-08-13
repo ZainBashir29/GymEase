@@ -7,6 +7,8 @@ import HomePage from "./pages/HomePage.jsx";
 import MembershipPlansPage from "./pages/MembershipPlansPage.jsx";
 import MemberRegistrationPage from "./pages/MemberRegistrationPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
+import MemberDashboardPage from "./pages/Member/MemberDashboardPage.jsx";
+import ProtectedRoute from "./components/Layout/ProtectedRoute.jsx";
 
 const router = createBrowserRouter([
   {
@@ -28,6 +30,14 @@ const router = createBrowserRouter([
       {
         path: "/login",
         element: <LoginPage />,
+      },
+      {
+        path: "/member/dashboard",
+        element: (
+          <ProtectedRoute allowedRoles={["Member"]}>
+            <MemberDashboardPage />
+          </ProtectedRoute>
+        ),
       },
     ],
   },
