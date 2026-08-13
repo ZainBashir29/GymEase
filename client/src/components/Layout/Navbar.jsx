@@ -1,5 +1,6 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Dumbbell } from "lucide-react";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 const NAV_LINKS = [
   { label: "Home", to: "/" },
@@ -9,6 +10,14 @@ const NAV_LINKS = [
 ];
 
 const Navbar = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/");
+  };
+
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-sm">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
@@ -34,18 +43,34 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <Link
-            to="/login"
-            className="text-sm font-semibold text-slate-700 transition-colors hover:text-brand-600"
-          >
-            Log in
-          </Link>
-          <Link
-            to="/register"
-            className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-700"
-          >
-            Get Started
-          </Link>
+          {user ? (
+            <>
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700">
+                {user?.fullName?.charAt(0).toUpperCase()}
+              </div>
+              <button
+                onClick={handleLogout}
+                className="rounded-lg bg-red-200 px-4 py-2 text-sm font-semibold text-danger transition-colors hover:bg-red-300"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="text-sm font-semibold text-slate-700 transition-colors hover:text-brand-600"
+              >
+                Log in
+              </Link>
+              <Link
+                to="/register"
+                className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-700"
+              >
+                Get Started
+              </Link>
+            </>
+          )}
         </div>
       </nav>
     </header>
