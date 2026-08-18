@@ -10,13 +10,13 @@ import {
 import sendEmail from "../services/nodemailer.js";
 import jwt from "jsonwebtoken";
 
-const generateAccessAndRefreshTokens = async (memberId) => {
+const generateAccessAndRefreshTokens = async (userId) => {
   try {
-    const member = await Member.findById(memberId);
-    const accessToken = member.generateAccessToken();
-    const refreshToken = member.generateRefreshToken();
-    member.refreshToken = refreshToken;
-    await member.save({ validateBeforeSave: false });
+    const user = await User.findById(userId);
+    const accessToken = user.generateAccessToken();
+    const refreshToken = user.generateRefreshToken();
+    user.refreshToken = refreshToken;
+    await user.save({ validateBeforeSave: false });
     return { accessToken, refreshToken };
   } catch (error) {
     throw new ApiError(500, "Could not generate access and refresh tokens");

@@ -361,11 +361,7 @@ const createOrder = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Could not create order");
   }
 
-  const session = await createPaymentSession(
-    finalAmount,
-    "StoreOrder",
-    order._id,
-  );
+  const session = await createPaymentSession(finalAmount, order._id);
 
   if (!session) {
     throw new ApiError(500, "Could not create payment session");
@@ -374,7 +370,7 @@ const createOrder = asyncHandler(async (req, res) => {
   const trackerToken = session.data?.tracker?.token;
   const authToken = await createAuthenticationToken();
 
-  if (!authToken) {
+  if (!authToken?.data) {
     throw new ApiError(
       500,
       "Could not create authentication token for payment",

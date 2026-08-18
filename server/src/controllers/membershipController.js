@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
@@ -73,6 +74,20 @@ const createMembershipSubscription = asyncHandler(async (req, res) => {
     });
 
   if (existingPendingMembershipSubscription) {
+    if (
+      existingPendingMembershipSubscription.membershipPlanId.toString() ===
+      membershipPlanId.toString()
+    ) {
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            existingPendingMembershipSubscription,
+            "Pending membership subscription already exists. Continuing to checkout.",
+          ),
+        );
+    }
     throw new ApiError(
       400,
       "You already have a pending membership subscription. Complete payment to activate it.",
@@ -89,7 +104,9 @@ const createMembershipSubscription = asyncHandler(async (req, res) => {
     membershipPlanId,
     memberId: req.user?._id,
     startDate: new Date(),
-    endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    endDate: new Date(
+      Date.now() + membershipPlan.duration * 24 * 60 * 60 * 1000,
+    ),
     status: "pending",
   });
 
@@ -266,7 +283,8 @@ const renewMembershipSubscription = asyncHandler(async (req, res) => {
   const now = new Date();
 
   const startDate =
-    currentMembershipSubscription.endDate && currentMembershipSubscription.endDate > now
+    currentMembershipSubscription.endDate &&
+    currentMembershipSubscription.endDate > now
       ? new Date(currentMembershipSubscription.endDate)
       : now;
 
@@ -274,18 +292,23 @@ const renewMembershipSubscription = asyncHandler(async (req, res) => {
 
   endDate.setMonth(endDate.getMonth() + 1);
 
-  const updatedSubscriptionRecord = await MembershipSubscription.findOneAndUpdate({
-    memberId: req.user?._id,
-    status: "pending",
-  }, {
-    $set: {
-      membershipPlanId: membershipPlan._id,
-      startDate,
-      endDate
-    }
-  }, {
-    returnDocument: "after"
-  });
+  const updatedSubscriptionRecord =
+    await MembershipSubscription.findOneAndUpdate(
+      {
+        memberId: req.user?._id,
+        status: "pending",
+      },
+      {
+        $set: {
+          membershipPlanId: membershipPlan._id,
+          startDate,
+          endDate,
+        },
+      },
+      {
+        returnDocument: "after",
+      },
+    );
 
   return res
     .status(201)
@@ -305,5 +328,5 @@ export {
   getCurrentMembershipSubscription,
   getSubscriptionHistory,
   cancelMembershipSubscription,
-  renewMembershipSubscription
+  renewMembershipSubscription,
 };

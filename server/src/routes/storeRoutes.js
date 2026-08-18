@@ -21,10 +21,10 @@ import {
 
 const router = express.Router();
 
-router.route("/products").get(role("Member", "Trainer", "Admin"), getProducts);
+router.route("/products").get(getProducts);
 router
   .route("/products/:id")
-  .get(role("Member", "Trainer", "Admin"), getSingleProduct);
+  .get(getSingleProduct);
 
 router.route("/products/add").post(verifyJwt, role("Admin"), addProduct);
 router

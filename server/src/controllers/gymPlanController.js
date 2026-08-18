@@ -5,7 +5,10 @@ import GymPlan from "../models/gymPlans/gymPlanModel.js";
 import MemberPlan from "../models/gymPlans/memberPlanModel.js";
 import MembershipSubscription from "../models/membershipSubscriptionModel.js";
 import Session from "../models/gymPlans/sessionModel.js";
-import { validateAnswers, generateCustomPlan } from "../services/questionnaire.js";
+import {
+  validateAnswers,
+  generateCustomPlan,
+} from "../services/questionnaire.js";
 import QuestionnaireResponse from "../models/gymPlans/questionnaireResponseModel.js";
 import ProgressData from "../models/progressDataModel.js";
 import mongoose from "mongoose";
@@ -526,7 +529,7 @@ const getMemberTodaySession = asyncHandler(async (req, res) => {
       $gte: startOfDay,
       $lte: endOfDay,
     },
-  });
+  }).populate("trainerId", "fullName profilePicture");
 
   if (!session) {
     throw new ApiError(404, "Session not found");
@@ -550,7 +553,7 @@ const getTrainerTodaySessions = asyncHandler(async (req, res) => {
       $gte: startOfDay,
       $lte: endOfDay,
     },
-  });
+  }).populate("memberId", "fullName profilePicture");
 
   res
     .status(200)
@@ -618,6 +621,7 @@ const markSessionComplete = asyncHandler(async (req, res) => {
 
   try {
     session.status = "completed";
+    session.memberCompletedAt = new Date();
     await session.save({ validateBeforeSave: false });
 
     const nextUpcomingSession = await Session.findOne({
@@ -699,6 +703,37 @@ const markSessionComplete = asyncHandler(async (req, res) => {
 //     );
 // });
 
+const markSessionConductedByTrainer = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id || !mongoose.isValidObjectId(id)) {
+    throw new ApiError(400, "No or invalid session id");
+  }
+
+  const session = await Session.findById(id);
+
+  if (!session) {
+    throw new ApiError(404, "Session not found");
+  }
+
+  if (session.trainerId.toString() !== req.user?._id.toString()) {
+    throw new ApiError(403, "You are not authorized to update this session");
+  }
+
+  if (session.trainerCompletedAt) {
+    throw new ApiError(400, "You've already marked this session as conducted");
+  }
+
+  session.trainerCompletedAt = new Date();
+  await session.save();
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, session, "Session marked as conducted successfully"),
+    );
+});
+
 export {
   getAllPopularPlans,
   getPlanById,
@@ -713,4 +748,5 @@ export {
   getAllSessionsForPlan,
   getTrainerAllSessions,
   markSessionComplete,
+  markSessionConductedByTrainer,
 };

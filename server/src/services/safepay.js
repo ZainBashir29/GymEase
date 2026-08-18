@@ -1,60 +1,49 @@
 import Safepay from "@sfpy/node-core";
+// import axios from "axios";
 
 const safepay = Safepay(process.env.SAFEPAY_SECRET_KEY, {
   authType: "secret",
   host: "https://sandbox.api.getsafepay.com",
 });
 
-async function createPaymentSession(amount, type, paymentCauseId) {
+async function createPaymentSession(amount, paymentCauseId) {
   try {
-    const response = await safepay.payments.session.setup({
+    return await safepay.payments.session.setup({
       merchant_api_key: process.env.SAFEPAY_PUBLIC_KEY,
       intent: "CYBERSOURCE",
       mode: "payment",
       currency: "PKR",
-      amount: amount * 100,
-      metadata: {
-        type,
-        paymentCauseId,
-      },
+      amount: Math.round(Number(amount) * 100),
+      metadata: { order_id: paymentCauseId },
       include_fees: false,
     });
-
-    return response;
   } catch (error) {
-    console.error(error);
+    console.error("Could not create Safepay payment session:", error.message);
+    throw error;
   }
 }
 
 async function createAuthenticationToken() {
   try {
-    const response = await safepay.auth.passport.create();
-    return response;
+    return await safepay.client.passport.create();
   } catch (error) {
-    console.error(error);
+    console.error(
+      "Could not create Safepay authentication token:",
+      error.response?.data || error.message,
+    );
+    throw error;
   }
 }
 
-async function getCheckoutUrl(trackerToken, tbt) {
-  try {
-    const checkoutURL = await safepay.checkouts.payment.create({
-      // this the tracker.token from the payment session response
-      tracker: trackerToken,
-      // the authentication token
-      tbt: tbt,
-      // either production or sandbox
-      environment: "sandbox",
-      // attach a source, available options are: hosted, popup, mobile, woocommerce, and shopify
-      source: "hosted",
-      // the success URL to redirect your customer to after payment complete
-      redirect_url: `${process.env.CLIENT_URL}/payment/success`,
-      // the cancel URL to redirect your customer to after the customer cancels the checkout session
-      cancel_url: `${process.env.CLIENT_URL}/payment/cancel`,
-    });
-    return checkoutURL;
-  } catch (error) {
-    console.error(error);
-  }
+function getCheckoutUrl(trackerToken, tbt) {
+  return safepay.checkout.createCheckoutUrl({
+    env: "sandbox",
+    tracker: trackerToken,
+    tbt,
+    source: "hosted",
+    redirect_url: `${process.env.CLIENT_URL}/payment/success`,
+    cancel_url: `${process.env.CLIENT_URL}/payment/cancel`,
+  });
 }
 
 export { createPaymentSession, createAuthenticationToken, getCheckoutUrl };

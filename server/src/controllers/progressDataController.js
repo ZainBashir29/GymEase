@@ -161,7 +161,7 @@ const getTrainerProgress = asyncHandler(async (req, res) => {
   });
 
   const completedThisMonth = monthlySessions.filter(
-    (session) => session.status === "completed",
+    (session) => session.trainerCompletedAt !== null,
   ).length;
 
   const missedThisMonth = monthlySessions.filter(

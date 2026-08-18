@@ -5,20 +5,36 @@ const api = axios.create({
   withCredentials: true,
 });
 
+const AUTH_ENDPOINTS_NO_REFRESH = [
+  "/auth/login",
+  "/auth/register",
+  "/auth/current-user",
+  "/auth/refresh-token",
+  "/auth/logout",
+];
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    const isExemptEndpoint = AUTH_ENDPOINTS_NO_REFRESH.some((path) =>
+      originalRequest.url?.includes(path),
+    );
 
-    if (error.response?.status === 401 && !originalRequest.retry) {
-      originalRequest.retry = true;
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !isExemptEndpoint
+    ) {
+      originalRequest._retry = true;
 
       try {
-        const { data } = await axios.post(
+        await axios.post(
           `${import.meta.env.VITE_API_BASE_URL}/auth/refresh-token`,
           {},
           { withCredentials: true },
         );
+
         return api(originalRequest);
       } catch (refreshError) {
         window.location.href = "/login";

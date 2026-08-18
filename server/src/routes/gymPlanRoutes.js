@@ -13,15 +13,17 @@ import {
   getTrainerAllSessions,
   getTrainerTodaySessions,
   markSessionComplete,
+  markSessionConductedByTrainer,
 } from "../controllers/gymPlanController.js";
 import verifyJwt from "../middlewares/authMiddleware.js";
 import role from "../middlewares/roleMiddleware.js";
+import requireActiveMembership from "../middlewares/requireActiveMembershipMiddleware.js";
 
 const router = Router();
 
-router.route("/").get(role("Member", "Trainer", "Admin"), getAllPopularPlans);
+router.route("/").get(getAllPopularPlans);
 
-router.route("/:id").get(role("Member", "Trainer", "Admin"), getPlanById);
+router.route("/:id").get(getPlanById);
 
 router
   .route("/activate/:id")
@@ -60,7 +62,16 @@ router
   .get(verifyJwt, role("Trainer"), getTrainerAllSessions);
 
 router
-  .route("/sessions/:id/complete")
-  .post(verifyJwt, role("Member", "Trainer"), markSessionComplete);
+  .route("/sessions/mark-completed/:id")
+  .post(
+    verifyJwt,
+    role("Member", "Trainer"),
+    requireActiveMembership,
+    markSessionComplete,
+  );
+
+router
+  .route("/sessions/mark-conducted/:id")
+  .post(verifyJwt, role("Trainer"), markSessionConductedByTrainer);
 
 export default router;

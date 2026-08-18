@@ -12,7 +12,7 @@ const router = Router();
 router.route("/initiate").post(verifyJwt, role("Member"), createCheckoutUrl);
 
 router
-  .route("/verify/:trackerToken")
+  .route("/verify/:tracker")
   .post(verifyJwt, role("Member"), verifyPaymentStatus);
 
 router

@@ -19,7 +19,7 @@ router
 
 router
   .route("/plan/:id")
-  .get(role("Member", "Trainer", "Admin"), getMembershipPlanById);
+  .get(getMembershipPlanById);
 
 router
   .route("/create")

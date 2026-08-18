@@ -1,6 +1,7 @@
 import express from "express";
 import verifyJwt from "../middlewares/authMiddleware.js";
 import role from "../middlewares/roleMiddleware.js";
+import requireActiveMembership from "../middlewares/requireActiveMembershipMiddleware.js";
 import {
   markAttendance,
   getMyAttendance,
@@ -9,7 +10,7 @@ import {
 
 const router = express.Router();
 
-router.use(verifyJwt, role("Member", "Trainer"));
+router.use(verifyJwt, role("Member", "Trainer"), requireActiveMembership);
 
 router.route("/mark").post(markAttendance);
 

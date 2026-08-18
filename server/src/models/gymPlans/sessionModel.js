@@ -42,6 +42,14 @@ const sessionSchema = new mongoose.Schema(
       required: true,
       enum: ["completed", "missed", "upcoming"],
     },
+    memberCompletedAt: {
+      type: Date,
+      default: null,
+    },
+    trainerCompletedAt: {
+      type: Date,
+      default: null,
+    }
   },
   {
     timestamps: true,

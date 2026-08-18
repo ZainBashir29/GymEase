@@ -7,6 +7,7 @@ import {
   getCheckoutUrl,
 } from "../services/safepay.js";
 import Payment from "../models/paymentModel.js";
+import MembershipPlan from "../models/membershipPlanModel.js";
 import Safepay from "@sfpy/node-core";
 import MembershipSubscription from "../models/membershipSubscriptionModel.js";
 import {
@@ -27,19 +28,38 @@ const createCheckoutUrl = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Payment type is required");
   }
 
+  if (!["MembershipSubscription", "StoreOrder"].includes(type)) {
+    throw new ApiError(400, "Invalid payment type");
+  }
+
   if (!paymentCauseId) {
     throw new ApiError(400, "Id of cause of payment is required");
   }
 
-  if (!amount) {
+  if (type === "StoreOrder" && !amount) {
     throw new ApiError(400, "Payment amount is required");
   }
 
-  if (Number(amount) <= 0) {
+  let chargeAmount = Number(amount);
+
+  if (type === "StoreOrder" && chargeAmount <= 0) {
     throw new ApiError(400, "Invalid payment amount");
   }
 
-  const session = await createPaymentSession(amount, type, paymentCauseId);
+  if (type === "MembershipSubscription") {
+    const membershipPlan = await MembershipPlan.findById(paymentCauseId);
+
+    if (!membershipPlan || !membershipPlan.isActive) {
+      throw new ApiError(404, "Invalid or inactive membership plan");
+    }
+
+    chargeAmount = membershipPlan.price;
+  }
+
+  const session = await createPaymentSession(
+    chargeAmount,
+    String(paymentCauseId),
+  );
 
   if (!session) {
     throw new ApiError(500, "Could not create payment session");
@@ -49,7 +69,7 @@ const createCheckoutUrl = asyncHandler(async (req, res) => {
 
   const authToken = await createAuthenticationToken();
 
-  if (!authToken) {
+  if (!authToken?.data) {
     throw new ApiError(
       500,
       "Could not create authentication token for payment",
@@ -68,7 +88,7 @@ const createCheckoutUrl = asyncHandler(async (req, res) => {
     memberId: req.user?._id,
     type,
     paymentCauseId,
-    amount,
+    amount: chargeAmount,
     status: "pending",
     trackerToken,
   });
@@ -90,27 +110,30 @@ const createCheckoutUrl = asyncHandler(async (req, res) => {
 });
 
 const verifyPaymentStatus = asyncHandler(async (req, res) => {
-  const { trackerToken } = req.body;
+  const { tracker } = req.params;
 
-  if (!trackerToken) {
+  if (!tracker) {
     throw new ApiError(400, "Tracker token is required");
   }
 
-  const response = await safepay.reporter.payments.fetch(trackerToken);
+  const paymentRecord = await Payment.findOne({
+    trackerToken: tracker,
+    memberId: req.user?._id,
+  });
+
+  if (!paymentRecord) {
+    throw new ApiError(404, "Payment record not found");
+  }
+
+  const response = await safepay.reporter.payments.fetch(tracker);
 
   if (!response) {
     throw new ApiError(500, "Could not fetch payment status");
   }
 
-  const status = response.data?.tracker?.state;
+  const status = response.data?.state;
 
   if (status !== "TRACKER_ENDED") {
-    const paymentRecord = await Payment.findOne({ trackerToken });
-
-    if (!paymentRecord) {
-      throw new ApiError(404, "Payment record not found");
-    }
-
     return res
       .status(200)
       .json(
@@ -122,22 +145,10 @@ const verifyPaymentStatus = asyncHandler(async (req, res) => {
       );
   }
 
-  const updatedPaymentStatus = await Payment.findOneAndUpdate(
-    {
-      trackerToken,
-    },
-    {
-      $set: {
-        status: "successful",
-      },
-    },
-    {
-      returnDocument: "after",
-    },
-  );
+  const updatedPaymentStatus = await handleSuccessfulPayment(tracker);
 
   if (!updatedPaymentStatus) {
-    throw new ApiError(500, "Could not update payment status in db");
+    throw new ApiError(500, "Could not process successful payment");
   }
 
   res
