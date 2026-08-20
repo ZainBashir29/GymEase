@@ -1,11 +1,16 @@
 import { useState, useEffect } from "react";
 import { Check, Loader2 } from "lucide-react";
 import api from "../lib/axios.js";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const Memberships = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [purchasingPlanId, setPurchasingPlanId] = useState(null);
   useEffect(() => {
     const fetchPlans = async () => {
       try {
@@ -22,6 +27,36 @@ const Memberships = () => {
     };
     fetchPlans();
   }, []);
+
+  const handleGetStarted = async (planId) => {
+    if (!user) {
+      navigate("/register", { state: { redirectTo: "/pricing" } });
+      return;
+    }
+
+    setError("");
+    setPurchasingPlanId(planId);
+
+    try {
+
+      await api.post("/memberships/create", { membershipPlanId: planId });
+
+      const { data } = await api.post("/payments/initiate", {
+        type: "MembershipSubscription",
+        paymentCauseId: String(planId),
+        amount: plans.find((p) => p._id === planId)?.price,
+      });
+
+      window.location.href = data.data.checkoutUrl;
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+          "Couldn't start checkout. Please try again.",
+      );
+      setPurchasingPlanId(null);
+    }
+  };
+
   return (
     <div className="bg-slate-50 min-h-screen py-16 sm:py-24">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -48,7 +83,7 @@ const Memberships = () => {
               <div
                 key={plan._id}
                 className={`rounded-3xl p-8 ring-1 sm:p-10 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col ${
-                  planIdx === 1 
+                  planIdx === 1
                     ? "bg-brand-900 ring-brand-900 text-white shadow-2xl scale-105 z-10"
                     : "bg-white ring-slate-200 shadow-md hover:ring-brand-200"
                 }`}
@@ -110,14 +145,21 @@ const Memberships = () => {
                   ))}
                 </ul>
                 <button
+                  onClick={() => handleGetStarted(plan._id)}
+                  disabled={purchasingPlanId === plan._id}
                   aria-describedby={plan._id}
-                  className={`mt-8 block w-full rounded-md px-3 py-3 text-center text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 transition-colors cursor-pointer ${
+                  className={`mt-8 flex w-full items-center justify-center gap-2 rounded-md px-3 py-3 text-center text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 ${
                     planIdx === 1
                       ? "bg-brand-500 text-white hover:bg-brand-400 focus-visible:outline-brand-500"
                       : "bg-brand-600 text-white hover:bg-brand-700 focus-visible:outline-brand-600"
                   }`}
                 >
-                  Get started
+                  {purchasingPlanId === plan._id && (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  )}
+                  {purchasingPlanId === plan._id
+                    ? "Redirecting..."
+                    : "Get started"}
                 </button>
               </div>
             ))}
