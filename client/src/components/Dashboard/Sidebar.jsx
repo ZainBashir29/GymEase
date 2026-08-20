@@ -1,24 +1,14 @@
 import { NavLink } from "react-router-dom";
-import {
-  LayoutDashboard,
-  Dumbbell,
-  CreditCard,
-  ShoppingBag,
-  MessageCircle,
-  LogOut,
-} from "lucide-react";
+import { Dumbbell, LogOut } from "lucide-react";
 import { useAuth } from "../../context/AuthContext.jsx";
 
-const NAV_ITEMS = [
-  { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard },
-  { label: "My Plan", to: "/dashboard/plan", icon: Dumbbell },
-  { label: "Membership", to: "/dashboard/membership", icon: CreditCard },
-  { label: "Store", to: "/dashboard/store", icon: ShoppingBag },
-  { label: "Messages", to: "/dashboard/chat", icon: MessageCircle },
-];
-
-const Sidebar = () => {
+const Sidebar = ({ navItems }) => {
   const { user, logout } = useAuth();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login", { replace: true });
+  };
 
   return (
     <aside className="flex h-screen w-64 flex-col border-r border-slate-200 bg-white">
@@ -30,11 +20,11 @@ const Sidebar = () => {
       </div>
 
       <nav className="flex-1 space-y-1 px-3 py-4">
-        {NAV_ITEMS.map(({ label, to, icon: Icon }) => (
+        {navItems.map(({ label, to, icon: Icon, end }) => (
           <NavLink
             key={to}
             to={to}
-            end={to === "/member/dashboard"}
+            end={end}
             className={({ isActive }) =>
               `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                 isActive
@@ -62,7 +52,7 @@ const Sidebar = () => {
           </div>
         </div>
         <button
-          onClick={logout}
+          onClick={handleLogout}
           className="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-danger"
         >
           <LogOut className="h-4.5 w-4.5" strokeWidth={2} />
