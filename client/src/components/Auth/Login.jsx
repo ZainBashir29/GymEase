@@ -5,9 +5,11 @@ import api from "../../lib/axios.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 import AuthLayout from "./AuthLayout.jsx";
 import FormInput from "./FormInput.jsx";
+import { useLocation } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
 
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -28,10 +30,16 @@ const Login = () => {
 
       login(data.data.user);
 
-      const role = data.data.user.role;
-      if (role === "Admin") navigate("/admin/dashboard");
-      else if (role === "Trainer") navigate("/trainer/dashboard");
-      else navigate("/member/dashboard");
+      const redirectTo = location.state?.redirectTo;
+
+      if (redirectTo) {
+        navigate(redirectTo);
+      } else {
+        const role = data.data.user.role;
+        if (role === "Admin") navigate("/admin/dashboard");
+        else if (role === "Trainer") navigate("/trainer/dashboard");
+        else navigate("/member/dashboard");
+      }
     } catch (err) {
       setError(
         err.response?.data?.message ||

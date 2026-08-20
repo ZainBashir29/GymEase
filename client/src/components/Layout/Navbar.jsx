@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Dumbbell } from "lucide-react";
+import { Dumbbell, ShoppingCart } from "lucide-react";
 import { useAuth } from "../../context/AuthContext.jsx";
+import { useCart } from "../../context/CartContext.jsx";
 
 const NAV_LINKS = [
   { label: "Home", to: "/" },
@@ -11,11 +12,12 @@ const NAV_LINKS = [
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const { itemCount, toggleCart } = useCart();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     await logout();
-    navigate("/");
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -45,9 +47,32 @@ const Navbar = () => {
         <div className="flex items-center gap-3">
           {user ? (
             <>
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700">
+              {user.role === "Member" && (
+                <button
+                  onClick={toggleCart}
+                  className="relative flex h-10 w-10 items-center justify-center rounded-full text-slate-600 hover:bg-slate-100 transition-colors"
+                >
+                  <ShoppingCart className="h-5 w-5" />
+                  {itemCount > 0 && (
+                    <span className="absolute right-0 top-0 flex h-4 w-4 items-center justify-center rounded-full bg-brand-600 text-[10px] font-bold text-white">
+                      {itemCount}
+                    </span>
+                  )}
+                </button>
+              )}
+              <Link
+                to={
+                  user.role === "Trainer"
+                    ? "/trainer/dashboard"
+                    : user.role === "Admin"
+                      ? "/admin/dashboard"
+                      : "/member/dashboard"
+                }
+                title="Go to Dashboard"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700 hover:bg-brand-200 transition-colors"
+              >
                 {user?.fullName?.charAt(0).toUpperCase()}
-              </div>
+              </Link>
               <button
                 onClick={handleLogout}
                 className="rounded-lg bg-red-200 px-4 py-2 text-sm font-semibold text-danger transition-colors hover:bg-red-300"

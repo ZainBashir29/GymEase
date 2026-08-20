@@ -98,10 +98,12 @@ const Register = () => {
             started.
           </p>
           <button
-            onClick={() => navigate("/login")}
+            onClick={() =>
+              navigate("/login", { state: { redirectTo: "/pricing" } })
+            }
             className="mt-6 w-full rounded-lg bg-brand-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
           >
-            Go to login
+            Log in to continue
           </button>
         </div>
       </AuthLayout>
