@@ -8,25 +8,41 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    console.log("[AuthContext] effect fired — checking /current-user");
+    let isMounted = true;
+
     const checkAuth = async () => {
       try {
         const { data } = await api.get("/auth/current-user");
-        setUser(data.data);
-      } catch {
-        setUser(null);
+        if (isMounted) {
+          console.log("[AuthContext] /auth/current-user resolved:", data.data);
+          setUser(data.data);
+        }
+      } catch (err) {
+        if (isMounted) {
+          console.log(
+            "[AuthContext] /auth/current-user failed:",
+            err.response?.status,
+          );
+          setUser(null);
+        }
       } finally {
-        setIsLoading(false);
+        if (isMounted) setIsLoading(false);
       }
     };
 
     checkAuth();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const login = (userData) => setUser(userData);
 
   const logout = async () => {
     try {
-      await api.post("/logout");
+      await api.post("/auth/logout");
     } finally {
       setUser(null);
     }
