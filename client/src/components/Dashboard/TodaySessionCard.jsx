@@ -11,7 +11,7 @@ const TodaySessionCard = () => {
     const fetchTodaySession = async () => {
       try {
         setIsLoading(true);
-        const { data } = await api.get("/sessions/today");
+        const { data } = await api.get("/gym-plans/sessions/member/today");
         setSession(data.data);
       } catch (err) {
         if (err.response?.status === 404) {

@@ -65,7 +65,11 @@ const ProgressCard = () => {
         <p className="mt-4 text-sm text-slate-600">{progress.message}</p>
 
         <div className="mt-5 grid grid-cols-2 gap-4">
-          <StatBlock label="Visits this month" value={progress.visitsThisMonth} accent />
+          <StatBlock
+            label="Visits this month"
+            value={progress.visitsThisMonth}
+            accent
+          />
           <StatBlock
             label="Last visit"
             value={
@@ -80,7 +84,7 @@ const ProgressCard = () => {
         </div>
 
         <Link
-          to="/dashboard/plan"
+          to="/member/plans"
           className="mt-5 inline-block text-sm font-semibold text-brand-600 hover:text-brand-700"
         >
           Select a gym plan for detailed tracking →
@@ -119,7 +123,11 @@ const ProgressCard = () => {
       </div>
 
       <div className="mt-6 grid grid-cols-3 gap-4">
-        <StatBlock label="Completed" value={progress.completedSessions} accent />
+        <StatBlock
+          label="Completed"
+          value={progress.completedSessions}
+          accent
+        />
         <StatBlock label="Missed" value={progress.missedSessions} />
         <StatBlock label="Upcoming" value={progress.upcomingSessions} />
       </div>
