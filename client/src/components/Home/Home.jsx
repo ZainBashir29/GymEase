@@ -1,5 +1,3 @@
-import Navbar from "../Layout/Navbar.jsx";
-import Footer from "../Layout/Footer.jsx";
 import Hero from "./Hero.jsx";
 import Services from "./Services.jsx";
 import CtaBanner from "./CtaBanner.jsx";

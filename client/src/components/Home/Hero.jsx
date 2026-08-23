@@ -12,10 +12,11 @@ const Hero = () => {
     <section className="relative overflow-hidden bg-white">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[600px] w-[900px] -translate-x-1/2 rounded-full bg-brand-100/60 blur-3xl"
+        className="pointer-events-none absolute left-1/2 top-0 h-150 w-225 -translate-x-1/2 rounded-full bg-brand-400/40 blur-3xl"
       />
 
-      <div className="mx-auto max-w-7xl px-6 py-24 text-center sm:py-32">
+      {/* Hero Content (relative ensures z-10 works properly above the glow) */}
+      <div className="relative z-10 mx-auto max-w-7xl px-6 py-24 text-center sm:py-32">
         <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-4 py-1.5 text-sm font-medium text-brand-700">
           <span className="h-1.5 w-1.5 rounded-full bg-brand-600" />
           Everything your gym needs, one place

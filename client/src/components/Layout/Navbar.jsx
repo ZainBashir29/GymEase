@@ -71,7 +71,9 @@ const Navbar = () => {
                 title="Go to Dashboard"
                 className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700 hover:bg-brand-200 transition-colors"
               >
-                {user?.fullName?.charAt(0).toUpperCase()}
+                {user.profilePictue
+                  ? user.profilePicture
+                  : user?.fullName?.charAt(0).toUpperCase()}
               </Link>
               <button
                 onClick={handleLogout}
