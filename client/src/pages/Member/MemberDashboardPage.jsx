@@ -3,8 +3,9 @@ import {
   Dumbbell,
   CreditCard,
   ShoppingBag,
-  MessageCircle,
+  // MessageCircle
   Package,
+  Settings,
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import DashboardLayout from "../../components/Dashboard/DashboardLayout.jsx";
@@ -22,10 +23,10 @@ const MEMBER_NAV_ITEMS = [
     end: true,
   },
   { label: "Gym Plans", to: "/member/plans", icon: Dumbbell },
-  { label: "Membership", to: "/member/dashboard/membership", icon: CreditCard },
+  { label: "Membership", to: "/member/membership", icon: CreditCard },
   { label: "Store", to: "/store", icon: ShoppingBag },
   { label: "Orders", to: "/member/orders", icon: Package },
-  { label: "Messages", to: "/member/dashboard/chat", icon: MessageCircle },
+  { label: "Settings", to: "/member/settings", icon: Settings },
 ];
 
 const MemberDashboard = () => {

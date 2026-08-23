@@ -53,7 +53,10 @@ const MembershipCard = () => {
   if (!membership) {
     return (
       <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-6 text-center">
-        <CreditCard className="mx-auto h-7 w-7 text-slate-400" strokeWidth={1.5} />
+        <CreditCard
+          className="mx-auto h-7 w-7 text-slate-400"
+          strokeWidth={1.5}
+        />
         <p className="mt-3 text-sm font-medium text-slate-600">
           No active membership
         </p>
@@ -68,7 +71,7 @@ const MembershipCard = () => {
   }
 
   const daysRemaining = Math.ceil(
-    (new Date(membership.endDate) - new Date()) / (1000 * 60 * 60 * 24)
+    (new Date(membership.endDate) - new Date()) / (1000 * 60 * 60 * 24),
   );
   const isExpiringSoon = daysRemaining <= 3 && daysRemaining >= 0;
 
@@ -83,7 +86,7 @@ const MembershipCard = () => {
             Membership
           </p>
           <h3 className="text-base font-bold text-slate-900">
-            {membership.membershipId?.name || "Active Plan"}
+            {membership.membershipPlanId?.name || "Active Plan"}
           </h3>
         </div>
       </div>
@@ -104,6 +107,14 @@ const MembershipCard = () => {
           </span>
         </div>
       )}
+      <div className="mt-4 flex justify-end">
+        <Link
+          to="/member/membership"
+          className="text-sm font-semibold text-brand-600 hover:text-brand-700"
+        >
+          Manage Membership →
+        </Link>
+      </div>
     </div>
   );
 };
