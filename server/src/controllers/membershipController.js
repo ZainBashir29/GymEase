@@ -152,9 +152,20 @@ const getCurrentMembershipSubscription = asyncHandler(async (req, res) => {
       },
     },
     {
+      $lookup: {
+        from: "membershipplans",
+        localField: "membershipPlanId",
+        foreignField: "_id",
+        as: "membershipPlanId",
+      },
+    },
+    {
       $addFields: {
         member: {
           $first: "$member",
+        },
+        membershipPlanId: {
+          $first: "$membershipPlanId",
         },
       },
     },
@@ -176,7 +187,7 @@ const getCurrentMembershipSubscription = asyncHandler(async (req, res) => {
 });
 
 const getSubscriptionHistory = asyncHandler(async (req, res) => {
-  const subscriptions = await MemberSubscription.aggregate([
+  const subscriptions = await MembershipSubscription.aggregate([
     {
       $match: {
         memberId: new mongoose.Types.ObjectId(req.user?._id),
@@ -206,9 +217,20 @@ const getSubscriptionHistory = asyncHandler(async (req, res) => {
       },
     },
     {
+      $lookup: {
+        from: "membershipplans",
+        localField: "membershipPlanId",
+        foreignField: "_id",
+        as: "membershipPlanId",
+      },
+    },
+    {
       $addFields: {
         member: {
           $first: "$member",
+        },
+        membershipPlanId: {
+          $first: "$membershipPlanId",
         },
       },
     },

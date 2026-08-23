@@ -76,6 +76,7 @@ const getMemberProgress = asyncHandler(async (req, res) => {
       new ApiResponse(
         200,
         {
+          hasActivePlan: true,
           memberPlanId: activePlan._id,
           remainingDays: progressData.remainingDays,
           totalSessions,
@@ -91,6 +92,8 @@ const getMemberProgress = asyncHandler(async (req, res) => {
         "Member progress fetched successfully",
       ),
     );
+
+    return;
   }
 
   const subscription = await MembershipSubscription.findOne({
