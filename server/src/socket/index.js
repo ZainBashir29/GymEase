@@ -15,7 +15,16 @@ const initializeSocket = (httpServer) => {
 
   io.use(async (socket, next) => {
     try {
-      const token = socket.handshake.auth?.token;
+       let token = socket.handshake.auth?.token;
+      
+      if (!token && socket.handshake.headers.cookie) {
+        const cookies = socket.handshake.headers.cookie.split(';').reduce((acc, cookie) => {
+          const [name, ...rest] = cookie.split('=');
+          acc[name.trim()] = rest.join('=').trim();
+          return acc;
+        }, {});
+        token = cookies.accessToken;
+      }
 
       if (!token) {
         return next(new Error("Authentication token missing"));

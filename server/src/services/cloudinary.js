@@ -19,7 +19,13 @@ async function uploadOnCloudinary(localFilePath) {
         fs.unlinkSync(localFilePath);
         return response;
     } catch (error) {
-        fs.unlinkSync(localFilePath);
+         try {
+            if (fs.existsSync(localFilePath)) {
+                fs.unlinkSync(localFilePath);
+            }
+        } catch (e) {
+            console.error("Could not delete local file", e);
+        }
         throw new ApiError(500, "Could not upload file on cloudinary");
     }
 }

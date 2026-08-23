@@ -242,7 +242,7 @@ const generateCustomPlan = (answers) => {
 
   const duration = parseInt(daysPerWeek) * 4;
 
-  const templatePool = session_templates.focusArea.goal;
+  const templatePool = session_templates[focusArea][goal];
 
   const sessions = [];
 

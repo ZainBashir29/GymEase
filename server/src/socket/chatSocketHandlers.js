@@ -19,12 +19,14 @@ const registerChatHandlers = (io, socket, onlineUsers) => {
         });
       }
 
-      const message = await createMessage({
+      const messageDoc = await createMessage({
         conversationId,
         senderId: socket.user?._id,
         receiverId,
         messageText,
       });
+
+      const message = messageDoc.toJSON ? messageDoc.toJSON : messageDoc;
 
       callback?.({ success: true, message });
 
