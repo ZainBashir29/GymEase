@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import api from "../lib/axios";
+import api from "../lib/axios.js";
 
 const AuthContext = createContext(null);
 
@@ -8,22 +8,16 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    console.log("[AuthContext] effect fired — checking /current-user");
     let isMounted = true;
 
     const checkAuth = async () => {
       try {
         const { data } = await api.get("/auth/current-user");
         if (isMounted) {
-          console.log("[AuthContext] /auth/current-user resolved:", data.data);
           setUser(data.data);
         }
       } catch (err) {
         if (isMounted) {
-          console.log(
-            "[AuthContext] /auth/current-user failed:",
-            err.response?.status,
-          );
           setUser(null);
         }
       } finally {
