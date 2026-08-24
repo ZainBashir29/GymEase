@@ -7,6 +7,9 @@ import Trainer from "../models/trainerModel.js";
 import Session from "../models/gymPlans/sessionModel.js";
 import MembershipSubscription from "../models/membershipSubscriptionModel.js";
 import MemberPlan from "../models/gymPlans/memberPlanModel.js";
+import MembershipPlan from "../models/membershipPlanModel.js";
+import GymPlan from "../models/gymPlans/gymPlanModel.js";
+import Payment from "../models/paymentModel.js";
 import {
   uploadOnCloudinary,
   deleteFromCloudinary,
@@ -660,12 +663,80 @@ const deleteMembershipPlan = asyncHandler(async (req, res) => {
     );
 });
 
+const addTrainer = asyncHandler(async (req, res) => {
+  const { fullName, username, email, password, expertise } = req.body;
+
+  if (!fullName || !username || !email || !password || !expertise) {
+    throw new ApiError(400, "All fields are required");
+  }
+
+  const existingTrainer = await Trainer.findOne({
+    $or: [{ username }, { email }],
+  });
+
+  if (existingTrainer) {
+    throw new ApiError(
+      409,
+      "Trainer with this email or username already exists",
+    );
+  }
+
+  const trainer = await Trainer.create({
+    fullName,
+    username,
+    email,
+    password,
+    expertise,
+    isActive: true,
+  });
+
+  const createdTrainer = await Trainer.findById(trainer._id).select(
+    "-password -refreshToken -isProfileCompleted -resetPasswordToken -resetPasswordExpiry",
+  );
+
+  res
+    .status(201)
+    .json(new ApiResponse(201, createdTrainer, "Trainer added successfully"));
+});
+
+const addMembershipPlan = asyncHandler(async (req, res) => {
+  const { name, price, details, duration, maxTrainers } = req.body;
+
+  if (!name || !price || !details || !duration) {
+    throw new ApiError(400, "Name, price, details and duration are required");
+  }
+
+  if (price <= 0) {
+    throw new ApiError(400, "Price must be greater than 0");
+  }
+
+  const membershipPlan = await MembershipPlan.create({
+    name,
+    price,
+    details,
+    duration,
+    maxTrainers: maxTrainers || 1,
+    isActive: true,
+  });
+
+  res
+    .status(201)
+    .json(
+      new ApiResponse(
+        201,
+        membershipPlan,
+        "Membership plan added successfully",
+      ),
+    );
+});
+
 export {
   getAllMembers,
   getMemberById,
   deleteMember,
   getAllTrainers,
   getTrainerById,
+  addTrainer,
   updateTrainer,
   deleteTrainer,
   getTrainerPerformance,
@@ -674,6 +745,7 @@ export {
   addGymPlan,
   updateGymPlan,
   deleteGymPlan,
+  addMembershipPlan,
   updateMembershipPlan,
   deleteMembershipPlan,
 };

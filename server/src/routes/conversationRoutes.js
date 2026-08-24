@@ -5,6 +5,7 @@ import requireActiveMembership from "../middlewares/requireActiveMembershipMiddl
 import {
   createConversation,
   getMyConversations,
+  getPotentialContacts,
 } from "../controllers/conversationController.js";
 
 const router = Router();
@@ -26,5 +27,9 @@ router
     requireActiveMembership,
     getMyConversations,
   );
+
+router
+  .route("/contacts")
+  .get(verifyJwt, role("Member", "Trainer", "Admin"), getPotentialContacts);
 
 export default router;

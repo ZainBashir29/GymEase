@@ -2,6 +2,8 @@ import Conversation from "../models/conversationModel.js";
 import User from "../models/userModel.js";
 import Member from "../models/memberModel.js";
 import Trainer from "../models/trainerModel.js";
+import Session from "../models/gymPlans/sessionModel.js";
+import Message from "../models/messageModel.js";
 import mongoose from "mongoose";
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
@@ -77,7 +79,7 @@ const createConversation = asyncHandler(async (req, res) => {
     participants: {
       $all: [req.user._id, receiverId],
     },
-  });
+  }).populate("participants", "fullName email role profilePicture");
 
   if (conversation) {
     return res
@@ -89,6 +91,11 @@ const createConversation = asyncHandler(async (req, res) => {
     participants: [req.user._id, receiverId],
   });
 
+  await conversation.populate(
+    "participants",
+    "fullName email role profilePicture",
+  );
+
   return res
     .status(201)
     .json(
@@ -97,13 +104,25 @@ const createConversation = asyncHandler(async (req, res) => {
 });
 
 const getMyConversations = asyncHandler(async (req, res) => {
-  const conversations = await Conversation.find({
+  let conversations = await Conversation.find({
     participants: req.user._id,
   })
     .populate("participants", "fullName email role profilePicture")
     .sort({
       updatedAt: -1,
-    });
+       })
+    .lean();
+
+  conversations = await Promise.all(
+    conversations.map(async (conv) => {
+      const unreadCount = await Message.countDocuments({
+        conversationId: conv._id,
+        receiverId: req.user._id,
+        isRead: false,
+      });
+      return { ...conv, unreadCount };
+    })
+  );
 
   return res
     .status(200)
@@ -112,4 +131,60 @@ const getMyConversations = asyncHandler(async (req, res) => {
     );
 });
 
-export { createConversation, getMyConversations };
+const getPotentialContacts = asyncHandler(async (req, res) => {
+  const user = req.user;
+  let validContacts = [];
+
+  const admins = await User.find({
+    role: "Admin",
+    _id: { $ne: user?._id },
+  }).select("fullName email role profilePicture");
+
+  validContacts = [...admins];
+
+  if (user.role === "Member") {
+    const sessions = await Session.find({ memberId: user._id }).populate(
+      "trainerId",
+      "fullName email role profilePicture",
+    );
+
+    const trainers = sessions.map((s) => s.trainerId).filter((t) => t);
+
+    const uniqueTrainers = Array.from(
+      new Map(trainers.map((t) => [t._id.toString(), t])).values(),
+    );
+
+    validContacts = [...validContacts, ...uniqueTrainers];
+  } else if (user.role === "Trainer") {
+    const sessions = await Session.find({ trainerId: user._id }).populate(
+      "memberId",
+      "fullName email role profilePicture",
+    );
+
+    const members = sessions.map((s) => s.memberId).filter((m) => m);
+
+    const uniqueMembers = Array.from(
+      new Map(members.map((m) => [m._id.toString(), m])).values(),
+    );
+
+    validContacts = [...validContacts, ...uniqueMembers];
+  } else if (user.role === "Admin") {
+    const everyoneElse = await User.find({ _id: { $ne: user?._id } }).select(
+      "fullName email role profilePicture",
+    );
+
+    validContacts = [...everyoneElse];
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        validContacts,
+        "Potential contacts fetched successfully",
+      ),
+    );
+});
+
+export { createConversation, getMyConversations, getPotentialContacts };

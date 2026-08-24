@@ -117,11 +117,11 @@ const activatePopularPlan = asyncHandler(async (req, res) => {
   const allowedTrainers = gymPlan.trainerIds.slice(0, maxTrainers);
 
   const validTrainers = await Trainer.find({
-    _id: { $in: trainerIds },
+    _id: { $in: allowedTrainers },
     isActive: true,
   });
 
-  if (validTrainers.length !== trainerIds.length) {
+  if (validTrainers.length !== allowedTrainers.length) {
     throw new ApiError(
       400,
       "One or more trainerIds do not match an active trainer",
@@ -341,7 +341,7 @@ const activateCustomPlan = asyncHandler(async (req, res) => {
   const subscription = await MembershipSubscription.findOne({
     memberId: req.user?._id,
     status: "active",
-  }).populate("membershipId");
+  }).populate("membershipPlanId");
 
   if (!subscription) {
     throw new ApiError(
@@ -350,7 +350,7 @@ const activateCustomPlan = asyncHandler(async (req, res) => {
     );
   }
 
-  const maxTrainers = subscription.membershipId.maxTrainers;
+  const maxTrainers = subscription.membershipPlanId.maxTrainers;
 
   const trainers = await Trainer.find({}).select("_id");
 
@@ -361,7 +361,7 @@ const activateCustomPlan = asyncHandler(async (req, res) => {
     );
   }
 
-  const allTrainerIds = trainers.map((trainer) => t._id);
+  const allTrainerIds = trainers.map((trainer) => trainer._id);
 
   const allowedTrainers = allTrainerIds.slice(0, maxTrainers);
 
@@ -383,7 +383,7 @@ const activateCustomPlan = asyncHandler(async (req, res) => {
   session.startTransaction();
 
   try {
-    const [questionnaireResponse] = await QuestionnaireResponses.create(
+    const [questionnaireResponse] = await QuestionnaireResponse.create(
       [{ memberId: req.user?._id, answers }],
       { session },
     );

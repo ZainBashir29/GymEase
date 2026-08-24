@@ -1,13 +1,14 @@
 import { Router } from "express";
 import verifyJwt from "../middlewares/authMiddleware.js";
 import role from "../middlewares/roleMiddleware.js";
-import upload from "../middlewares/multerMIddleware.js";
+import upload from "../middlewares/multerMiddleware.js";
 import {
   getAllMembers,
   getMemberById,
   deleteMember,
   getAllTrainers,
   getTrainerById,
+  addTrainer,
   updateTrainer,
   deleteTrainer,
   getTrainerPerformance,
@@ -16,6 +17,7 @@ import {
   addGymPlan,
   updateGymPlan,
   deleteGymPlan,
+  addMembershipPlan,
   updateMembershipPlan,
   deleteMembershipPlan,
 } from "../controllers/adminController.js";
@@ -34,6 +36,8 @@ router.route("/trainers").get(getAllTrainers);
 
 router.route("/trainers/:id").get(getTrainerById);
 
+router.route("/trainers/add").post(addTrainer);
+
 router
   .route("/trainers/update/:id")
   .patch(upload.single("profilePicture"), updateTrainer);
@@ -51,6 +55,8 @@ router.route("/add-gym-plan").post(addGymPlan);
 router.route("/update-gym-plan/:id").patch(updateGymPlan);
 
 router.route("/delete-gym-plan/:id").delete(deleteGymPlan);
+
+router.route("/add-membership-plan").post(addMembershipPlan);
 
 router.route("/update-membership-plan/:id").patch(updateMembershipPlan);
 
