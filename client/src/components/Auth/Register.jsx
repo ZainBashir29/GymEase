@@ -24,10 +24,16 @@ const Register = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
+  const [profilePicture, setProfilePicture] = useState(null);
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     setFieldErrors((prev) => ({ ...prev, [e.target.name]: "" }));
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) setProfilePicture(file);
   };
 
   const validate = () => {
@@ -66,12 +72,18 @@ const Register = () => {
     setIsSubmitting(true);
 
     try {
-      const { confirmPassword, ...payload } = formData;
+      const payload = new FormData();
+      payload.append("fullName", formData.fullName);
+      payload.append("username", formData.username);
+      payload.append("email", formData.email);
+      payload.append("age", Number(formData.age));
+      payload.append("password", formData.password);
 
-      await api.post("/auth/member/register", {
-        ...payload,
-        age: Number(payload.age),
-      });
+      if (profilePicture) {
+        payload.append("profilePicture", profilePicture);
+      }
+
+      await api.post("/auth/member/register", payload);
       setIsSuccess(true);
     } catch (err) {
       setServerError(
@@ -166,6 +178,18 @@ const Register = () => {
           onChange={handleChange}
           error={fieldErrors.age}
         />
+
+        <div>
+          <label className="mb-1 block text-sm font-medium text-slate-700">
+            Profile Picture (Optional)
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100"
+          />
+        </div>
 
         <FormInput
           id="password"
