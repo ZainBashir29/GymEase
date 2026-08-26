@@ -38,7 +38,6 @@ const Memberships = () => {
     setPurchasingPlanId(planId);
 
     try {
-
       await api.post("/memberships/create", { membershipPlanId: planId });
 
       const { data } = await api.post("/payments/initiate", {
@@ -148,7 +147,7 @@ const Memberships = () => {
                   onClick={() => handleGetStarted(plan._id)}
                   disabled={purchasingPlanId === plan._id}
                   aria-describedby={plan._id}
-                  className={`mt-8 flex w-full items-center justify-center gap-2 rounded-md px-3 py-3 text-center text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 ${
+                  className={`mt-8 flex w-full items-center justify-center gap-2 rounded-md px-3 py-3 text-center text-sm font-semibold focus-visible:outline focus-visible:outline-offset-2 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 ${
                     planIdx === 1
                       ? "bg-brand-500 text-white hover:bg-brand-400 focus-visible:outline-brand-500"
                       : "bg-brand-600 text-white hover:bg-brand-700 focus-visible:outline-brand-600"

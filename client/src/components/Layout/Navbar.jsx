@@ -69,11 +69,17 @@ const Navbar = () => {
                       : "/member/dashboard"
                 }
                 title="Go to Dashboard"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700 hover:bg-brand-200 transition-colors"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700 hover:bg-brand-200 transition-colors overflow-hidden"
               >
-                {user.profilePictue
-                  ? user.profilePicture
-                  : user?.fullName?.charAt(0).toUpperCase()}
+                {user?.profilePicture ? (
+                  <img
+                    src={user.profilePicture}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  user?.fullName?.charAt(0).toUpperCase()
+                )}
               </Link>
               <button
                 onClick={handleLogout}
