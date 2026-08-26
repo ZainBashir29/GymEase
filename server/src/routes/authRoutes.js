@@ -14,6 +14,7 @@ import {
   updateEmail,
   changeCurrentPassword,
   changeProfilePicture,
+  deleteAccount,
   getCurrentUser,
 } from "../controllers/authController.js";
 import passport from "passport";
@@ -53,11 +54,11 @@ router
 
 router
   .route("/forgot-password")
-  .post(role("Member", "Trainer", "Admin"), forgotPassword);
+  .post(forgotPassword);
 
 router
   .route("/change-password/:token")
-  .post(verifyJwt, role("Admin"), changePassword);
+  .post(changePassword);
 
 router
   .route("/refresh-token")
@@ -87,6 +88,8 @@ router
     upload.single("profilePicture"),
     changeProfilePicture,
   );
+
+router.route("/member/delete").delete(verifyJwt, role("Member"), deleteAccount);
 
 router
   .route("/current-user")

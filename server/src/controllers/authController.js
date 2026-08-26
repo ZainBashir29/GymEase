@@ -9,6 +9,7 @@ import {
 } from "../services/cloudinary.js";
 import sendEmail from "../services/nodemailer.js";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
@@ -483,7 +484,7 @@ const changeProfilePicture = asyncHandler(async (req, res) => {
       },
     },
     {
-      returnDocument: "after",
+      new: true,
     },
   ).select("-password -refreshToken -isProfileCompleted -googleId");
 
@@ -515,6 +516,29 @@ const changeProfilePicture = asyncHandler(async (req, res) => {
     );
 });
 
+const deleteAccount = asyncHandler(async (req, res) => {
+  const member = await Member.findByIdAndDelete(req.user?._id);
+
+  if (!member) {
+    throw new ApiError(404, "Member not found or could not be deleted");
+  }
+
+  if (member.profilePicturePublicId) {
+    await deleteFromCloudinary(member.profilePicturePublicId);
+  }
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+
+  res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, {}, "Account deleted successfully"));
+});
+
 const getCurrentUser = asyncHandler(async (req, res) => {
   res
     .status(200)
@@ -535,5 +559,6 @@ export {
   updateEmail,
   changeCurrentPassword,
   changeProfilePicture,
+  deleteAccount,
   getCurrentUser,
 };
