@@ -1,6 +1,7 @@
 import express from "express";
 import verifyJwt from "../middlewares/authMiddleware.js";
 import role from "../middlewares/roleMiddleware.js";
+import upload from "../middlewares/multerMiddleware.js";
 import {
   addProduct,
   updateProduct,
@@ -22,14 +23,14 @@ import {
 const router = express.Router();
 
 router.route("/products").get(getProducts);
-router
-  .route("/products/:id")
-  .get(getSingleProduct);
+router.route("/products/:id").get(getSingleProduct);
 
-router.route("/products/add").post(verifyJwt, role("Admin"), addProduct);
+router
+  .route("/products/add")
+  .post(verifyJwt, role("Admin"), upload.single("image"), addProduct);
 router
   .route("/products/update/:id")
-  .patch(verifyJwt, role("Admin"), updateProduct);
+  .patch(verifyJwt, role("Admin"), upload.single("image"), updateProduct);
 router
   .route("/products/delete/:id")
   .delete(verifyJwt, role("Admin"), deleteProduct);

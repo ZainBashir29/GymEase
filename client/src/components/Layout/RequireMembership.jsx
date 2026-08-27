@@ -1,4 +1,3 @@
-// src/components/layout/RequireMembership.jsx — unchanged logic, same as before
 import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
@@ -9,7 +8,6 @@ const RequireMembership = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    console.log("[RequireMembership] mounted — firing membership check");
     const checkMembership = async () => {
       try {
         await api.get("/memberships/current");
