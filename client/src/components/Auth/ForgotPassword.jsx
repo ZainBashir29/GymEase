@@ -21,14 +21,20 @@ const ForgotPassword = () => {
       await api.post("/auth/forgot-password", { email });
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to send reset email. Please try again.");
+      setError(
+        err.response?.data?.message ||
+          "Failed to send reset email. Please try again.",
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <AuthLayout title="Reset password" subtitle="Enter your email to receive a password reset link">
+    <AuthLayout
+      title="Reset password"
+      subtitle="Enter your email to receive a password reset link"
+    >
       {!success ? (
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
@@ -62,7 +68,9 @@ const ForgotPassword = () => {
           <p className="text-brand-800 font-medium mb-4">
             If an account with {email} exists, we've sent a password reset link.
           </p>
-          <p className="text-brand-600 text-sm">Please check your email inbox and spam folder.</p>
+          <p className="text-brand-600 text-sm">
+            Please check your email inbox and spam folder.
+          </p>
         </div>
       )}
 
