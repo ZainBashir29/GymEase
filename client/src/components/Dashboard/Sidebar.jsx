@@ -41,13 +41,18 @@ const Sidebar = ({ navItems }) => {
 
       <div className="border-t border-slate-200 p-3">
         <div className="flex items-center gap-3 rounded-lg px-3 py-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700 overflow-hidden shrink-0">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700 overflow-hidden shrink-0">
             {user?.profilePicture ? (
-              <img src={user.profilePicture} alt="Profile" className="w-full h-full object-cover" />
+              <img
+                src={user.profilePicture}
+                alt="Profile"
+                className="w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+              />
             ) : (
               user?.fullName?.charAt(0).toUpperCase()
             )}
-            </div>
+          </div>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold text-slate-900">
               {user?.fullName}

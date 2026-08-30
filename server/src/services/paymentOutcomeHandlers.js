@@ -26,6 +26,7 @@ const handleSuccessfulPayment = async (trackerToken) => {
       {
         membershipPlanId: updatedPayment.paymentCauseId,
         memberId: updatedPayment.memberId,
+        status: "pending",
       },
       {
         $set: {

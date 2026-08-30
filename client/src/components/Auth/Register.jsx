@@ -4,6 +4,7 @@ import { Loader2, CheckCircle2 } from "lucide-react";
 import api from "../../lib/axios.js";
 import AuthLayout from "./AuthLayout.jsx";
 import FormInput from "./FormInput.jsx";
+import GoogleAuthButton from "./GoogleAuthButton.jsx";
 
 const MIN_AGE = 13;
 
@@ -128,6 +129,15 @@ const Register = () => {
       subtitle="Start your GymEase membership today"
     >
       <form onSubmit={handleSubmit} className="space-y-4">
+        <GoogleAuthButton label="Sign up with Google" />
+        <div className="relative flex items-center py-2">
+          <div className="flex-grow border-t border-slate-200"></div>
+          <span className="mx-4 shrink-0 text-xs text-slate-400">
+            OR CONTINUE WITH EMAIL
+          </span>
+          <div className="flex-grow border-t border-slate-200"></div>
+        </div>
+
         {serverError && (
           <div className="rounded-lg border border-danger/20 bg-danger/5 px-4 py-3 text-sm text-danger">
             {serverError}

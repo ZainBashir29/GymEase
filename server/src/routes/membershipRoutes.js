@@ -7,19 +7,16 @@ import {
   getSubscriptionHistory,
   cancelMembershipSubscription,
   renewMembershipSubscription,
+  verifyMembership,
 } from "../controllers/membershipController.js";
 import verifyJwt from "../middlewares/authMiddleware.js";
 import role from "../middlewares/roleMiddleware.js";
 
 const router = Router();
 
-router
-  .route("/plans")
-  .get(getAllMembershipPlans);
+router.route("/plans").get(getAllMembershipPlans);
 
-router
-  .route("/plan/:id")
-  .get(getMembershipPlanById);
+router.route("/plan/:id").get(getMembershipPlanById);
 
 router
   .route("/create")
@@ -38,5 +35,7 @@ router
 router
   .route("/renew")
   .post(verifyJwt, role("Member"), renewMembershipSubscription);
+
+router.route("/verify/:id").get(verifyMembership);
 
 export default router;

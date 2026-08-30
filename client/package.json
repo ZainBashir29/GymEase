@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -12,7 +12,9 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
     "axios": "^1.19.0",
+    "html-to-image": "^1.11.13",
     "lucide-react": "^1.31.0",
+    "qrcode.react": "^4.2.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router-dom": "^7.18.2",

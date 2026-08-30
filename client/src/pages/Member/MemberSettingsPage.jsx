@@ -179,6 +179,7 @@ const MemberSettingsPage = () => {
                   src={user.profilePicture}
                   alt="Profile"
                   className="w-24 h-24 rounded-full object-cover border-4 border-slate-50"
+                  referrerPolicy="no-referrer"
                 />
               ) : (
                 <div className="w-24 h-24 rounded-full bg-brand-100 flex items-center justify-center text-brand-700 text-3xl font-bold border-4 border-slate-50">

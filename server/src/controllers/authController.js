@@ -26,7 +26,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
 
 const cookieOptions = {
   httpOnly: true,
-  secure: true,
+  secure: process.env.NODE_ENV === "production",
   sameSite: "strict",
 };
 
@@ -219,12 +219,13 @@ const completeProfile = asyncHandler(async (req, res) => {
   if (age < 13) {
     throw new ApiError(400, "Age is too small");
   }
-  const member = await Member.findOneAndUpdate(
+  const member = await Member.findByIdAndUpdate(
     req.user._id,
     {
       $set: {
         username,
         age,
+        isProfileCompleted: true,
       },
     },
     {

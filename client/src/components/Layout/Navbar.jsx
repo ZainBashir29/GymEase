@@ -76,6 +76,7 @@ const Navbar = () => {
                     src={user.profilePicture}
                     alt="Profile"
                     className="w-full h-full object-cover"
+                    referrerPolicy="no-referrer"
                   />
                 ) : (
                   user?.fullName?.charAt(0).toUpperCase()

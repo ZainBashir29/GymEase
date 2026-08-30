@@ -6,6 +6,7 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import AuthLayout from "./AuthLayout.jsx";
 import FormInput from "./FormInput.jsx";
 import { useLocation } from "react-router-dom";
+import GoogleAuthButton from "./GoogleAuthButton.jsx";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -53,6 +54,15 @@ const Login = () => {
   return (
     <AuthLayout title="Welcome back" subtitle="Log in to your GymEase account">
       <form onSubmit={handleSubmit} className="space-y-4">
+        <GoogleAuthButton label="Log in with Google" />
+        <div className="relative flex items-center py-2">
+          <div className="flex-grow border-t border-slate-200"></div>
+          <span className="mx-4 shrink-0 text-xs text-slate-400">
+            OR CONTINUE WITH EMAIL
+          </span>
+          <div className="flex-grow border-t border-slate-200"></div>
+        </div>
+
         {error && (
           <div className="rounded-lg border border-danger/20 bg-danger/5 px-4 py-3 text-sm text-danger">
             {error}

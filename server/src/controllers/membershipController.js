@@ -332,7 +332,7 @@ const renewMembershipSubscription = asyncHandler(async (req, res) => {
       },
     );
 
-  return res
+  res
     .status(201)
     .json(
       new ApiResponse(
@@ -343,6 +343,33 @@ const renewMembershipSubscription = asyncHandler(async (req, res) => {
     );
 });
 
+const verifyMembership = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const membership = await MembershipSubscription.findById(id)
+    .populate("memberId", "fullName email profilePicture")
+    .populate("membershipPlanId", "name");
+  if (!membership) {
+    throw new ApiError(404, "Membership not found");
+  }
+  const isActive =
+    new Date(membership.endDate) > new Date() &&
+    membership.status !== "cancelled";
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        isValid: isActive,
+        user: membership.userId,
+        plan: membership.membershipPlanId,
+        endDate: membership.endDate,
+        startDate: membership.startDate,
+        status: membership.status,
+      },
+      isActive ? "Active membership" : "Expired or cancelled membership",
+    ),
+  );
+});
+
 export {
   getAllMembershipPlans,
   getMembershipPlanById,
@@ -351,4 +378,5 @@ export {
   getSubscriptionHistory,
   cancelMembershipSubscription,
   renewMembershipSubscription,
+  verifyMembership,
 };

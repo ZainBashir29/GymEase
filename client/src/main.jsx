@@ -23,6 +23,7 @@ import AboutPage from "./pages/AboutPage.jsx";
 import StorePage from "./pages/Store/StorePage.jsx";
 import ProductDetailsPage from "./pages/Store/ProductDetailsPage.jsx";
 import MemberOrdersPage from "./pages/Store/MemberOrdersPage.jsx";
+import VerifyMembershipPage from "./pages/VerifyMembershipPage.jsx";
 
 import AdminLayout from "./components/Layout/AdminLayout.jsx";
 import AdminDashboardPage from "./pages/Admin/AdminDashboardPage.jsx";
@@ -41,6 +42,7 @@ import MyMembershipPage from "./pages/Member/MyMembershipPage.jsx";
 import MemberSettingsPage from "./pages/Member/MemberSettingsPage.jsx";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
 import ChangePasswordPage from "./pages/ChangePasswordPage.jsx";
+import CompleteProfilePage from "./pages/CompleteProfilePage.jsx";
 
 const router = createBrowserRouter([
   {
@@ -68,12 +70,25 @@ const router = createBrowserRouter([
         element: <ProductDetailsPage />,
       },
       {
+        path: "/verify/:id",
+        element: <VerifyMembershipPage />,
+      },
+      {
         path: "/register",
         element: <MemberRegistrationPage />,
       },
       {
         path: "/login",
         element: <LoginPage />,
+      },
+      {
+        path: "/complete-profile",
+        element: (
+          <ProtectedRoute allowedRoles={["Member"]}>
+            {" "}
+            <CompleteProfilePage />{" "}
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/forgot-password",
