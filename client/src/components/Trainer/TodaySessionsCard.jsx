@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Dumbbell, Loader2, CalendarX, CheckCircle2 } from "lucide-react";
+import { Dumbbell, Loader2, CalendarX, CheckCircle2, X, Clock, Activity, User as UserIcon } from "lucide-react";
 import api from "../../lib/axios.js";
 
 const STATUS_STYLES = {
@@ -8,7 +8,7 @@ const STATUS_STYLES = {
   upcoming: "bg-brand-100 text-brand-700",
 };
 
-const SessionRow = ({ session, onMarkConducted }) => {
+const SessionModal = ({ session, onClose, onMarkConducted }) => {
   const [isMarking, setIsMarking] = useState(false);
   const [error, setError] = useState("");
 
@@ -17,7 +17,128 @@ const SessionRow = ({ session, onMarkConducted }) => {
     setIsMarking(true);
 
     try {
-      await api.post(`/sessions/mark-conducted/${session._id}`);
+      await api.post(`/gym-plans/sessions/mark-conducted/${session._id}`);
+      onMarkConducted(session._id);
+    } catch (err) {
+      setError(err.response?.data?.message || "Couldn't mark as conducted.");
+    } finally {
+      setIsMarking(false);
+    }
+  };
+
+  if (!session) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0">
+      <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={onClose} />
+      
+      <div className="relative w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50 p-6">
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-brand-100 ring-2 ring-white">
+              {session.memberId?.profilePicture ? (
+                <img src={session.memberId.profilePicture} alt="Profile" className="h-full w-full object-cover" referrerPolicy="no-referrer" />
+              ) : (
+                <UserIcon className="h-6 w-6 text-brand-600" />
+              )}
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">{session.memberId?.fullName || "Member"}</h2>
+              <div className="flex items-center gap-2 mt-0.5">
+                <p className="text-sm font-medium text-slate-500">{session.workoutName}</p>
+                <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${STATUS_STYLES[session.status]}`}>
+                  {session.status}
+                </span>
+              </div>
+            </div>
+          </div>
+          <button onClick={onClose} className="rounded-full p-2 text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition-colors">
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Exercises List */}
+        <div className="max-h-[60vh] overflow-y-auto p-6">
+          <h3 className="mb-4 flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-slate-400">
+            <Dumbbell className="h-4 w-4" />
+            Workout Details
+          </h3>
+          
+          {(!session.exercises || session.exercises.length === 0) ? (
+            <p className="text-sm text-slate-500 italic">No exercises detailed for this session.</p>
+          ) : (
+            <div className="space-y-4">
+              {session.exercises.map((ex, idx) => (
+                <div key={idx} className="rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
+                  <p className="font-bold text-slate-900">{ex.name}</p>
+                  <div className="mt-2 flex flex-wrap gap-4 text-sm text-slate-600">
+                    {ex.sets && (
+                      <div className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100">
+                        <Activity className="h-3.5 w-3.5 text-brand-600" />
+                        <span><span className="font-bold text-slate-900">{ex.sets}</span> sets</span>
+                      </div>
+                    )}
+                    {ex.reps && (
+                      <div className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100">
+                        <Dumbbell className="h-3.5 w-3.5 text-brand-600" />
+                        <span><span className="font-bold text-slate-900">{ex.reps}</span> reps</span>
+                      </div>
+                    )}
+                    {ex.duration && (
+                      <div className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100">
+                        <Clock className="h-3.5 w-3.5 text-brand-600" />
+                        <span className="font-bold text-slate-900">{ex.duration}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Footer Actions */}
+        <div className="border-t border-slate-100 bg-slate-50 p-6 flex flex-col gap-2">
+          {error && <p className="text-center text-sm text-danger">{error}</p>}
+          
+          <div className="flex gap-3">
+            <button onClick={onClose} className="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors">
+              Close
+            </button>
+            {!session.trainerCompletedAt && (
+              <button
+                onClick={handleMark}
+                disabled={isMarking}
+                className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-brand-700 disabled:opacity-60 transition-colors"
+              >
+                {isMarking ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
+                {isMarking ? "Marking..." : "Mark Conducted"}
+              </button>
+            )}
+          </div>
+          {session.trainerCompletedAt && (
+            <p className="text-center text-sm font-medium text-success mt-1 flex items-center justify-center gap-1.5">
+              <CheckCircle2 className="h-4 w-4" /> You have conducted this session.
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const SessionRow = ({ session, onClick, onMarkConducted }) => {
+  const [isMarking, setIsMarking] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleMark = async (e) => {
+    e.stopPropagation(); // Prevent opening modal when clicking button
+    setError("");
+    setIsMarking(true);
+
+    try {
+      await api.post(`/gym-plans/sessions/mark-conducted/${session._id}`);
       onMarkConducted(session._id);
     } catch (err) {
       setError(err.response?.data?.message || "Couldn't mark as conducted.");
@@ -27,28 +148,31 @@ const SessionRow = ({ session, onMarkConducted }) => {
   };
 
   return (
-    <div className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-4 py-3.5">
+    <div 
+      onClick={() => onClick(session)}
+      className="flex cursor-pointer items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-4 py-3.5 transition-colors hover:bg-slate-100 hover:border-slate-200 group"
+    >
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <p className="text-sm font-semibold text-slate-900">
+          <p className="text-sm font-bold text-slate-900 group-hover:text-brand-700 transition-colors">
             {session.workoutName}
           </p>
           <span
-            className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
+            className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
               STATUS_STYLES[session.status]
             }`}
           >
             {session.status}
           </span>
         </div>
-        <p className="mt-0.5 text-xs text-slate-500">
-          {session.memberId?.fullName || "Member"}
+        <p className="mt-0.5 text-xs font-medium text-slate-500">
+          with {session.memberId?.fullName || "Member"}
         </p>
         {error && <p className="mt-1 text-xs text-danger">{error}</p>}
       </div>
 
       {session.trainerCompletedAt ? (
-        <span className="flex shrink-0 items-center gap-1.5 text-xs font-medium text-success">
+        <span className="flex shrink-0 items-center gap-1.5 text-xs font-bold text-success">
           <CheckCircle2 className="h-4 w-4" />
           Conducted
         </span>
@@ -56,7 +180,7 @@ const SessionRow = ({ session, onMarkConducted }) => {
         <button
           onClick={handleMark}
           disabled={isMarking}
-          className="flex shrink-0 items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex shrink-0 items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-slate-700 shadow-sm ring-1 ring-slate-200 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isMarking && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
           {isMarking ? "Marking..." : "Mark conducted"}
@@ -70,11 +194,12 @@ const TodaySessionsCard = () => {
   const [sessions, setSessions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedSession, setSelectedSession] = useState(null);
 
   useEffect(() => {
     const fetchTodaySessions = async () => {
       try {
-        const { data } = await api.get("/sessions/trainer/today");
+        const { data } = await api.get("/gym-plans/sessions/trainer/today");
         setSessions(data.data);
       } catch {
         setError("Couldn't load today's sessions.");
@@ -94,6 +219,10 @@ const TodaySessionsCard = () => {
           : s,
       ),
     );
+    // Also update selected session state if modal is open
+    if (selectedSession && selectedSession._id === sessionId) {
+      setSelectedSession(prev => ({ ...prev, trainerCompletedAt: new Date().toISOString() }));
+    }
   };
 
   if (isLoading) {
@@ -113,41 +242,50 @@ const TodaySessionsCard = () => {
   }
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6">
-      <div className="mb-4 flex items-center gap-3">
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50">
-          <Dumbbell className="h-5 w-5 text-brand-600" strokeWidth={2} />
+    <>
+      <div className="rounded-2xl border border-slate-200 bg-white p-6">
+        <div className="mb-4 flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50">
+            <Dumbbell className="h-5 w-5 text-brand-600" strokeWidth={2} />
+          </div>
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wide text-brand-600">
+              Today
+            </p>
+            <h3 className="text-base font-bold text-slate-900">
+              {sessions.length} session{sessions.length !== 1 ? "s" : ""}{" "}
+              scheduled
+            </h3>
+          </div>
         </div>
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-brand-600">
-            Today
-          </p>
-          <h3 className="text-base font-bold text-slate-900">
-            {sessions.length} session{sessions.length !== 1 ? "s" : ""}{" "}
-            scheduled
-          </h3>
-        </div>
+
+        {sessions.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <CalendarX className="h-7 w-7 text-slate-400" strokeWidth={1.5} />
+            <p className="mt-3 text-sm text-slate-500">
+              No sessions scheduled today
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-2.5">
+            {sessions.map((session) => (
+              <SessionRow
+                key={session._id}
+                session={session}
+                onClick={setSelectedSession}
+                onMarkConducted={handleMarkConducted}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
-      {sessions.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-8 text-center">
-          <CalendarX className="h-7 w-7 text-slate-400" strokeWidth={1.5} />
-          <p className="mt-3 text-sm text-slate-500">
-            No sessions scheduled today
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-2.5">
-          {sessions.map((session) => (
-            <SessionRow
-              key={session._id}
-              session={session}
-              onMarkConducted={handleMarkConducted}
-            />
-          ))}
-        </div>
-      )}
-    </div>
+      <SessionModal 
+        session={selectedSession} 
+        onClose={() => setSelectedSession(null)} 
+        onMarkConducted={handleMarkConducted}
+      />
+    </>
   );
 };
 

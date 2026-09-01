@@ -12,7 +12,6 @@ const TRAINER_NAV_ITEMS = [
     end: true,
   },
   { label: "My Members", to: "/trainer/members", icon: Users },
-  { label: "Messages", to: "/trainer/chat", icon: MessageCircle },
 ];
 
 const TrainerDashboardPage = () => {

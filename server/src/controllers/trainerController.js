@@ -23,19 +23,46 @@ const getAssignedMembers = asyncHandler(async (req, res) => {
   const trainerId = req.user?._id;
   const { scope } = req.query;
 
-  const filter = { trainerId };
+  const matchStage = { trainerId: new mongoose.Types.ObjectId(trainerId) };
+
   if (scope !== "all") {
-    filter.status = "upcoming";
+    matchStage.status = "upcoming";
   }
 
-  const memberIds = await Session.distinct("memberId", filter);
+  const members = await Session.aggregate([
+    { $match: matchStage },
+    {
+      $group: {
+        _id: "$memberId",
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "_id",
+        foreignField: "_id",
+        as: "memberDetails",
+      },
+    },
+    { $unwind: "$memberDetails" },
+    {
+      $project: {
+        _id: "$memberDetails._id",
+        fullName: "$memberDetails.fullName",
+        email: "$memberDetails.email",
+        profilePicture: "$memberDetails.profilePicture",
+        age: "$memberDetails.age",
+        username: "$memberDetails.username",
+      },
+    },
+  ]);
 
   return res
     .status(200)
     .json(
       new ApiResponse(
         200,
-        { totalMembers: memberIds.length, memberIds },
+        { totalMembers: members.length, members },
         "Assigned members fetched successfully",
       ),
     );

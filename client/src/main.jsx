@@ -44,6 +44,8 @@ import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
 import ChangePasswordPage from "./pages/ChangePasswordPage.jsx";
 import CompleteProfilePage from "./pages/CompleteProfilePage.jsx";
 
+import MyMembersPage from "./pages/Trainer/MyMembersPage.jsx";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -169,6 +171,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={["Trainer"]}>
             <TrainerDashboardPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/trainer/members",
+        element: (
+          <ProtectedRoute allowedRoles={["Trainer"]}>
+            <MyMembersPage />
           </ProtectedRoute>
         ),
       },
