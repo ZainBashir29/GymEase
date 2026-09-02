@@ -151,34 +151,58 @@ const activatePopularPlan = asyncHandler(async (req, res) => {
       },
     );
 
-    for (let day = 1; day <= gymPlan.duration; day++) {
+    const getValidDaysOfWeek = (frequency) => {
+      if (frequency <= 2) return [1, 4];
+      if (frequency === 3) return [1, 3, 5];
+      if (frequency === 4) return [1, 2, 4, 5];
+      if (frequency === 5) return [1, 2, 3, 4, 5];
+      return [1, 2, 3, 4, 5, 6];
+    };
+
+    // const trainerId = await findAvailableTrainer(
+    //   allowedTrainers,
+    //   targetDate,
+    //   session,
+    // );
+    // const workout = workouts[(day - 1) % workouts.length];
+
+    const validDays = getValidDaysOfWeek(workouts.length);
+    let workoutIndex = 0;
+    let dayCounter = 1;
+
+    for (let i = 0; i < gymPlan.duration; i++) {
       const targetDate = new Date(startDate);
-      targetDate.setDate(startDate.getDate() + (day - 1));
+      targetDate.setDate(startDate.getDate() + i);
 
-      const trainerId = await findAvailableTrainer(
-        allowedTrainers,
-        targetDate,
-        session,
-      );
-      const workout = workouts[(day - 1) % workouts.length];
-
-      if (!trainerId) {
-        throw new ApiError(
-          409,
-          `No trainer is available on day ${day} ${targetDate.toDateString()}`,
+      if (validDays.includes(targetDate.getDay())) {
+        const trainerId = await findAvailableTrainer(
+          allowedTrainers,
+          targetDate,
+          session,
         );
-      }
 
-      sessionDocuments.push({
-        memberPlanId: memberPlan?._id,
-        memberId: req.user?._id,
-        trainerId,
-        workoutName: workout.name,
-        exercises: workout.exercises,
-        day,
-        date: targetDate,
-        status: "upcoming",
-      });
+        const workout = workouts[workoutIndex % workouts.length];
+
+        if (!trainerId) {
+          throw new ApiError(
+            409,
+            `No trainer is available on date ${targetDate.toDateString()}`,
+          );
+        }
+
+        sessionDocuments.push({
+          memberPlanId: memberPlan?._id,
+          memberId: req.user?._id,
+          trainerId,
+          workoutName: workout.name,
+          exercises: workout.exercises,
+          day: dayCounter++,
+          date: targetDate,
+          status: "upcoming",
+        });
+
+        workoutIndex++;
+      }
     }
 
     const sessions = await Session.insertMany(sessionDocuments, {
@@ -419,30 +443,56 @@ const activateCustomPlan = asyncHandler(async (req, res) => {
 
     const sessionDocuments = [];
 
-    for (let day = 1; day <= customGymPlan.sessions.length; day++) {
+    const getValidDaysOfWeek = (frequency) => {
+      if (frequency <= 2) return [1, 4];
+      if (frequency === 3) return [1, 3, 5];
+      if (frequency === 4) return [1, 2, 4, 5];
+      if (frequency === 5) return [1, 2, 3, 4, 5];
+      return [1, 2, 3, 4, 5, 6];
+    };
+
+    const weeks = Math.max(1, Math.round(customGymPlan.duration / 7));
+    const sessionsPerWeek = Math.max(
+      1,
+      Math.round(customGymPlan.sessions.length / weeks),
+    );
+    const validDays = getValidDaysOfWeek(sessionsPerWeek);
+
+    let sessionIndex = 0;
+    let dayCounter = 1;
+
+    for (let i = 0; i < customGymPlan.duration; i++) {
+      if (sessionIndex >= customGymPlan.sessions.length) break;
+
       const targetDate = new Date(startDate);
-      targetDate.setDate(startDate.getDate() + (day - 1));
+      targetDate.setDate(startDate.getDate() + i);
 
-      const trainerId = await findAvailableTrainer(allowedTrainers, targetDate);
-
-      if (!trainerId) {
-        throw new Error(
-          `No trainer is available on day ${day}, date = ${targetDate.toDateString()}`,
+      if (validDays.includes(targetDate.getDay())) {
+        const trainerId = await findAvailableTrainer(
+          allowedTrainers,
+          targetDate,
         );
+
+        if (!trainerId)
+          throw new Error(
+            `No trainer is available on date ${targetDate.toDateString()}`,
+          );
+
+        const workout = customGymPlan.sessions[sessionIndex];
+
+        sessionDocuments.push({
+          memberPlanId: memberPlan._id,
+          memberId: req.user?._id,
+          trainerId,
+          day: dayCounter++,
+          date: targetDate,
+          workoutName: workout.name,
+          exercises: workout.exercises,
+          status: "upcoming",
+        });
+
+        sessionIndex++;
       }
-
-      const workout = customGymPlan.sessions[day - 1];
-
-      sessionDocuments.push({
-        memberPlanId: memberPlan._id,
-        memberId: req.user?._id,
-        trainerId,
-        day,
-        date: targetDate,
-        workoutName: workout.name,
-        exercises: workout.exercises,
-        status: "upcoming",
-      });
     }
 
     const sessions = await Session.insertMany(sessionDocuments, {
@@ -585,7 +635,7 @@ const getAllSessionsForPlan = asyncHandler(async (req, res) => {
 const getTrainerAllSessions = asyncHandler(async (req, res) => {
   const trainerSessions = await Session.find({
     trainerId: req.user?._id,
-  });
+  }).populate("memberId", "fullName profilePicture");
 
   res
     .status(200)
@@ -594,6 +644,22 @@ const getTrainerAllSessions = asyncHandler(async (req, res) => {
         200,
         trainerSessions,
         "Trainer sessions found successfully",
+      ),
+    );
+});
+
+const getMemberAllSessions = asyncHandler(async (req, res) => {
+  const memberSessions = await Session.find({
+    memberId: req.user?._id,
+  }).populate("trainerId", "fullName profilePicture");
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        memberSessions,
+        "Member sessions fetched successfully",
       ),
     );
 });
@@ -747,6 +813,7 @@ export {
   getTrainerTodaySessions,
   getAllSessionsForPlan,
   getTrainerAllSessions,
+  getMemberAllSessions,
   markSessionComplete,
   markSessionConductedByTrainer,
 };

@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { TrendingUp, Loader2 } from "lucide-react";
+import { TrendingUp, Loader2, ArrowDown } from "lucide-react";
 import api from "../../lib/axios.js";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Doughnut } from "react-chartjs-2";
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const StatBlock = ({ label, value, accent = false }) => (
   <div>
@@ -78,7 +82,7 @@ const ProgressCard = () => {
                     month: "short",
                     day: "numeric",
                   })
-                : "—"
+                : "-"
             }
           />
         </div>
@@ -87,11 +91,27 @@ const ProgressCard = () => {
           to="/member/plans"
           className="mt-5 inline-block text-sm font-semibold text-brand-600 hover:text-brand-700"
         >
-          Select a gym plan for detailed tracking →
+          Select a gym plan for detailed tracking &raar;
         </Link>
       </div>
     );
   }
+
+  const chartData = {
+    labels: ["Completed", "Missed", "Upcoming"],
+    datasets: [
+      {
+        data: [
+          progress.completedSessions || 0,
+          progress.missedSessions || 0,
+          progress.upcomingSessions || 0,
+        ],
+        backgroundColor: ["#10b981", "#ef4444", "#3b82f6"],
+        hoverBackgroundColor: ["#059669", "#dc2626", "#2563eb"],
+        borderWidth: 0,
+      },
+    ],
+  };
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-6">
@@ -105,6 +125,20 @@ const ProgressCard = () => {
         <span className="text-sm font-medium text-slate-500">
           {progress.remainingDays} days left
         </span>
+      </div>
+
+      <div className="mt-6 flex justify-center">
+        <div className="h-40 w-40">
+          <Doughnut
+            data={chartData}
+            options={{
+              cutout: "75%",
+              plugins: {
+                legend: { display: false },
+              },
+            }}
+          />
+        </div>
       </div>
 
       <div className="mt-5">

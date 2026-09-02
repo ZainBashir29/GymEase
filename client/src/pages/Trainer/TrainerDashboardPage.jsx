@@ -3,6 +3,7 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import DashboardLayout from "../../components/Dashboard/DashboardLayout.jsx";
 import TodaySessionsCard from "../../components/Trainer/TodaySessionsCard.jsx";
 import TrainerProgressCard from "../../components/Trainer/TrainerProgressCard.jsx";
+import UpcomingScheduleCard from "../../components/Trainer/UpcomingScheduleCard.jsx";
 
 const TRAINER_NAV_ITEMS = [
   {
@@ -29,8 +30,9 @@ const TrainerDashboardPage = () => {
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 space-y-6">
           <TodaySessionsCard />
+          <UpcomingScheduleCard />
         </div>
         <div>
           <TrainerProgressCard />

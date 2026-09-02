@@ -11,7 +11,7 @@ const Sidebar = ({ navItems }) => {
   };
 
   return (
-    <aside className="flex h-screen w-64 flex-col border-r border-slate-200 bg-white">
+    <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col border-r border-slate-200 bg-white">
       <div className="flex items-center gap-2 border-b border-slate-200 px-6 py-5">
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600">
           <Dumbbell className="h-4 w-4 text-white" strokeWidth={2.5} />
@@ -62,7 +62,7 @@ const Sidebar = ({ navItems }) => {
         </div>
         <button
           onClick={handleLogout}
-          className="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-danger"
+          className="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-danger ml-2"
         >
           <LogOut className="h-4.5 w-4.5" strokeWidth={2} />
           Log out

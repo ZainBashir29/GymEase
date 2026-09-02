@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { TrendingUp, Loader2 } from "lucide-react";
 import api from "../../lib/axios.js";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Doughnut } from "react-chartjs-2";
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const StatBlock = ({ label, value, accent = false }) => (
   <div>
@@ -49,6 +53,22 @@ const TrainerProgressCard = () => {
     );
   }
 
+  const chartData = {
+    labels: ["Completed", "Missed", "Upcoming"],
+    datasets: [
+      {
+        data: [
+          progress.completedThisMonth,
+          progress.missedThisMonth,
+          progress.upcomingThisMonth,
+        ],
+        backgroundColor: ["#10b981", "#ef4444", "#3b82f6"],
+        hoverBackgroundColor: ["#059669", "#dc2626", "#2563eb"],
+        borderWidth: 0,
+      },
+    ],
+  };
+
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-6">
       <div className="flex items-center gap-3">
@@ -56,6 +76,20 @@ const TrainerProgressCard = () => {
           <TrendingUp className="h-5 w-5 text-brand-600" strokeWidth={2} />
         </div>
         <h3 className="text-base font-bold text-slate-900">This Month</h3>
+      </div>
+
+      <div className="mt-6 flex justify-center">
+        <div className="h-40 w-40">
+          <Doughnut
+            data={chartData}
+            options={{
+              cutout: "75%",
+              plugins: {
+                legend: { display: false },
+              },
+            }}
+          />
+        </div>
       </div>
 
       <div className="mt-5">
@@ -75,11 +109,26 @@ const TrainerProgressCard = () => {
 
       <div className="mt-6 grid grid-cols-2 gap-4">
         <StatBlock
-          label="Sessions this month"
+          label="Total Sessions"
           value={progress.totalSessionsThisMonth}
           accent
         />
         <StatBlock label="Members" value={progress.uniqueMembersThisMonth} />
+      </div>
+
+      <div className="mt-4 flex flex-wrap gap-2 text-xs font-medium">
+        <div className="flex items-center gap-1 text-slate-600">
+          <div className="h-2 w-2 rounded-full bg-success"></div>
+          {progress.completedThisMonth} Completed
+        </div>
+        <div className="flex items-center gap-1 text-slate-600">
+          <div className="h-2 w-2 rounded-full bg-danger"></div>
+          {progress.missedThisMonth} Missed
+        </div>
+        <div className="flex items-center gap-1 text-slate-600">
+          <div className="h-2 w-2 rounded-full bg-blue-500"></div>
+          {progress.upcomingThisMonth} Upcoming
+        </div>
       </div>
     </div>
   );

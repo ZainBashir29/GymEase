@@ -11,6 +11,7 @@ import {
   getMemberTodaySession,
   getPlanById,
   getTrainerAllSessions,
+  getMemberAllSessions,
   getTrainerTodaySessions,
   markSessionComplete,
   markSessionConductedByTrainer,
@@ -48,6 +49,10 @@ router
 router
   .route("/sessions/trainer")
   .get(verifyJwt, role("Trainer"), getTrainerAllSessions);
+
+router
+  .route("/sessions/member")
+  .get(verifyJwt, role("Member"), getMemberAllSessions);
 
 router.route("/:gymPlanId").get(getPlanById);
 

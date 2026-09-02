@@ -14,6 +14,7 @@ import AttendanceCard from "../../components/Dashboard/AttendanceCard.jsx";
 import ProgressCard from "../../components/Dashboard/ProgressCard.jsx";
 import QuickLinks from "../../components/Dashboard/QuickLinks.jsx";
 import MembershipCard from "../../components/Dashboard/MembershipCard.jsx";
+import UpcomingScheduleCard from "../../components/Dashboard/UpcomingScheduleCard.jsx";
 
 const MEMBER_NAV_ITEMS = [
   {
@@ -46,12 +47,13 @@ const MemberDashboard = () => {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
           <TodaySessionCard />
-          <ProgressCard />
+          <UpcomingScheduleCard />
+          <AttendanceCard />
           {/* <QuickLinks /> */}
         </div>
 
-        <div className="space-y-6">
-          <AttendanceCard />
+        <div className="space-y-8">
+          <ProgressCard />
           <MembershipCard />
         </div>
       </div>

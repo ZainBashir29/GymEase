@@ -7,6 +7,7 @@ import {
   MessageCircle,
   Package,
   Loader2,
+  Settings,
 } from "lucide-react";
 import DashboardLayout from "../../components/Dashboard/DashboardLayout.jsx";
 import api from "../../lib/axios.js";
@@ -23,7 +24,7 @@ const MEMBER_NAV_ITEMS = [
   { label: "Membership", to: "/member/membership", icon: CreditCard },
   { label: "Store", to: "/store", icon: ShoppingBag },
   { label: "Orders", to: "/member/orders", icon: Package },
-  { label: "Messages", to: "/member/dashboard/chat", icon: MessageCircle },
+  { label: "Settings", to: "/member/settings", icon: Settings },
 ];
 
 const MemberOrdersPage = () => {
