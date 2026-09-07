@@ -4,6 +4,7 @@ import DashboardLayout from "../../components/Dashboard/DashboardLayout.jsx";
 import TodaySessionsCard from "../../components/Trainer/TodaySessionsCard.jsx";
 import TrainerProgressCard from "../../components/Trainer/TrainerProgressCard.jsx";
 import UpcomingScheduleCard from "../../components/Trainer/UpcomingScheduleCard.jsx";
+import AttendanceCard from "../../components/Dashboard/AttendanceCard.jsx";
 
 const TRAINER_NAV_ITEMS = [
   {
@@ -34,7 +35,8 @@ const TrainerDashboardPage = () => {
           <TodaySessionsCard />
           <UpcomingScheduleCard />
         </div>
-        <div>
+        <div className="space-y-6">
+          <AttendanceCard />
           <TrainerProgressCard />
         </div>
       </div>
