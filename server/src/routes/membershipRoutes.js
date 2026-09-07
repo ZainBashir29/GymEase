@@ -8,6 +8,7 @@ import {
   cancelMembershipSubscription,
   renewMembershipSubscription,
   verifyMembership,
+  checkInMemberByVerificationId,
 } from "../controllers/membershipController.js";
 import verifyJwt from "../middlewares/authMiddleware.js";
 import role from "../middlewares/roleMiddleware.js";
@@ -37,5 +38,7 @@ router
   .post(verifyJwt, role("Member"), renewMembershipSubscription);
 
 router.route("/verify/:id").get(verifyMembership);
+
+router.route("/verify/check-in/:id").post(checkInMemberByVerificationId);
 
 export default router;

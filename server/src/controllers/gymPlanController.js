@@ -209,8 +209,6 @@ const activatePopularPlan = asyncHandler(async (req, res) => {
       session,
     });
 
-    await session.commitTransaction();
-
     const firstSessionTrainerId = sessionDocuments[0]?.trainerId;
 
     const [progressData] = await ProgressData.create(
@@ -225,6 +223,8 @@ const activatePopularPlan = asyncHandler(async (req, res) => {
       ],
       { session },
     );
+
+    await session.commitTransaction();
 
     res.status(200).json(
       new ApiResponse(
@@ -471,6 +471,7 @@ const activateCustomPlan = asyncHandler(async (req, res) => {
         const trainerId = await findAvailableTrainer(
           allowedTrainers,
           targetDate,
+          session,
         );
 
         if (!trainerId)
@@ -685,6 +686,16 @@ const markSessionComplete = asyncHandler(async (req, res) => {
     throw new ApiError(400, `Session is already marked as ${session.status}`);
   }
 
+  const endOfToday = new Date();
+  endOfToday.setHours(23, 59, 59, 999);
+
+  if (new Date(session.date) > endOfToday) {
+    throw new ApiError(
+      400,
+      "You cannot mark a future session as completed before its scheduled date",
+    );
+  }
+
   try {
     session.status = "completed";
     session.memberCompletedAt = new Date();
@@ -716,24 +727,52 @@ const markSessionComplete = asyncHandler(async (req, res) => {
       },
       { returnDocument: "after" },
     );
+
+    try {
+      const startOfDay = new Date();
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date();
+      endOfDay.setHours(23, 59, 59, 999);
+
+      const existingAttendance = await Attendance.findOne({
+        userId: req.user._id,
+        date: { $gte: startOfDay, $lte: endOfDay },
+      });
+
+      if (!existingAttendance) {
+        await Attendance.create({
+          role: req.user.role || "Member",
+          userId: req.user._id,
+          status: "present",
+          date: new Date(),
+        });
+      }
+    } catch (attendanceErr) {
+      console.warn(
+        "Auto-attendance failed during session completion:",
+        attendanceErr?.message,
+      );
+    }
+
+    res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          completedSession: session,
+          progressData: updatedProgressData,
+        },
+        "Session marked as completed successfully",
+      ),
+    );
   } catch (error) {
+    if (error instanceof ApiError) throw error;
     throw new ApiError(
       500,
       error?.message || "Could not update session status to completed",
     );
   }
-
-  res.status(200).json(
-    new ApiResponse(
-      200,
-      {
-        completedSession: session,
-        progressData: updatedProgressData,
-      },
-      "Session marked as completed successfully",
-    ),
-  );
 });
+
 
 // const markSessionMissed = asyncHandler(async (req, res) => {
 //   const { id } = req.params;
@@ -790,8 +829,44 @@ const markSessionConductedByTrainer = asyncHandler(async (req, res) => {
     throw new ApiError(400, "You've already marked this session as conducted");
   }
 
+  const endOfToday = new Date();
+  endOfToday.setHours(23, 59, 59, 999);
+
+  if (new Date(session.date) > endOfToday) {
+    throw new ApiError(
+      400,
+      "You cannot mark a future session as conducted before its scheduled date",
+    );
+  }
+
   session.trainerCompletedAt = new Date();
   await session.save();
+
+  try {
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const existingAttendance = await Attendance.findOne({
+      userId: req.user._id,
+      date: { $gte: startOfDay, $lte: endOfDay },
+    });
+
+    if (!existingAttendance) {
+      await Attendance.create({
+        role: "Trainer",
+        userId: req.user._id,
+        status: "present",
+        date: new Date(),
+      });
+    }
+  } catch (attendanceErr) {
+    console.warn(
+      "Auto-attendance failed during trainer session completion:",
+      attendanceErr?.message,
+    );
+  }
 
   res
     .status(200)

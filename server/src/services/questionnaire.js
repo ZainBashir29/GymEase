@@ -240,13 +240,14 @@ const validateAnswers = (answers) => {
 const generateCustomPlan = (answers) => {
   const [goal, level, daysPerWeek, focusArea] = answers;
 
-  const duration = parseInt(daysPerWeek) * 4;
+  const totalSessions = parseInt(daysPerWeek) * 4;
+  const duration = 28;
 
   const templatePool = session_templates[focusArea][goal];
 
   const sessions = [];
 
-  for (let i = 0; i < duration; i++) {
+  for (let i = 0; i < totalSessions; i++) {
     sessions.push(templatePool[i % templatePool.length]);
   }
 
@@ -254,7 +255,7 @@ const generateCustomPlan = (answers) => {
 
   const description = `A personalized ${level}-level plan focused on ${goal.replace(/_/g, " ")}, targeting ${focusArea.replace(/_/g, " ")}.`;
 
-  const details = `This plan runs for ${duration} sessions over 4 weeks, training ${daysPerWeek} days per week. Designed for ${level} level members.`;
+  const details = `This plan runs for ${totalSessions} sessions over 4 weeks, training ${daysPerWeek} days per week. Designed for ${level} level members.`;
 
   return {
     name,

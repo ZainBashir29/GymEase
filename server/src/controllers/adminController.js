@@ -72,7 +72,7 @@ const deleteMember = asyncHandler(async (req, res) => {
 
     await MembershipSubscription.findOneAndUpdate(
       {
-        memberId: req.user?._id,
+        memberId: id,
         status: "active",
       },
       {
@@ -86,7 +86,7 @@ const deleteMember = asyncHandler(async (req, res) => {
     );
 
     const cancelledMemberPlan = await MemberPlan.findOne({
-      memberId: req.user?._id,
+      memberId: id,
       status: "active",
     });
 
