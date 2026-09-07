@@ -7,18 +7,33 @@ import reconcilePayments from "./reconcilePayments.js";
 import markAbsentees from "./markAbsentees.js";
 
 const runDailyBatch = async () => {
-  console.log("Starting daily batch: ", new Date().toISOString);
+  console.log("Starting daily batch: ", new Date().toISOString());
 
   try {
     await warnExpiringMemberships();
-    await expireMemberships();
-    await markMissedSessions();
-    await completeFinishedMemberPlans();
-
-    console.log("Daily batch completed successfully");
   } catch (error) {
-    console.log("Daily batch failed: ", error?.message);
+    console.error("warnExpiringMemberships failed: ", error?.message);
   }
+
+  try {
+    await expireMemberships();
+  } catch (error) {
+    console.error("expireMemberships failed: ", error?.message);
+  }
+
+  try {
+    await markMissedSessions();
+  } catch (error) {
+    console.error("markMissedSessions failed: ", error?.message);
+  }
+
+  try {
+    await completeFinishedMemberPlans();
+  } catch (error) {
+    console.error("completeFinishedMemberPlans failed: ", error?.message);
+  }
+
+  console.log("Daily batch execution completed.");
 };
 
 const startCronJobs = () => {

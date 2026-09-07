@@ -11,8 +11,8 @@ const markMissedSessions = async () => {
     {
       date: {
         $lt: startOfToday,
-        status: "upcoming",
       },
+      status: "upcoming",
     },
     {
       $set: {

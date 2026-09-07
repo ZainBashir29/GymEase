@@ -40,49 +40,50 @@ const UpcomingScheduleCard = () => {
   const [error, setError] = useState("");
   const [selectedSession, setSelectedSession] = useState(null);
 
-  useEffect(() => {
-    const fetchUpcomingSessions = async () => {
-      try {
-        const { data } = await api.get("/gym-plans/sessions/member");
-        const allSessions = data.data || [];
+  const fetchUpcomingSessions = async () => {
+    try {
+      const { data } = await api.get("/gym-plans/sessions/member");
+      const allSessions = data.data || [];
 
-        // Filter out today and past sessions
-        const startOfTomorrow = new Date();
-        startOfTomorrow.setHours(24, 0, 0, 0);
+      // Filter out today and past sessions
+      const startOfTomorrow = new Date();
+      startOfTomorrow.setHours(24, 0, 0, 0);
 
-        const futureSessions = allSessions.filter(
-          (s) => new Date(s.date) >= startOfTomorrow,
-        );
+      const futureSessions = allSessions.filter(
+        (s) => new Date(s.date) >= startOfTomorrow,
+      );
 
-        // Group by Date (ignoring time)
-        const groups = {};
-        futureSessions.forEach((session) => {
-          const dateStr = new Date(session.date).toLocaleDateString(undefined, {
-            weekday: "long",
-            month: "short",
-            day: "numeric",
-          });
-          if (!groups[dateStr]) groups[dateStr] = [];
-          groups[dateStr].push(session);
+      // Group by Date (ignoring time)
+      const groups = {};
+      futureSessions.forEach((session) => {
+        const dateStr = new Date(session.date).toLocaleDateString(undefined, {
+          weekday: "long",
+          month: "short",
+          day: "numeric",
+        });
+        if (!groups[dateStr]) groups[dateStr] = [];
+        groups[dateStr].push(session);
+      });
+
+      // Sort dates chronologically
+      const sortedGroups = {};
+      Object.keys(groups)
+        .sort(
+          (a, b) => new Date(groups[a][0].date) - new Date(groups[b][0].date),
+        )
+        .forEach((key) => {
+          sortedGroups[key] = groups[key];
         });
 
-        const sortedGroups = {};
-        Object.keys(groups)
-          .sort(
-            (a, b) => new Date(groups[a][0].date) - new Date(groups[b][0].date),
-          )
-          .forEach((key) => {
-            sortedGroups[key] = groups[key];
-          });
+      setGroupedSessions(sortedGroups);
+    } catch {
+      setError("Couldn't load upcoming sessions.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-        setGroupedSessions(sortedGroups);
-      } catch {
-        setError("Couldn't load upcoming sessions.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
+  useEffect(() => {
     fetchUpcomingSessions();
   }, []);
 
@@ -130,7 +131,7 @@ const UpcomingScheduleCard = () => {
             </p>
           </div>
         ) : (
-          <div className="max-h-[300px] space-y-6 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-200 hover:scrollbar-thumb-slate-300">
+          <div className="max-h-80 space-y-6 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-200 hover:scrollbar-thumb-slate-300">
             {Object.entries(groupedSessions).map(([dateLabel, sessions]) => (
               <div key={dateLabel}>
                 <h4 className="mb-3 flex items-center gap-2 text-sm font-bold text-slate-700">
@@ -155,6 +156,9 @@ const UpcomingScheduleCard = () => {
       <MemberSessionModal
         session={selectedSession}
         onClose={() => setSelectedSession(null)}
+        onMarkCompleted={() => {
+          fetchUpcomingSessions();
+        }}
       />
     </>
   );

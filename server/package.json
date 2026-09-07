@@ -12,7 +12,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "seed:admin": "node src/db/seeds/adminSeed.js"
   },
   "dependencies": {
     "@sfpy/node-core": "^0.3.5",

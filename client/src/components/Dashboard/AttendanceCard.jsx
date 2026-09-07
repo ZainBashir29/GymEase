@@ -19,6 +19,15 @@ const AttendanceCard = () => {
     };
 
     checkStatus();
+
+    const handleAttendanceUpdated = () => {
+      checkStatus();
+    };
+
+    window.addEventListener("attendanceUpdated", handleAttendanceUpdated);
+    return () => {
+      window.removeEventListener("attendanceUpdated", handleAttendanceUpdated);
+    };
   }, []);
 
   const handleMarkAttendance = async () => {

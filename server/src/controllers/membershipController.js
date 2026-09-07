@@ -345,27 +345,116 @@ const renewMembershipSubscription = asyncHandler(async (req, res) => {
 
 const verifyMembership = asyncHandler(async (req, res) => {
   const { id } = req.params;
+
+  if (!id || !mongoose.isValidObjectId(id)) {
+    throw new ApiError(400, "Invalid verification ID");
+  }
+
   const membership = await MembershipSubscription.findById(id)
     .populate("memberId", "fullName email profilePicture")
     .populate("membershipPlanId", "name");
+
   if (!membership) {
     throw new ApiError(404, "Membership not found");
   }
+
   const isActive =
     new Date(membership.endDate) > new Date() &&
     membership.status !== "cancelled";
+
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+  const endOfDay = new Date();
+  endOfDay.setHours(23, 59, 59, 999);
+
+  const todayAttendance = await Attendance.findOne({
+    userId: membership.memberId?._id,
+    date: { $gte: startOfDay, $lte: endOfDay },
+  });
+
   res.status(200).json(
     new ApiResponse(
       200,
       {
         isValid: isActive,
-        user: membership.userId,
+        user: membership.memberId,
         plan: membership.membershipPlanId,
         endDate: membership.endDate,
         startDate: membership.startDate,
         status: membership.status,
+        isCheckedInToday: !!todayAttendance,
+        checkedInAt: todayAttendance?.date || null,
       },
       isActive ? "Active membership" : "Expired or cancelled membership",
+    ),
+  );
+});
+
+const checkInMemberByVerificationId = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id || !mongoose.isValidObjectId(id)) {
+    throw new ApiError(400, "Invalid verification ID");
+  }
+
+  const membership = await MembershipSubscription.findById(id).populate(
+    "memberId",
+    "fullName email profilePicture",
+  );
+
+  if (!membership) {
+    throw new ApiError(404, "Membership not found");
+  }
+
+  const isActive =
+    new Date(membership.endDate) > new Date() &&
+    membership.status !== "cancelled";
+
+  if (!isActive) {
+    throw new ApiError(
+      400,
+      "Cannot check in: membership is expired or inactive",
+    );
+  }
+
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+  const endOfDay = new Date();
+  endOfDay.setHours(23, 59, 59, 999);
+
+  const existingAttendance = await Attendance.findOne({
+    userId: membership.memberId?._id,
+    date: { $gte: startOfDay, $lte: endOfDay },
+  });
+
+  if (existingAttendance) {
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          alreadyCheckedIn: true,
+          attendance: existingAttendance,
+        },
+        "Member is already checked in for today",
+      ),
+    );
+  }
+
+  const attendance = await Attendance.create({
+    role: "Member",
+    userId: membership.memberId._id,
+    status: "present",
+    date: new Date(),
+  });
+
+  return res.status(201).json(
+    new ApiResponse(
+      201,
+      {
+        alreadyCheckedIn: false,
+        attendance,
+      },
+      `Member ${membership.memberId?.fullName || "Member"} checked in successfully`,
     ),
   );
 });
@@ -379,4 +468,5 @@ export {
   cancelMembershipSubscription,
   renewMembershipSubscription,
   verifyMembership,
+  checkInMemberByVerificationId,
 };

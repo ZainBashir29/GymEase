@@ -1,4 +1,4 @@
-import { createMessage } from "../services/message.js";
+import { createMessage, markMessagesRead } from "../services/message.js";
 
 const registerChatHandlers = (io, socket, onlineUsers) => {
   socket.on("sendMessage", async (payload, callback) => {

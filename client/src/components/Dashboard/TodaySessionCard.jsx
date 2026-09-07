@@ -1,31 +1,51 @@
 import { useState, useEffect } from "react";
-import { Dumbbell, Loader2, CalendarX } from "lucide-react";
+import { Dumbbell, Loader2, CalendarX, CheckCircle2 } from "lucide-react";
 import api from "../../lib/axios.js";
 
 const TodaySessionCard = () => {
   const [session, setSession] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCompleting, setIsCompleting] = useState(false);
+  const [completingError, setCompletingError] = useState("");
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    const fetchTodaySession = async () => {
-      try {
-        setIsLoading(true);
-        const { data } = await api.get("/gym-plans/sessions/member/today");
-        setSession(data.data);
-      } catch (err) {
-        if (err.response?.status === 404) {
-          setSession(null);
-        } else {
-          setError("Couldn't load today's session. Please try refreshing.");
-        }
-      } finally {
-        setIsLoading(false);
+  const fetchTodaySession = async () => {
+    try {
+      setIsLoading(true);
+      const { data } = await api.get("/gym-plans/sessions/member/today");
+      setSession(data.data);
+    } catch (err) {
+      if (err.response?.status === 404) {
+        setSession(null);
+      } else {
+        setError("Couldn't load today's session. Please try refreshing.");
       }
-    };
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchTodaySession();
   }, []);
+
+  const handleMarkCompleted = async () => {
+    if (!session?._id) return;
+    setIsCompleting(true);
+    setCompletingError("");
+
+    try {
+      await api.post(`/gym-plans/sessions/mark-completed/${session._id}`);
+      setSession((prev) => ({ ...prev, status: "completed" }));
+      window.dispatchEvent(new Event("attendanceUpdated"));
+    } catch (err) {
+      setCompletingError(
+        err.response?.data?.message || "Failed to mark session as completed.",
+      );
+    } finally {
+      setIsCompleting(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -101,6 +121,40 @@ const TodaySessionCard = () => {
           </div>
         ))}
       </div>
+
+      {completingError && (
+        <p className="mt-3 text-xs text-danger">{completingError}</p>
+      )}
+
+      {session.status === "upcoming" && (
+        <div className="mt-5 flex items-center justify-between border-t border-brand-100 pt-4">
+          <p className="text-xs text-slate-500">Finished your workout today?</p>
+          <button
+            onClick={handleMarkCompleted}
+            disabled={isCompleting}
+            className="flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isCompleting ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Marking...</span>
+              </>
+            ) : (
+              <>
+                <CheckCircle2 className="h-4 w-4" />
+                <span>Mark as Completed</span>
+              </>
+            )}
+          </button>
+        </div>
+      )}
+
+      {session.status === "completed" && (
+        <div className="mt-5 flex items-center gap-2 border-t border-brand-100 pt-4 text-sm font-medium text-success">
+          <CheckCircle2 className="h-4 w-4" />
+          <span>Workout completed for today! Great work!</span>
+        </div>
+      )}
     </div>
   );
 };

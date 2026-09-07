@@ -99,7 +99,7 @@ const getMemberProgress = asyncHandler(async (req, res) => {
   const subscription = await MembershipSubscription.findOne({
     memberId,
     status: "active",
-  }).populate("membershipId", "name price duration");
+  }).populate("membershipPlanId", "name price duration");
 
   if (!subscription) {
     throw new ApiError(
@@ -135,7 +135,7 @@ const getMemberProgress = asyncHandler(async (req, res) => {
         message:
           "You don't have an active gym plan yet. Select or create one for detailed session tracking.",
         membership: {
-          plan: subscription.membershipId?.name,
+          plan: subscription.membershipPlanId?.name,
           status: subscription.status,
           endDate: subscription.endDate,
         },

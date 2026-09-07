@@ -26,6 +26,7 @@ const UpcomingSessionRow = ({ session, onClick, onMarkConducted }) => {
 
     try {
       await api.post(`/gym-plans/sessions/mark-conducted/${session._id}`);
+      window.dispatchEvent(new Event("attendanceUpdated"));
       onMarkConducted(session._id);
     } catch (err) {
       setError(err.response?.data?.message || "Couldn't mark as conducted.");
@@ -62,14 +63,9 @@ const UpcomingSessionRow = ({ session, onClick, onMarkConducted }) => {
           Conducted
         </span>
       ) : (
-        <button
-          onClick={handleMark}
-          disabled={isMarking}
-          className="flex shrink-0 items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-slate-700 shadow-sm ring-1 ring-slate-200 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {isMarking && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-          {isMarking ? "Marking..." : "Mark"}
-        </button>
+        <span className="flex shrink-0 items-center gap-1 text-xs font-medium text-slate-400">
+          Scheduled
+        </span>
       )}
     </div>
   );
@@ -87,6 +83,7 @@ const UpcomingScheduleCard = () => {
         const { data } = await api.get("/gym-plans/sessions/trainer");
         const allSessions = data.data || [];
 
+        // Filter out today and past sessions
         const startOfTomorrow = new Date();
         startOfTomorrow.setHours(24, 0, 0, 0);
 
@@ -94,6 +91,7 @@ const UpcomingScheduleCard = () => {
           (s) => new Date(s.date) >= startOfTomorrow,
         );
 
+        // Group by Date (ignoring time)
         const groups = {};
         futureSessions.forEach((session) => {
           const dateStr = new Date(session.date).toLocaleDateString(undefined, {
@@ -105,6 +103,7 @@ const UpcomingScheduleCard = () => {
           groups[dateStr].push(session);
         });
 
+        // Sort dates chronologically
         const sortedGroups = {};
         Object.keys(groups)
           .sort(
@@ -188,7 +187,7 @@ const UpcomingScheduleCard = () => {
             <p className="mt-1 text-xs text-slate-400">Enjoy your free time!</p>
           </div>
         ) : (
-          <div className="max-h-37.5 space-y-6 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-200 hover:scrollbar-thumb-slate-300">
+          <div className="max-h-80 space-y-6 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-200 hover:scrollbar-thumb-slate-300">
             {Object.entries(groupedSessions).map(([dateLabel, sessions]) => (
               <div key={dateLabel}>
                 <h4 className="mb-3 flex items-center gap-2 text-sm font-bold text-slate-700">

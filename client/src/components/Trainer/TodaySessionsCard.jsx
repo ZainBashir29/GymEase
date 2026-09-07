@@ -18,6 +18,7 @@ const SessionModal = ({ session, onClose, onMarkConducted }) => {
 
     try {
       await api.post(`/gym-plans/sessions/mark-conducted/${session._id}`);
+      window.dispatchEvent(new Event("attendanceUpdated"));
       onMarkConducted(session._id);
     } catch (err) {
       setError(err.response?.data?.message || "Couldn't mark as conducted.");

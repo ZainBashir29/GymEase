@@ -26,6 +26,7 @@ const SessionModal = ({ session, onClose, onMarkConducted }) => {
 
     try {
       await api.post(`/gym-plans/sessions/mark-conducted/${session._id}`);
+      window.dispatchEvent(new Event("attendanceUpdated"));
       onMarkConducted(session._id);
     } catch (err) {
       setError(err.response?.data?.message || "Couldn't mark as conducted.");
@@ -148,20 +149,31 @@ const SessionModal = ({ session, onClose, onMarkConducted }) => {
             >
               Close
             </button>
-            {!session.trainerCompletedAt && (
-              <button
-                onClick={handleMark}
-                disabled={isMarking}
-                className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-brand-700 disabled:opacity-60 transition-colors"
-              >
-                {isMarking ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <CheckCircle2 className="h-4 w-4" />
-                )}
-                {isMarking ? "Marking..." : "Mark Conducted"}
-              </button>
-            )}
+            {!session.trainerCompletedAt &&
+              (new Date(session.date) >
+              new Date(new Date().setHours(23, 59, 59, 999)) ? (
+                <div className="flex flex-1 items-center justify-center rounded-xl bg-slate-100 px-3 py-2 text-xs font-medium text-slate-500">
+                  Scheduled for{" "}
+                  {new Date(session.date).toLocaleDateString(undefined, {
+                    weekday: "short",
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </div>
+              ) : (
+                <button
+                  onClick={handleMark}
+                  disabled={isMarking}
+                  className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-brand-700 disabled:opacity-60 transition-colors"
+                >
+                  {isMarking ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <CheckCircle2 className="h-4 w-4" />
+                  )}
+                  {isMarking ? "Marking..." : "Mark Conducted"}
+                </button>
+              ))}
           </div>
           {session.trainerCompletedAt && (
             <p className="text-center text-sm font-medium text-success mt-1 flex items-center justify-center gap-1.5">
