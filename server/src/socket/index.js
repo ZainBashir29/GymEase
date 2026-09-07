@@ -5,24 +5,30 @@ import registerChatHandlers from "./chatSocketHandlers.js";
 
 const onlineUsers = new Map();
 
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(",").map((origin) => origin.trim())
+  : ["http://localhost:5173", "http://192.168.1.10:5173"];
+
 const initializeSocket = (httpServer) => {
   const io = new Server(httpServer, {
     cors: {
-      origin: process.env.CORS_ORIGIN,
+      origin: allowedOrigins.length === 1 ? allowedOrigins[0] : allowedOrigins,
       credentials: true,
     },
   });
 
   io.use(async (socket, next) => {
     try {
-       let token = socket.handshake.auth?.token;
-      
+      let token = socket.handshake.auth?.token;
+
       if (!token && socket.handshake.headers.cookie) {
-        const cookies = socket.handshake.headers.cookie.split(';').reduce((acc, cookie) => {
-          const [name, ...rest] = cookie.split('=');
-          acc[name.trim()] = rest.join('=').trim();
-          return acc;
-        }, {});
+        const cookies = socket.handshake.headers.cookie
+          .split(";")
+          .reduce((acc, cookie) => {
+            const [name, ...rest] = cookie.split("=");
+            acc[name.trim()] = rest.join("=").trim();
+            return acc;
+          }, {});
         token = cookies.accessToken;
       }
 
@@ -65,9 +71,8 @@ const initializeSocket = (httpServer) => {
     socket.on("disconnect", () => {
       onlineUsers.delete(userId);
       console.log(`${socket.user?.fullName} disconnected`);
+      socket.broadcast.emit("userOffline", { userId });
     });
-
-    socket.broadcast.emit("userOffline", { userId });
   });
 
   return io;
