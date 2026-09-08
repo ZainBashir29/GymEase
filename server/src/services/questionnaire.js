@@ -248,12 +248,41 @@ const generateCustomPlan = (answers) => {
   const sessions = [];
 
   for (let i = 0; i < totalSessions; i++) {
-    sessions.push(templatePool[i % templatePool.length]);
+    const template = templatePool[i % templatePool.length];
+
+    const levelMultiplier =
+      level === "advanced" ? 1.2 : level === "intermediate" ? 1.0 : 0.85;
+
+    sessions.push({
+      name: template.name,
+      exercises: template.exercises.map((exercise) => ({
+        name: exercise.name,
+        sets: exercise.sets
+          ? Math.max(
+              2,
+              Math.min(6, Math.round(exercise.sets * levelMultiplier)),
+            )
+          : null,
+        reps: exercise.reps
+          ? Math.max(
+              6,
+              Math.min(25, Math.round(exercise.reps * levelMultiplier)),
+            )
+          : null,
+        duration: exercise.duration,
+      })),
+    });
   }
 
-  const name = `${goal.replace(/_/g, " ")} — ${focusArea.replace(/_/g, " ")} (${level})`;
+  const formatWord = (str) =>
+    str
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
 
-  const description = `A personalized ${level}-level plan focused on ${goal.replace(/_/g, " ")}, targeting ${focusArea.replace(/_/g, " ")}.`;
+  const name = `${formatWord(goal)} - ${formatWord(focusArea)} (${level.charAt(0).toUpperCase() + level.slice(1)})`;
+
+  const description = `A personalized ${level}-level plan focused on ${formatWord(goal)}, targeting ${formatWord(focusArea)}.`;
 
   const details = `This plan runs for ${totalSessions} sessions over 4 weeks, training ${daysPerWeek} days per week. Designed for ${level} level members.`;
 
