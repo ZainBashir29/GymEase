@@ -1,6 +1,7 @@
 import Payment from "../models/paymentModel.js";
 import MembershipSubscription from "../models/membershipSubscriptionModel.js";
 import Order from "../models/orderModel.js";
+import Cart from "../models/cartModel.js";
 import StoreProduct from "../models/storeProductModel.js";
 import Safepay from "@sfpy/node-core";
 
@@ -106,6 +107,11 @@ const handleSuccessfulPayment = async (trackerToken) => {
         paymentId: updatedPayment._id,
       },
     });
+
+    await Cart.findOneAndUpdate(
+      { memberId: order.memberId },
+      { $set: { products: [] } },
+    );
   }
 
   return updatedPayment;

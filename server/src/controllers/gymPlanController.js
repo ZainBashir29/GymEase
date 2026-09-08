@@ -15,11 +15,16 @@ import mongoose from "mongoose";
 import Trainer from "../models/trainerModel.js";
 
 const findAvailableTrainer = async (allowedTrainers, targetDate, session) => {
+  if (!allowedTrainers || allowedTrainers.length === 0) return null;
+
   const startOfDay = new Date(targetDate);
   startOfDay.setHours(0, 0, 0, 0);
 
   const endOfDay = new Date(targetDate);
   endOfDay.setHours(23, 59, 59, 999);
+
+  let bestTrainer = allowedTrainers[0];
+  let minSessions = Infinity;
 
   for (const trainerId of allowedTrainers) {
     const sessionCount = await Session.countDocuments({
@@ -33,9 +38,14 @@ const findAvailableTrainer = async (allowedTrainers, targetDate, session) => {
     if (sessionCount < 3) {
       return trainerId;
     }
+
+    if (sessionCount < minSessions) {
+      minSessions = sessionCount;
+      bestTrainer = trainerId;
+    }
   }
 
-  return null;
+  return bestTrainer;
 };
 
 const getAllPopularPlans = asyncHandler(async (req, res) => {
@@ -112,21 +122,23 @@ const activatePopularPlan = asyncHandler(async (req, res) => {
     throw new ApiError(400, "This gym plan has no trainers assigned");
   }
 
-  const maxTrainers = activeMember.membershipPlanId?.maxTrainers;
-
-  const allowedTrainers = gymPlan.trainerIds.slice(0, maxTrainers);
+  const maxTrainers = activeMember.membershipPlanId?.maxTrainers || 1;
 
   const validTrainers = await Trainer.find({
-    _id: { $in: allowedTrainers },
+    _id: { $in: gymPlan.trainerIds },
     isActive: true,
   });
 
-  if (validTrainers.length !== allowedTrainers.length) {
+  if (!validTrainers || validTrainers.length === 0) {
     throw new ApiError(
       400,
-      "One or more trainerIds do not match an active trainer",
+      "No active trainers are currently assigned to this gym plan",
     );
   }
+
+  const allowedTrainers = validTrainers
+    .slice(0, maxTrainers)
+    .map((trainer) => trainer._id);
 
   const startDate = new Date();
   const sessionDocuments = [];
@@ -374,32 +386,20 @@ const activateCustomPlan = asyncHandler(async (req, res) => {
     );
   }
 
-  const maxTrainers = subscription.membershipPlanId.maxTrainers;
+  const maxTrainers = subscription.membershipPlanId?.maxTrainers || 1;
 
-  const trainers = await Trainer.find({}).select("_id");
+  const trainers = await Trainer.find({ isActive: true });
 
   if (!trainers || trainers.length === 0) {
     throw new ApiError(
       400,
-      "No trainers are available in the system right now",
+      "No active trainers are available in the system right now",
     );
   }
 
-  const allTrainerIds = trainers.map((trainer) => trainer._id);
-
-  const allowedTrainers = allTrainerIds.slice(0, maxTrainers);
-
-  const validTrainers = await Trainer.find({
-    _id: { $in: allowedTrainers },
-    isActive: true,
-  });
-
-  if (validTrainers.length !== allowedTrainers.length) {
-    throw new ApiError(
-      400,
-      "One or more trainerIds do not match an active trainer",
-    );
-  }
+  const allowedTrainers = trainers
+    .slice(0, maxTrainers)
+    .map((trainer) => trainer._id);
 
   const customGymPlan = generateCustomPlan(answers);
 
@@ -460,12 +460,11 @@ const activateCustomPlan = asyncHandler(async (req, res) => {
 
     let sessionIndex = 0;
     let dayCounter = 1;
+    let offset = 0;
 
-    for (let i = 0; i < customGymPlan.duration; i++) {
-      if (sessionIndex >= customGymPlan.sessions.length) break;
-
+    while (sessionIndex < customGymPlan.sessions.length && offset < 60) {
       const targetDate = new Date(startDate);
-      targetDate.setDate(startDate.getDate() + i);
+      targetDate.setDate(startDate.getDate() + offset);
 
       if (validDays.includes(targetDate.getDay())) {
         const trainerId = await findAvailableTrainer(
@@ -494,6 +493,7 @@ const activateCustomPlan = asyncHandler(async (req, res) => {
 
         sessionIndex++;
       }
+      offset++;
     }
 
     const sessions = await Session.insertMany(sessionDocuments, {
@@ -772,7 +772,6 @@ const markSessionComplete = asyncHandler(async (req, res) => {
     );
   }
 });
-
 
 // const markSessionMissed = asyncHandler(async (req, res) => {
 //   const { id } = req.params;

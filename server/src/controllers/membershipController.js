@@ -4,6 +4,7 @@ import ApiResponse from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import MembershipPlan from "../models/membershipPlanModel.js";
 import MembershipSubscription from "../models/membershipSubscriptionModel.js";
+import Attendance from "../models/attendanceModel.js";
 import { createCheckoutUrl } from "./paymentController.js";
 
 const getAllMembershipPlans = asyncHandler(async (req, res) => {
