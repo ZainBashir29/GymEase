@@ -5,14 +5,24 @@ import registerChatHandlers from "./chatSocketHandlers.js";
 
 const onlineUsers = new Map();
 
-const allowedOrigins = process.env.CORS_ORIGIN
-  ? process.env.CORS_ORIGIN.split(",").map((origin) => origin.trim())
-  : ["http://localhost:5173", "http://192.168.1.10:5173"];
-
 const initializeSocket = (httpServer) => {
+  const allowedOrigins = process.env.CORS_ORIGIN
+    ? process.env.CORS_ORIGIN.split(",").map((origin) => origin.trim())
+    : ["http://localhost:5173", "http://192.168.1.11:5173"];
+
   const io = new Server(httpServer, {
     cors: {
-      origin: allowedOrigins.length === 1 ? allowedOrigins[0] : allowedOrigins,
+      origin: (origin, callback) => {
+        if (
+          !origin ||
+          allowedOrigins.includes(origin) ||
+          allowedOrigins.includes("*") ||
+          process.env.NODE_ENV === "development"
+        ) {
+          return callback(null, true);
+        }
+        return callback(new Error("Not allowed by CORS"));
+      },
       credentials: true,
     },
   });

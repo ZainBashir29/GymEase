@@ -7,7 +7,7 @@ import {
 } from "react";
 import { io } from "socket.io-client";
 import { useAuth } from "./AuthContext.jsx";
-import api from "../lib/axios.js";
+import api, { API_BASE_URL } from "../lib/axios.js";
 
 const ChatContext = createContext(undefined);
 
@@ -42,13 +42,10 @@ export const ChatProvider = ({ children }) => {
     const token =
       getCookie("accessToken") || localStorage.getItem("accessToken");
 
-    const newSocket = io(
-      import.meta.env.VITE_API_BASE_URL.replace("/api/v1", ""),
-      {
-        auth: { token },
-        withCredentials: true,
-      },
-    );
+    const newSocket = io(API_BASE_URL.replace("/api/v1", ""), {
+      auth: { token },
+      withCredentials: true,
+    });
 
     newSocket.on("connect", () => {
       console.log("Connected to chat socket");

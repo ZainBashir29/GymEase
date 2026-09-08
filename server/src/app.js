@@ -13,7 +13,7 @@ app.use(passport.initialize());
 
 const allowedOrigins = process.env.CORS_ORIGIN
   ? process.env.CORS_ORIGIN.split(",").map((origin) => origin.trim())
-  : ["http://localhost:5173", "192.168.1.10:5173"];
+  : ["http://localhost:5173", "http://192.168.1.11:5173"];
 
 app.use(
   cors({

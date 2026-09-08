@@ -1,8 +1,9 @@
 import React from "react";
+import { API_BASE_URL } from "../../lib/axios.js";
 
 const GoogleAuthButton = ({ label }) => {
   const handleGoogleAuth = () => {
-    window.location.href = `${import.meta.env.VITE_API_BASE_URL}/auth/google`;
+    window.location.href = `${API_BASE_URL}/auth/google`;
   };
 
   return (
