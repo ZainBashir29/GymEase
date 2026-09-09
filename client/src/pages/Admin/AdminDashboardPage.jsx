@@ -79,7 +79,7 @@ const AdminDashboardPage = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <StatCard
           title="Total Revenue"
-          value={`$${revenue?.totalRevenue?.toLocaleString() || 0}`}
+          value={`Rs. ${revenue?.totalRevenue?.toLocaleString() || 0}`}
           icon={DollarSign}
           colorClass="bg-green-100 text-green-700"
         />
@@ -133,7 +133,7 @@ const AdminDashboardPage = () => {
                   </span>
                   <div className="text-right">
                     <p className="font-bold text-slate-900">
-                      ${type.totalRevenue.toLocaleString()}
+                      Rs. {type.totalRevenue.toLocaleString()}
                     </p>
                     <p className="text-xs text-slate-500">
                       {type.transactionCount} transactions

@@ -42,7 +42,8 @@ export const ChatProvider = ({ children }) => {
     const token =
       getCookie("accessToken") || localStorage.getItem("accessToken");
 
-    const newSocket = io(API_BASE_URL.replace("/api/v1", ""), {
+    const socketUrl = API_BASE_URL.replace("/api/v1", "");
+    const newSocket = io(socketUrl, {
       auth: { token },
       withCredentials: true,
     });
@@ -51,14 +52,18 @@ export const ChatProvider = ({ children }) => {
       console.log("Connected to chat socket");
     });
 
+    newSocket.on("initialOnlineUsers", (userIds) => {
+      setOnlineUsers(new Set((userIds || []).map(String)));
+    });
+
     newSocket.on("userOnline", ({ userId }) => {
-      setOnlineUsers((prev) => new Set([...prev, userId]));
+      setOnlineUsers((prev) => new Set([...prev, String(userId)]));
     });
 
     newSocket.on("userOffline", ({ userId }) => {
       setOnlineUsers((prev) => {
         const newSet = new Set(prev);
-        newSet.delete(userId);
+        newSet.delete(String(userId));
         return newSet;
       });
     });
@@ -75,51 +80,81 @@ export const ChatProvider = ({ children }) => {
 
     const handleNewMessage = (message) => {
       const convId = String(message?.conversationId);
-      if (activeConversation && convId === String(activeConversation._id)) {
-        setMessages((prev) => [...prev, message]);
-      }
+      const senderIdStr = String(message?.senderId?._id || message?.senderId);
+      const isFromMe = senderIdStr === String(user?._id);
 
-      if (isChatOpen) {
-        socket.emit("markAsRead", {
-          conversationId: convId,
+      if (activeConversation && convId === String(activeConversation._id)) {
+        setMessages((prev) => {
+          if (prev.some((m) => String(m._id) === String(message._id))) {
+            return prev;
+          }
+          return [...prev, message];
         });
+
+        if (isChatOpen && !isFromMe) {
+          socket.emit("markAsRead", { conversationId: convId });
+        } else if (!isFromMe) {
+          setUnreadCounts((prev) => ({
+            ...prev,
+            [convId]: (prev[convId] || 0) + 1,
+          }));
+          setUnreadCount((prev) => prev + 1);
+        }
       } else {
-        setUnreadCounts((prev) => ({
-          ...prev,
-          [convId]: (prev[convId] || 0) + 1,
-        }));
-        setUnreadCount((prev) => prev + 1);
+        if (!isFromMe) {
+          setUnreadCounts((prev) => ({
+            ...prev,
+            [convId]: (prev[convId] || 0) + 1,
+          }));
+          setUnreadCount((prev) => prev + 1);
+        }
       }
 
       setConversations((prev) => {
         const idx = prev.findIndex((c) => String(c._id) === convId);
         if (idx !== -1) {
           const updated = [...prev];
-          updated[idx].lastMessage = message?.messageText || "New message";
-          const [conversation] = updated.splice(idx, 1);
-          return [conversation, ...updated];
+          updated[idx] = {
+            ...updated[idx],
+            lastMessage: message?.messageText || "New message",
+            lastMessageAt: message?.createdAt || new Date().toISOString(),
+          };
+          const [conv] = updated.splice(idx, 1);
+          return [conv, ...updated];
         } else {
           fetchConversations();
         }
-
         return prev;
       });
     };
 
+    const handleMessagesRead = ({ conversationId }) => {
+      setMessages((prev) =>
+        prev.map((msg) =>
+          String(msg.conversationId) === String(conversationId)
+            ? { ...msg, isRead: true }
+            : msg,
+        ),
+      );
+    };
+
     socket.on("newMessage", handleNewMessage);
+    socket.on("messagesRead", handleMessagesRead);
 
     return () => {
       socket.off("newMessage", handleNewMessage);
+      socket.off("messagesRead", handleMessagesRead);
     };
-  }, [socket, activeConversation, isChatOpen]);
+  }, [socket, activeConversation, isChatOpen, user]);
 
+  // Fetch conversations
   const fetchConversations = async () => {
     if (!user) return;
-
     try {
       const { data } = await api.get("/conversations/me");
       const convs = data.data || [];
       setConversations(convs);
+
       const initialUnread = {};
       let totalUnread = 0;
       convs.forEach((c) => {
@@ -160,6 +195,7 @@ export const ChatProvider = ({ children }) => {
   const openConversation = (conversation) => {
     setActiveConversation(conversation);
     fetchMessages(conversation._id);
+
     setUnreadCounts((prev) => {
       const next = { ...prev };
       const idStr = String(conversation._id);
@@ -168,6 +204,7 @@ export const ChatProvider = ({ children }) => {
       setUnreadCount((current) => Math.max(0, current - convUnread));
       return next;
     });
+
     if (!isChatOpen) {
       setIsChatOpen(true);
     }
@@ -185,8 +222,15 @@ export const ChatProvider = ({ children }) => {
       "sendMessage",
       { conversationId, receiverId, messageText },
       (response) => {
-        if (response.success) {
-          setMessages((prev) => [...prev, response.message]);
+        if (response?.success && response?.message) {
+          setMessages((prev) => {
+            if (
+              prev.some((m) => String(m._id) === String(response.message._id))
+            ) {
+              return prev;
+            }
+            return [...prev, response.message];
+          });
 
           setConversations((prev) => {
             const idx = prev.findIndex(
@@ -194,15 +238,19 @@ export const ChatProvider = ({ children }) => {
             );
             if (idx !== -1) {
               const updated = [...prev];
-              updated[idx].lastMessage =
-                response?.message?.messageText || "Sent message";
+              updated[idx] = {
+                ...updated[idx],
+                lastMessage: response.message.messageText || "Sent message",
+                lastMessageAt:
+                  response.message.createdAt || new Date().toISOString(),
+              };
               const [conv] = updated.splice(idx, 1);
               return [conv, ...updated];
             }
             return prev;
           });
         } else {
-          console.error("Failed to send message via socket", response.message);
+          console.error("Failed to send message via socket", response?.message);
         }
       },
     );
@@ -243,6 +291,7 @@ export const ChatProvider = ({ children }) => {
         }
         return prev;
       });
+
       openConversation(newConv);
     } catch (error) {
       console.error("Failed to start conversation", error);

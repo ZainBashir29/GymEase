@@ -6,7 +6,6 @@ const AdminMembershipsPage = () => {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -127,7 +126,7 @@ const AdminMembershipsPage = () => {
               <h3 className="text-xl font-bold text-slate-900">{plan.name}</h3>
               <div className="mt-2 mb-4">
                 <span className="text-3xl font-black text-slate-900">
-                  ${plan.price}
+                  Rs. {plan.price}
                 </span>
                 <span className="text-slate-500 font-medium">
                   {" "}
@@ -202,7 +201,7 @@ const AdminMembershipsPage = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Price ($)
+                    Price (Rs. )
                   </label>
                   <input
                     type="number"

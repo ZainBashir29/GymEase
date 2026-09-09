@@ -12,14 +12,14 @@ const router = Router();
 
 router
   .route("/send")
-  .post(verifyJwt, role("Member", "Trainer", "Admin"), requireActiveMembership, sendMessage);
+  .post(verifyJwt, role("Member", "Trainer", "Admin"), sendMessage);
 
 router
   .route("/:conversationId")
-  .get(verifyJwt, role("Member", "Trainer", "Admin"), requireActiveMembership, getConversationMessages);
+  .get(verifyJwt, role("Member", "Trainer", "Admin"), getConversationMessages);
 
 router
   .route("/read/:conversationId")
-  .patch(verifyJwt, role("Member", "Trainer", "Admin"), requireActiveMembership, markMessagesAsRead);
+  .patch(verifyJwt, role("Member", "Trainer", "Admin"), markMessagesAsRead);
 
 export default router;

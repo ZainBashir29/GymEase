@@ -109,8 +109,9 @@ const getMyConversations = asyncHandler(async (req, res) => {
   })
     .populate("participants", "fullName email role profilePicture")
     .sort({
+      lastMessageAt: -1,
       updatedAt: -1,
-       })
+    })
     .lean();
 
   conversations = await Promise.all(
@@ -121,7 +122,7 @@ const getMyConversations = asyncHandler(async (req, res) => {
         isRead: false,
       });
       return { ...conv, unreadCount };
-    })
+    }),
   );
 
   return res
@@ -137,6 +138,7 @@ const getPotentialContacts = asyncHandler(async (req, res) => {
 
   const admins = await User.find({
     role: "Admin",
+    isActive: true,
     _id: { $ne: user?._id },
   }).select("fullName email role profilePicture");
 
@@ -148,7 +150,7 @@ const getPotentialContacts = asyncHandler(async (req, res) => {
       "fullName email role profilePicture",
     );
 
-    const trainers = sessions.map((s) => s.trainerId).filter((t) => t);
+    const trainers = sessions.map((s) => s.trainerId).filter((t) => t && t.isActive !== false);
 
     const uniqueTrainers = Array.from(
       new Map(trainers.map((t) => [t._id.toString(), t])).values(),
@@ -161,7 +163,7 @@ const getPotentialContacts = asyncHandler(async (req, res) => {
       "fullName email role profilePicture",
     );
 
-    const members = sessions.map((s) => s.memberId).filter((m) => m);
+    const members = sessions.map((s) => s.memberId).filter((m) => m && m.isActive !== false);
 
     const uniqueMembers = Array.from(
       new Map(members.map((m) => [m._id.toString(), m])).values(),
@@ -169,9 +171,10 @@ const getPotentialContacts = asyncHandler(async (req, res) => {
 
     validContacts = [...validContacts, ...uniqueMembers];
   } else if (user.role === "Admin") {
-    const everyoneElse = await User.find({ _id: { $ne: user?._id } }).select(
-      "fullName email role profilePicture",
-    );
+    const everyoneElse = await User.find({
+      _id: { $ne: user?._id },
+      isActive: true,
+    }).select("fullName email role profilePicture");
 
     validContacts = [...everyoneElse];
   }

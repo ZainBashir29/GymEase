@@ -6,14 +6,13 @@ const AdminStorePage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     price: "",
     stock: "",
-    category: "supplements",
+    category: "Supplement",
   });
   const [imageFile, setImageFile] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -68,7 +67,7 @@ const AdminStorePage = () => {
         description: "",
         price: "",
         stock: "",
-        category: "supplements",
+        category: "Supplement",
       });
       setImageFile(null);
       fetchProducts();
@@ -139,7 +138,7 @@ const AdminStorePage = () => {
                     {product.name}
                   </h3>
                   <span className="font-black text-brand-600 ml-2">
-                    ${product.price}
+                    Rs. ${product.price}
                   </span>
                 </div>
 
@@ -217,13 +216,13 @@ const AdminStorePage = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Price ($)
+                    Price (Rs.)
                   </label>
                   <input
                     type="number"
                     required
-                    min="0.01"
-                    step="0.01"
+                    min="1"
+                    step="1"
                     value={formData.price}
                     onChange={(e) =>
                       setFormData({ ...formData, price: e.target.value })
@@ -260,10 +259,8 @@ const AdminStorePage = () => {
                   }
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
                 >
-                  <option value="supplements">Supplements</option>
-                  <option value="equipment">Equipment</option>
-                  <option value="apparel">Apparel</option>
-                  <option value="accessories">Accessories</option>
+                  <option value="Supplement">Supplements</option>
+                  <option value="Gym Gear">Gym Gear</option>
                 </select>
               </div>
 

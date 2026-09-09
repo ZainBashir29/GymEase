@@ -15,7 +15,6 @@ router
   .post(
     verifyJwt,
     role("Member", "Trainer", "Admin"),
-    requireActiveMembership,
     createConversation,
   );
 
@@ -24,7 +23,6 @@ router
   .get(
     verifyJwt,
     role("Member", "Trainer", "Admin"),
-    requireActiveMembership,
     getMyConversations,
   );
 

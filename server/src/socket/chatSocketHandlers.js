@@ -26,14 +26,14 @@ const registerChatHandlers = (io, socket, onlineUsers) => {
         messageText,
       });
 
-      const message = messageDoc.toJSON ? messageDoc.toJSON : messageDoc;
+      const message = messageDoc.toJSON ? messageDoc.toJSON() : messageDoc;
 
       callback?.({ success: true, message });
 
-      const receiverSocketId = onlineUsers.get(receiverId);
-      if (receiverSocketId) {
-        io.to(receiverSocketId).emit("newMessage", message);
-      }
+      const receiverSocketRoom = receiverId.toString();
+      io.to(receiverSocketRoom).emit("newMessage", message);
+
+      socket.to(socket.user._id.toString()).emit("newMessage", message);
     } catch (error) {
       callback?.({
         success: false,
@@ -60,14 +60,11 @@ const registerChatHandlers = (io, socket, onlineUsers) => {
 
       callback?.({ success: true, ...result });
 
-      for (const senderId of result?.senderIds) {
-        const senderSocketId = onlineUsers.get(senderId);
-        if (senderSocketId) {
-          io.to(senderSocketId).emit("messagesRead", {
-            conversationId,
-            readBy: socket.user._id,
-          });
-        }
+      for (const senderId of result?.senderIds || []) {
+        io.to(senderId.toString()).emit("messagesRead", {
+          conversationId,
+          readBy: socket.user._id,
+        });
       }
     } catch (error) {
       callback?.({
