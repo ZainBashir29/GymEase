@@ -10,6 +10,7 @@ import MemberPlan from "../models/gymPlans/memberPlanModel.js";
 import MembershipPlan from "../models/membershipPlanModel.js";
 import GymPlan from "../models/gymPlans/gymPlanModel.js";
 import Payment from "../models/paymentModel.js";
+import Order from "../models/orderModel.js";
 import {
   uploadOnCloudinary,
   deleteFromCloudinary,
@@ -20,13 +21,51 @@ const getAllMembers = asyncHandler(async (req, res) => {
 
   const filter = includeInactive == "true" ? {} : { isActive: true };
 
-  const members = await Member.find(filter).select(
-    "-password -refreshToken -isProfileCompleted -resetPasswordToken -resetPasswordExpiry",
+  const members = await Member.find(filter)
+    .select(
+      "-password -refreshToken -isProfileCompleted -resetPasswordToken -resetPasswordExpiry",
+    )
+    .lean();
+
+  const membersWithDetails = await Promise.all(
+    members.map(async (member) => {
+      const activeMembership = await MembershipSubscription.findOne({
+        memberId: member._id,
+        status: "active",
+      })
+        .populate("membershipPlanId", "name")
+        .lean();
+
+      const activeGymPlan = await MemberPlan.findOne({
+        memberId: member._id,
+        status: "active",
+      })
+        .populate("gymPlanId", "name")
+        .lean();
+
+      return {
+        ...member,
+        membership: activeMembership
+          ? {
+              planName:
+                activeMembership.membershipPlanId?.name || "Unknown Plan",
+              endDate: activeMembership.endDate,
+            }
+          : null,
+        gymPlan: activeGymPlan
+          ? {
+              planName: activeGymPlan.gymPlanId?.name || "Unknown Plan",
+            }
+          : null,
+      };
+    }),
   );
 
   res
     .status(200)
-    .json(new ApiResponse(200, members, "Members fetched successfully"));
+    .json(
+      new ApiResponse(200, membersWithDetails, "Members fetched successfully"),
+    );
 });
 
 const getMemberById = asyncHandler(async (req, res) => {
@@ -342,12 +381,27 @@ const getSystemOverview = asyncHandler(async (req, res) => {
     totalActiveMemberships,
     totalActiveGymPlans,
     todaySessionsCount,
+    recentOrders,
+    recentMembers,
+    todaySessions,
   ] = await Promise.all([
     Member.countDocuments({ isActive: true }),
     Trainer.countDocuments({ isActive: true }),
     MembershipSubscription.countDocuments({ status: "active" }),
     MemberPlan.countDocuments({ status: "active" }),
     Session.countDocuments({ date: { $gte: startOfDay, $lte: endOfDay } }),
+    Order.find()
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .populate("memberId", "fullName email profilePicture"),
+    Member.find()
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .select("fullName email profilePicture createdAt"),
+    Session.find({ date: { $gte: startOfDay, $lte: endOfDay } })
+      .populate("memberId", "fullName profilePicture")
+      .populate("trainerId", "fullName")
+      .limit(10)
   ]);
 
   res.status(200).json(
@@ -359,6 +413,9 @@ const getSystemOverview = asyncHandler(async (req, res) => {
         totalActiveMemberships,
         totalActiveGymPlans,
         todaySessionsCount,
+        recentOrders,
+        recentMembers,
+        todaySessions,
       },
       "System overview fetched successfully",
     ),
@@ -387,6 +444,26 @@ const getRevenueSummary = asyncHandler(async (req, res) => {
     { $group: { _id: null, totalRefunded: { $sum: "$amount" } } },
   ]);
 
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 29);
+  thirtyDaysAgo.setHours(0, 0, 0, 0);
+
+  const recentPayments = await Payment.find({
+    status: "successful",
+    createdAt: { $gte: thirtyDaysAgo },
+  });
+
+  const thirtyDayMap = {};
+  recentPayments.forEach((p) => {
+    const d = new Date(p.createdAt);
+    const dateStr = d.toISOString().split("T")[0];
+    thirtyDayMap[dateStr] = (thirtyDayMap[dateStr] || 0) + p.amount;
+  });
+
+  const thirtyDayRevenue = Object.keys(thirtyDayMap)
+    .map((k) => ({ _id: k, revenue: thirtyDayMap[k] }))
+    .sort((a, b) => a._id.localeCompare(b._id));
+
   res.status(200).json(
     new ApiResponse(
       200,
@@ -394,6 +471,7 @@ const getRevenueSummary = asyncHandler(async (req, res) => {
         totalRevenue,
         revenueByType,
         totalRefunded: refundedResult[0]?.totalRefunded || 0,
+        thirtyDayRevenue,
       },
       "Revenue summary fetched successfully",
     ),

@@ -1,11 +1,19 @@
 import nodemailer from "nodemailer";
 
+// const transporter = nodemailer.createTransport({
+//   host: process.env.NODEMAILER_HOST,
+//   port: process.env.NODEMAILER_PORT,
+//   auth: {
+//     user: process.env.NODEMAILER_USER,
+//     pass: process.env.NODEMAILER_PASS,
+//   },
+// });
+
 const transporter = nodemailer.createTransport({
-  host: process.env.NODEMAILER_HOST,
-  port: process.env.NODEMAILER_PORT,
+  service: "gmail",
   auth: {
-    user: process.env.NODEMAILER_USER,
-    pass: process.env.NODEMAILER_PASS,
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
@@ -19,7 +27,7 @@ try {
 const sendEmail = async ({ to, subject, html }) => {
   try {
     await transporter.sendMail({
-      from: `"GymEase" <${process.env.NODEMAILER_USER}>`,
+      from: `"GymEase Team" <${process.env.EMAIL_USER}>`,
       to,
       subject,
       html,
@@ -27,6 +35,6 @@ const sendEmail = async ({ to, subject, html }) => {
   } catch (err) {
     console.error("Error while sending mail:", err);
   }
-}
+};
 
 export default sendEmail;
