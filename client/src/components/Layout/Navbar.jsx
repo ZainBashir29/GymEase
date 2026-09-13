@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Dumbbell, ShoppingCart } from "lucide-react";
+import { Dumbbell, ShoppingCart, Menu, X } from "lucide-react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useCart } from "../../context/CartContext.jsx";
 
@@ -14,6 +15,7 @@ const Navbar = () => {
   const { user, logout } = useAuth();
   const { itemCount, toggleCart } = useCart();
   const navigate = useNavigate();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogout = async () => {
     await logout();
@@ -84,7 +86,7 @@ const Navbar = () => {
               </Link>
               <button
                 onClick={handleLogout}
-                className="rounded-lg bg-red-200 px-4 py-2 text-sm font-semibold text-danger transition-colors hover:bg-red-300"
+                className="hidden sm:block rounded-lg bg-red-200 px-4 py-2 text-sm font-semibold text-danger transition-colors hover:bg-red-300"
               >
                 Logout
               </button>
@@ -93,7 +95,7 @@ const Navbar = () => {
             <>
               <Link
                 to="/login"
-                className="text-sm font-semibold text-slate-700 transition-colors hover:text-brand-600"
+                className="hidden sm:block text-sm font-semibold text-slate-700 transition-colors hover:text-brand-600"
               >
                 Log in
               </Link>
@@ -105,8 +107,59 @@ const Navbar = () => {
               </Link>
             </>
           )}
+
+          {/* Mobile Menu Toggle Button */}
+          <button
+            className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg -mr-2"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
+          </button>
         </div>
       </nav>
+
+      {/* Mobile Menu Dropdown */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden border-t border-slate-200 bg-white absolute w-full left-0 right-0 shadow-lg">
+          <div className="flex flex-col">
+            {NAV_LINKS.map((link) => (
+               <Link
+                 key={link.to}
+                 to={link.to}
+                 onClick={() => setIsMobileMenuOpen(false)}
+                 className="text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-brand-600 px-6 py-4 border-b border-slate-100"
+               >
+                 {link.label}
+               </Link>
+            ))}
+            
+            {/* Additional Mobile Actions */}
+            {user ? (
+               <button
+                 onClick={() => {
+                   handleLogout();
+                   setIsMobileMenuOpen(false);
+                 }}
+                 className="text-left text-base font-medium text-red-600 hover:bg-red-50 px-6 py-4 sm:hidden"
+               >
+                 Logout
+               </button>
+            ) : (
+               <Link
+                 to="/login"
+                 onClick={() => setIsMobileMenuOpen(false)}
+                 className="text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-brand-600 px-6 py-4 sm:hidden"
+               >
+                 Log in
+               </Link>
+            )}
+          </div>
+        </div>
+      )}
     </header>
   );
 };

@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useLocation, Outlet } from "react-router-dom";
 import {
+  Menu,
   LayoutDashboard,
   Users,
   UserCheck,
@@ -20,6 +21,7 @@ const AdminLayout = () => {
   const { pathname } = useLocation();
   const { logout } = useAuth();
   const { toggleChatWindow, unreadCount } = useChat();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = [
     { name: "Overview", path: "/admin/dashboard", icon: LayoutDashboard },
@@ -32,8 +34,16 @@ const AdminLayout = () => {
   ];
 
   return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden font-sans">
-      <aside className="w-64 bg-slate-900 text-white flex flex-col md:flex shrink-0">
+    <div className="flex h-screen bg-slate-50 overflow-hidden font-sans relative">
+      {/* Mobile Sidebar Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 z-40 bg-slate-900/50 md:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 text-white flex flex-col shrink-0 transform transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="p-6 flex items-center gap-3">
           <div className="bg-brand-500 rounded p-1.5">
             <Dumbbell className="w-6 h-6 text-white" />
@@ -62,6 +72,7 @@ const AdminLayout = () => {
               <Link
                 key={item.path}
                 to={item.path}
+                onClick={() => setIsMobileMenuOpen(false)}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
                   isActive
                     ? "bg-brand-600 text-white font-medium"
@@ -106,17 +117,22 @@ const AdminLayout = () => {
 
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
         <header className="md:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between z-10">
-          <div className="flex items-center gap-2">
-            <div className="bg-brand-500 rounded p-1">
-              <Dumbbell className="w-5 h-5 text-white" />
-            </div>
-            <span className="font-bold text-slate-900">Admin</span>
-          </div>
-          <Link to="/" className="text-sm font-medium text-brand-600">
-            Exit
-          </Link>
-
           <div className="flex items-center gap-3">
+            <button 
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="p-1 -ml-1 text-slate-600 hover:bg-slate-100 rounded-lg"
+            >
+              <Menu className="h-6 w-6" />
+            </button>
+            <div className="flex items-center gap-2">
+              <div className="bg-brand-500 rounded p-1 hidden sm:block">
+                <Dumbbell className="w-5 h-5 text-white" />
+              </div>
+              <span className="font-bold text-slate-900">Admin</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
             <button
               type="button"
               onClick={toggleChatWindow}

@@ -57,16 +57,16 @@ const GymPlansPage = () => {
               You must complete or cancel your current plan before activating a new one.
             </p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 mt-4 sm:mt-0 w-full sm:w-auto">
             <button 
               onClick={() => setIsCancelModalOpen(true)}
-              className="shrink-0 px-6 py-2 bg-white text-red-600 font-medium rounded-lg hover:bg-red-50 border border-red-200 transition-colors"
+              className="w-full sm:w-auto shrink-0 px-6 py-2 bg-white text-red-600 font-medium rounded-lg hover:bg-red-50 border border-red-200 transition-colors"
             >
               Cancel Plan
             </button>
             <Link 
               to="/member/dashboard" 
-              className="shrink-0 px-6 py-2 bg-brand-600 text-white font-medium rounded-lg hover:bg-brand-700 transition-colors"
+              className="w-full sm:w-auto text-center shrink-0 px-6 py-2 bg-brand-600 text-white font-medium rounded-lg hover:bg-brand-700 transition-colors"
             >
               Go to Dashboard
             </Link>

@@ -1,13 +1,20 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { Dumbbell, LogOut } from "lucide-react";
 import { useAuth } from "../../context/AuthContext.jsx";
 
-const Sidebar = ({ navItems }) => {
+const Sidebar = ({ navItems, setIsMobileMenuOpen }) => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
     await logout();
     navigate("/login", { replace: true });
+  };
+
+  const handleNavClick = () => {
+    if (setIsMobileMenuOpen) {
+      setIsMobileMenuOpen(false);
+    }
   };
 
   return (
@@ -25,6 +32,7 @@ const Sidebar = ({ navItems }) => {
             key={to}
             to={to}
             end={end}
+            onClick={handleNavClick}
             className={({ isActive }) =>
               `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                 isActive

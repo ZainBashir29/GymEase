@@ -72,11 +72,11 @@ const StorePage = () => {
               className="group relative border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow"
             >
               <Link to={`/store/product/${product._id}`}>
-                <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden bg-slate-200 lg:aspect-none lg:h-80">
+                <div className="aspect-square w-full overflow-hidden bg-slate-200 lg:h-80 lg:aspect-auto">
                   <img
                     src={product.imageUrl}
                     alt={product.name}
-                    className="h-full w-full object-cover object-center lg:h-full lg:w-full"
+                    className="h-full w-full object-cover object-center"
                   />
                 </div>
                 <div className="flex flex-col p-4">
