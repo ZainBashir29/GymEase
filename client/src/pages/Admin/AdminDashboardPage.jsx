@@ -85,7 +85,6 @@ const AdminDashboardPage = () => {
     );
   }
 
-  // Generate 30 days array to ensure no gaps in the chart (using local timezone)
   const last30Days = [];
   const today = new Date();
   for (let i = 29; i >= 0; i--) {
@@ -128,10 +127,10 @@ const AdminDashboardPage = () => {
       {
         data: revenue?.revenueByType?.map((r) => r.totalRevenue) || [],
         backgroundColor: [
-          "#3b82f6", // blue-500
-          "#10b981", // emerald-500
-          "#8b5cf6", // violet-500
-          "#f59e0b", // amber-500
+          "#3b82f6", 
+          "#10b981", 
+          "#8b5cf6", 
+          "#f59e0b", 
         ],
         borderWidth: 0,
         hoverOffset: 4,

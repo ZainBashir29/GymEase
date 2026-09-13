@@ -49,7 +49,9 @@ const findAvailableTrainer = async (allowedTrainers, targetDate, session) => {
 };
 
 const getAllPopularPlans = asyncHandler(async (req, res) => {
-  const popularPlans = await GymPlan.find({});
+  const popularPlans = await GymPlan.find({
+    type: "popular",
+  });
 
   if (!popularPlans) {
     throw new ApiError(500, "Could not fetch popular gym plans");

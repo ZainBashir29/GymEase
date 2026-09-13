@@ -280,7 +280,7 @@ const generateCustomPlan = (answers) => {
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
 
-  const name = `${formatWord(goal)} - ${formatWord(focusArea)} (${level.charAt(0).toUpperCase() + level.slice(1)})`;
+  const name = `${formatWord(goal)} - ${formatWord(focusArea)} (${level.charAt(0).toUpperCase() + level.slice(1)}) (Custom)`;
 
   const description = `A personalized ${level}-level plan focused on ${formatWord(goal)}, targeting ${formatWord(focusArea)}.`;
 
