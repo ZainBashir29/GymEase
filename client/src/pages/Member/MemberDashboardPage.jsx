@@ -3,7 +3,7 @@ import {
   Dumbbell,
   CreditCard,
   ShoppingBag,
-  // MessageCircle
+  
   Package,
   Settings,
 } from "lucide-react";
@@ -49,7 +49,7 @@ const MemberDashboard = () => {
           <TodaySessionCard />
           <UpcomingScheduleCard />
           <AttendanceCard />
-          {/* <QuickLinks /> */}
+          
         </div>
 
         <div className="space-y-8">

@@ -6,7 +6,7 @@ const AdminMembershipsPage = () => {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Modal state
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPlanId, setEditingPlanId] = useState(null);
   const [formData, setFormData] = useState({
@@ -14,7 +14,7 @@ const AdminMembershipsPage = () => {
     price: "",
     duration: "",
     maxTrainers: 1,
-    details: "", // comma separated
+    details: "", 
   });
   const [submitting, setSubmitting] = useState(false);
 
@@ -216,7 +216,7 @@ const AdminMembershipsPage = () => {
         )}
       </div>
 
-      {/* Add/Edit Modal */}
+      
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm overflow-y-auto">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md my-8">

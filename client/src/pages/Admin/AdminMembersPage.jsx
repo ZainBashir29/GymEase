@@ -32,7 +32,7 @@ const AdminMembersPage = () => {
 
     try {
       await api.delete(`/admin/members/delete/${id}`);
-      fetchMembers(); // Refresh the list
+      fetchMembers(); 
     } catch (error) {
       console.error("Failed to delete member", error);
       alert(error.response?.data?.message || "Failed to deactivate member");

@@ -112,7 +112,7 @@ const AdminDashboardPage = () => {
       {
         label: "Daily Revenue (Rs)",
         data: last30Days.map((d) => dailyDataMap[d] || 0),
-        backgroundColor: "rgba(37, 99, 235, 0.8)", // brand-600
+        backgroundColor: "rgba(37, 99, 235, 0.8)", 
         borderRadius: 4,
       },
     ],
@@ -223,7 +223,7 @@ const AdminDashboardPage = () => {
         />
       </div>
 
-      {/* Analytics Charts */}
+      
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm ring-1 ring-slate-100 flex flex-col">
           <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
@@ -269,7 +269,7 @@ const AdminDashboardPage = () => {
         </div>
       </div>
 
-      {/* Recent Activity Feeds */}
+      
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-100 overflow-hidden flex flex-col">
           <div className="p-6 border-b border-slate-100 flex justify-between items-center">

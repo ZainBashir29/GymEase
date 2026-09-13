@@ -170,7 +170,7 @@ const MemberSettingsPage = () => {
           </div>
         )}
 
-        {/* Profile Picture Section */}
+        
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-8">
           <div className="p-6 flex flex-col sm:flex-row items-center gap-6">
             <div className="relative">
@@ -219,7 +219,7 @@ const MemberSettingsPage = () => {
           </div>
         </div>
 
-        {/* Profile Info Section */}
+        
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-8">
           <div className="px-6 py-5 border-b border-slate-200">
             <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
@@ -279,7 +279,7 @@ const MemberSettingsPage = () => {
           </div>
         </div>
 
-        {/* Change Password Section */}
+        
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-8">
           <div className="px-6 py-5 border-b border-slate-200">
             <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
@@ -327,7 +327,7 @@ const MemberSettingsPage = () => {
           </div>
         </div>
 
-        {/* Danger Zone */}
+        
         <div className="bg-red-50 rounded-2xl border border-red-100 shadow-sm overflow-hidden">
           <div className="px-6 py-5 border-b border-red-200">
             <h2 className="text-lg font-semibold text-red-700 flex items-center gap-2">

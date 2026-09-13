@@ -64,7 +64,7 @@ const ChatWidget = () => {
 
   return (
     <>
-      {/* Floating Chat Button */}
+      
       <button
         onClick={toggleChatWindow}
         className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-brand-600 text-white shadow-lg transition-transform hover:scale-105 active:scale-95"
@@ -81,10 +81,10 @@ const ChatWidget = () => {
         )}
       </button>
 
-      {/* Chat Window */}
+      
       {isChatOpen && (
         <div className="fixed bottom-24 right-6 z-50 flex h-[500px] w-80 sm:w-96 flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-slate-200 transition-all">
-          {/* Header */}
+          
           <div className="flex items-center bg-brand-600 px-4 py-3 text-white">
             {activeConversation || showContacts ? (
               <button
@@ -172,10 +172,10 @@ const ChatWidget = () => {
             </button>
           </div>
 
-          {/* Body */}
+          
           <div className="flex-1 overflow-hidden bg-slate-50 flex flex-col">
             {showContacts ? (
-              // Contacts List
+              
               <div className="flex-1 overflow-y-auto">
                 {contacts.length === 0 ? (
                   <div className="flex h-full flex-col items-center justify-center text-slate-400 p-6 text-center">
@@ -223,7 +223,7 @@ const ChatWidget = () => {
                 )}
               </div>
             ) : !activeConversation ? (
-              // Conversations List
+              
               <div className="flex-1 overflow-y-auto">
                 {conversations.length === 0 ? (
                   <div className="flex h-full flex-col items-center justify-center text-slate-400 p-6 text-center">
@@ -288,7 +288,7 @@ const ChatWidget = () => {
                 )}
               </div>
             ) : (
-              // Active Chat Messages
+              
               <div className="flex-1 flex flex-col overflow-hidden">
                 <div className="flex-1 overflow-y-auto p-4 space-y-4">
                   {messages.map((msg, index) => {
@@ -336,7 +336,7 @@ const ChatWidget = () => {
                   <div ref={messagesEndRef} />
                 </div>
 
-                {/* Message Input */}
+                
                 <div className="border-t border-slate-200 bg-white p-3">
                   <form
                     onSubmit={handleSend}

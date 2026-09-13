@@ -45,7 +45,7 @@ const UpcomingScheduleCard = () => {
       const { data } = await api.get("/gym-plans/sessions/member");
       const allSessions = data.data || [];
 
-      // Filter out today and past sessions
+      
       const startOfTomorrow = new Date();
       startOfTomorrow.setHours(24, 0, 0, 0);
 
@@ -53,7 +53,7 @@ const UpcomingScheduleCard = () => {
         (s) => new Date(s.date) >= startOfTomorrow,
       );
 
-      // Group by Date (ignoring time)
+      
       const groups = {};
       futureSessions.forEach((session) => {
         const dateStr = new Date(session.date).toLocaleDateString(undefined, {
@@ -65,7 +65,7 @@ const UpcomingScheduleCard = () => {
         groups[dateStr].push(session);
       });
 
-      // Sort dates chronologically
+      
       const sortedGroups = {};
       Object.keys(groups)
         .sort(

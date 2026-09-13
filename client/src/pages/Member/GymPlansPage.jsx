@@ -21,7 +21,7 @@ const GymPlansPage = () => {
           api.get("/gym-plans/active").catch(() => ({ data: { data: null } }))
         ]);
         
-        // Filter out inactive plans
+        
         const activePlansOnly = (plansRes.data.data || []).filter(p => p.isActive !== false);
         setPlans(activePlansOnly);
         setActivePlan(activePlanRes.data.data);
@@ -74,7 +74,7 @@ const GymPlansPage = () => {
         </div>
       )}
 
-      {/* Custom Plan Hero Banner */}
+      
       <div className="mb-12 overflow-hidden rounded-3xl bg-slate-900 text-white relative shadow-xl">
         <div className="absolute inset-0 bg-gradient-to-r from-brand-600/20 to-purple-600/20 mix-blend-overlay"></div>
         <div className="relative p-8 md:p-12 flex flex-col md:flex-row items-center gap-8">

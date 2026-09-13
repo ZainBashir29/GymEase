@@ -35,7 +35,7 @@ const AdminLayout = () => {
 
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden font-sans relative">
-      {/* Mobile Sidebar Overlay */}
+      
       {isMobileMenuOpen && (
         <div 
           className="fixed inset-0 z-40 bg-slate-900/50 md:hidden"

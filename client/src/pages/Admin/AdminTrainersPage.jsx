@@ -18,7 +18,7 @@ const AdminTrainersPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [includeInactive, setIncludeInactive] = useState(true);
 
-  // Modal state
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTrainerId, setEditingTrainerId] = useState(null);
   const [formData, setFormData] = useState({
@@ -87,7 +87,7 @@ const AdminTrainersPage = () => {
       fullName: trainer.fullName,
       username: trainer.username || "",
       email: trainer.email,
-      password: "", // Password cannot be edited via this route currently
+      password: "", 
       expertise: trainer.expertise,
     });
     setProfilePicture(null);
@@ -102,7 +102,7 @@ const AdminTrainersPage = () => {
 
     try {
       if (editingTrainerId) {
-        // Edit Trainer (Uses multipart/form-data because it accepts profilePicture)
+        
         const form = new FormData();
         form.append("fullName", formData.fullName);
         form.append("email", formData.email);
@@ -115,8 +115,8 @@ const AdminTrainersPage = () => {
           headers: { "Content-Type": "multipart/form-data" },
         });
       } else {
-        // Add Trainer (Uses JSON for basic fields currently based on old implementation)
-        // If the backend addTrainer supports profilePicture, we could use FormData too, but sticking to what was there:
+        
+        
         await api.post("/admin/trainers/add", formData);
       }
 
@@ -303,7 +303,7 @@ const AdminTrainersPage = () => {
         </div>
       </div>
 
-      {/* Add/Edit Modal */}
+      
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm overflow-y-auto">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md my-8">

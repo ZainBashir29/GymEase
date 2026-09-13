@@ -11,7 +11,7 @@ const products = [
     price: 18500,
     stock: 50,
     imageUrl:
-      "https://images.unsplash.com/photo-1593095940071-007dd2a20336?q=80&w=800&auto=format&fit=crop",
+      "/images/products/whey_protein.jpg",
     imagePublicId: "",
     category: "Supplement",
     isActive: true,
@@ -23,7 +23,7 @@ const products = [
     price: 6500,
     stock: 80,
     imageUrl:
-      "https://images.unsplash.com/photo-1579722820308-d74e571900a9?q=80&w=800&auto=format&fit=crop",
+      "/images/products/creatine.jpg",
     imagePublicId: "",
     category: "Supplement",
     isActive: true,
@@ -35,7 +35,7 @@ const products = [
     price: 8900,
     stock: 40,
     imageUrl:
-      "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=800&auto=format&fit=crop",
+      "/images/products/pre_workout.jpg",
     imagePublicId: "",
     category: "Supplement",
     isActive: true,
@@ -47,7 +47,7 @@ const products = [
     price: 9500,
     stock: 35,
     imageUrl:
-      "https://images.unsplash.com/photo-1546483875-ad9014c88eba?q=80&w=800&auto=format&fit=crop",
+      "/images/products/plant_protein.jpg",
     imagePublicId: "",
     category: "Supplement",
     isActive: true,
@@ -59,7 +59,7 @@ const products = [
     price: 5800,
     stock: 60,
     imageUrl:
-      "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?q=80&w=800&auto=format&fit=crop",
+      "/images/products/bcaa.jpg",
     imagePublicId: "",
     category: "Supplement",
     isActive: true,
@@ -71,7 +71,7 @@ const products = [
     price: 4200,
     stock: 25,
     imageUrl:
-      "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=800&auto=format&fit=crop",
+      "/images/products/lifting_belt.jpg",
     imagePublicId: "",
     category: "Gym Gear",
     isActive: true,
@@ -83,7 +83,7 @@ const products = [
     price: 1200,
     stock: 100,
     imageUrl:
-      "https://images.unsplash.com/photo-1598971639058-fab3c3109a00?q=80&w=800&auto=format&fit=crop",
+      "/images/products/wrist_straps.jpg",
     imagePublicId: "",
     category: "Gym Gear",
     isActive: true,
@@ -95,7 +95,7 @@ const products = [
     price: 2800,
     stock: 75,
     imageUrl:
-      "https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=800&auto=format&fit=crop",
+      "/images/products/shaker_bottle.jpg",
     imagePublicId: "",
     category: "Gym Gear",
     isActive: true,
@@ -107,7 +107,7 @@ const products = [
     price: 2500,
     stock: 45,
     imageUrl:
-      "https://images.unsplash.com/photo-1598289431512-b97b0917affc?q=80&w=800&auto=format&fit=crop",
+      "/images/products/resistance_bands.jpg",
     imagePublicId: "",
     category: "Gym Gear",
     isActive: true,
@@ -119,7 +119,7 @@ const products = [
     price: 1800,
     stock: 65,
     imageUrl:
-      "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?q=80&w=800&auto=format&fit=crop",
+      "/images/products/gym_gloves.jpg",
     imagePublicId: "",
     category: "Gym Gear",
     isActive: true,

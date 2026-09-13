@@ -108,7 +108,7 @@ const Navbar = () => {
             </>
           )}
 
-          {/* Mobile Menu Toggle Button */}
+          
           <button
             className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg -mr-2"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -122,7 +122,7 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Mobile Menu Dropdown */}
+      
       {isMobileMenuOpen && (
         <div className="md:hidden border-t border-slate-200 bg-white absolute w-full left-0 right-0 shadow-lg">
           <div className="flex flex-col">
@@ -137,7 +137,7 @@ const Navbar = () => {
                </Link>
             ))}
             
-            {/* Additional Mobile Actions */}
+            
             {user ? (
                <button
                  onClick={() => {

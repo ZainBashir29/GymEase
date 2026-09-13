@@ -110,7 +110,7 @@ const CustomPlanQuestionnaire = () => {
     newAnswers[currentStep] = optionId;
     setAnswers(newAnswers);
 
-    // Auto advance if not on last step
+    
     if (currentStep < QUESTIONS.length - 1) {
       setTimeout(() => {
         setCurrentStep((prev) => prev + 1);
@@ -133,7 +133,7 @@ const CustomPlanQuestionnaire = () => {
 
     try {
       await api.post("/gym-plans/custom/activate", { answers });
-      // Redirect to dashboard on success
+      
       navigate("/member/dashboard", { replace: true });
     } catch (err) {
       setError(
@@ -150,7 +150,7 @@ const CustomPlanQuestionnaire = () => {
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-6">
       <div className="max-w-3xl mx-auto">
-        {/* Header */}
+        
         <div className="text-center mb-12">
           <div className="w-16 h-16 bg-brand-100 rounded-full flex items-center justify-center mx-auto mb-6 text-brand-600 shadow-sm">
             <Wand2 className="w-8 h-8" />
@@ -163,7 +163,7 @@ const CustomPlanQuestionnaire = () => {
           </p>
         </div>
 
-        {/* Progress Bar */}
+        
         <div className="mb-8 relative">
           <div className="flex justify-between text-xs font-semibold text-slate-400 mb-2 px-1">
             <span>
@@ -187,7 +187,7 @@ const CustomPlanQuestionnaire = () => {
           </div>
         )}
 
-        {/* Question Card */}
+        
         <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/40 border border-slate-100 p-8 md:p-12 mb-8 relative overflow-hidden">
           {submitting ? (
             <div className="py-20 flex flex-col items-center justify-center text-center">
@@ -256,7 +256,7 @@ const CustomPlanQuestionnaire = () => {
           )}
         </div>
 
-        {/* Navigation Actions */}
+        
         {!submitting && (
           <div className="flex items-center justify-between">
             <button

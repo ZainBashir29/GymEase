@@ -109,7 +109,7 @@ const MembershipCard = () => {
   );
   const isExpiringSoon = daysRemaining <= 3 && daysRemaining >= 0;
 
-  // Real Verification QR Payload
+  
   const qrPayload = `${window.location.origin}/verify/${membership._id}`;
 
   const renderCard = (isModal = false) => (
@@ -228,7 +228,7 @@ const MembershipCard = () => {
         </Link>
       </div>
 
-      {/* Modal Overlay */}
+      
       {isModalOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm"

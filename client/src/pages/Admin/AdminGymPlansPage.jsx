@@ -6,7 +6,7 @@ const AdminGymPlansPage = () => {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Modal & Form State
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPlanId, setEditingPlanId] = useState(null);
   const [submitting, setSubmitting] = useState(false);

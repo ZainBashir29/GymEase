@@ -197,11 +197,11 @@ const AdminOrdersPage = () => {
         </div>
       </div>
 
-      {/* Order Details Modal */}
+      
       {selectedOrder && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-150">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden border border-slate-100">
-            {/* Modal Header */}
+            
             <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
               <div>
                 <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
@@ -221,9 +221,9 @@ const AdminOrdersPage = () => {
               </button>
             </div>
 
-            {/* Modal Body */}
+            
             <div className="p-6 overflow-y-auto space-y-6">
-              {/* Order Meta Cards */}
+              
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 space-y-1">
                   <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Customer Details</p>
@@ -246,7 +246,7 @@ const AdminOrdersPage = () => {
                 </div>
               </div>
 
-              {/* Items List */}
+              
               <div>
                 <h4 className="text-sm font-bold text-slate-900 mb-3 flex items-center justify-between">
                   <span>Ordered Items</span>
@@ -306,7 +306,7 @@ const AdminOrdersPage = () => {
                 </div>
               </div>
 
-              {/* Price Breakdown */}
+              
               <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 space-y-2 text-sm">
                 <div className="flex justify-between text-slate-600">
                   <span>Items Subtotal</span>
@@ -330,7 +330,7 @@ const AdminOrdersPage = () => {
               </div>
             </div>
 
-            {/* Modal Footer */}
+            
             <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex flex-col sm:flex-row justify-between items-center gap-3">
               <div className="flex items-center gap-2 w-full sm:w-auto">
                 <span className="text-xs font-semibold text-slate-600 whitespace-nowrap">Update Status:</span>

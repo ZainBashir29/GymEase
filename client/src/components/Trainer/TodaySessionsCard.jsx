@@ -34,7 +34,7 @@ const SessionModal = ({ session, onClose, onMarkConducted }) => {
       <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={onClose} />
       
       <div className="relative w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl">
-        {/* Header */}
+        
         <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50 p-6">
           <div className="flex items-center gap-4">
             <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-brand-100 ring-2 ring-white">
@@ -59,7 +59,7 @@ const SessionModal = ({ session, onClose, onMarkConducted }) => {
           </button>
         </div>
 
-        {/* Exercises List */}
+        
         <div className="max-h-[60vh] overflow-y-auto p-6">
           <h3 className="mb-4 flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-slate-400">
             <Dumbbell className="h-4 w-4" />
@@ -99,7 +99,7 @@ const SessionModal = ({ session, onClose, onMarkConducted }) => {
           )}
         </div>
 
-        {/* Footer Actions */}
+        
         <div className="border-t border-slate-100 bg-slate-50 p-6 flex flex-col gap-2">
           {error && <p className="text-center text-sm text-danger">{error}</p>}
           
@@ -134,7 +134,7 @@ const SessionRow = ({ session, onClick, onMarkConducted }) => {
   const [error, setError] = useState("");
 
   const handleMark = async (e) => {
-    e.stopPropagation(); // Prevent opening modal when clicking button
+    e.stopPropagation(); 
     setError("");
     setIsMarking(true);
 
@@ -220,7 +220,7 @@ const TodaySessionsCard = () => {
           : s,
       ),
     );
-    // Also update selected session state if modal is open
+    
     if (selectedSession && selectedSession._id === sessionId) {
       setSelectedSession(prev => ({ ...prev, trainerCompletedAt: new Date().toISOString() }));
     }

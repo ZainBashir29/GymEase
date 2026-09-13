@@ -129,7 +129,7 @@ const VerifyMembershipPage = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
       <div className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-xl ring-1 ring-slate-100">
-        {/* Header Banner */}
+        
         <div
           className={`p-8 text-center text-white ${
             isValid ? "bg-success" : "bg-danger"
