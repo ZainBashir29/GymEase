@@ -114,7 +114,7 @@ const MembershipCard = () => {
   const renderCard = (isModal = false) => (
     <div
       ref={!isModal ? cardRef : null}
-      onClick={() = className="cursor-pointer"> !isModal && setIsModalOpen(true)}
+      onClick={() => !isModal && setIsModalOpen(true)}
       className={`relative overflow-hidden rounded-xl bg-linear-to-br from-brand-600 to-brand-800 text-white shadow-md transition-transform ${!isModal ? "cursor-pointer hover:scale-[1.02] p-6" : "p-8 shadow-2xl"}`}
     >
       <div
@@ -246,7 +246,7 @@ const MembershipCard = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <button
-              onClick={() = className="cursor-pointer"> setIsModalOpen(false)}
+              onClick={() => setIsModalOpen(false)}
               className="absolute -right-4 -top-4 z-50 flex h-8 w-8 items-center justify-center rounded-full bg-white text-slate-900 shadow-md hover:bg-slate-100 cursor-pointer"
             >
               <X className="h-5 w-5" />

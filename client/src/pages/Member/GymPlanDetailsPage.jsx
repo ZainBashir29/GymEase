@@ -114,7 +114,7 @@ const GymPlanDetailsPage = () => {
             </p>
           </div>
           <button
-            onClick={() = className="cursor-pointer"> setIsCancelModalOpen(true)}
+            onClick={() => setIsCancelModalOpen(true)}
             className="shrink-0 px-4 py-2 bg-yellow-100 text-yellow-800 text-sm font-medium rounded-lg hover:bg-yellow-200 transition-colors"
           >
             Cancel Active Plan

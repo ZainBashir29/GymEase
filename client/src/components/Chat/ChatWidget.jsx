@@ -85,7 +85,7 @@ const ChatWidget = () => {
           <div className="flex items-center bg-brand-600 px-4 py-3 text-white">
             {activeConversation || showContacts ? (
               <button
-                onClick={() = className="cursor-pointer"> {
+                onClick={() => {
                   if (showContacts) setShowContacts(false);
                   else closeConversation();
                 }}
@@ -152,7 +152,7 @@ const ChatWidget = () => {
             </div>
             {!activeConversation && !showContacts && (
               <button
-                onClick={() = className="cursor-pointer"> {
+                onClick={() => {
                   fetchContacts();
                   setShowContacts(true);
                 }}
@@ -182,7 +182,7 @@ const ChatWidget = () => {
                     {contacts.map((contact) => (
                       <li
                         key={contact._id}
-                        onClick={() = className="cursor-pointer"> {
+                        onClick={() => {
                           startConversation(contact._id);
                           setShowContacts(false);
                         }}
@@ -237,7 +237,7 @@ const ChatWidget = () => {
                       return (
                         <li
                           key={conv._id}
-                          onClick={() = className="cursor-pointer"> openConversation(conv)}
+                          onClick={() => openConversation(conv)}
                           className={`flex cursor-pointer items-center p-4 transition-colors ${convUnread > 0 ? "bg-brand-50 hover:bg-brand-100" : "hover:bg-slate-100"}`}
                         >
                           <div className="relative flex-shrink-0">

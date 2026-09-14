@@ -189,8 +189,13 @@ const activatePopularPlan = asyncHandler(async (req, res) => {
       targetDate.setDate(startDate.getDate() + i);
 
       if (validDays.includes(targetDate.getDay())) {
+        const rotatedTrainers = [
+          ...allowedTrainers.slice(workoutIndex % allowedTrainers.length),
+          ...allowedTrainers.slice(0, workoutIndex % allowedTrainers.length)
+        ];
+        
         const trainerId = await findAvailableTrainer(
-          allowedTrainers,
+          rotatedTrainers,
           targetDate,
           session,
         );
@@ -476,8 +481,13 @@ const activateCustomPlan = asyncHandler(async (req, res) => {
       targetDate.setDate(startDate.getDate() + offset);
 
       if (validDays.includes(targetDate.getDay())) {
+        const rotatedTrainers = [
+          ...allowedTrainers.slice(sessionIndex % allowedTrainers.length),
+          ...allowedTrainers.slice(0, sessionIndex % allowedTrainers.length)
+        ];
+
         const trainerId = await findAvailableTrainer(
-          allowedTrainers,
+          rotatedTrainers,
           targetDate,
           session,
         );

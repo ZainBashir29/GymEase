@@ -92,7 +92,7 @@ const StorePage = () => {
 
                   <div className="mt-auto pt-4">
                     <button
-                      onClick={(e) = className="cursor-pointer"> handleAddToCart(e, product._id)}
+                      onClick={(e) => handleAddToCart(e, product._id)}
                       disabled={
                         addingToCart === product._id || product.stock === 0
                       }

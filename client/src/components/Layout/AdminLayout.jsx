@@ -35,15 +35,16 @@ const AdminLayout = () => {
 
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden font-sans relative">
-      
       {isMobileMenuOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-40 bg-slate-900/50 md:hidden cursor-pointer"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
 
-      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 text-white flex flex-col shrink-0 transform transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 text-white flex flex-col shrink-0 transform transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
+      >
         <div className="p-6 flex items-center gap-3">
           <div className="bg-brand-500 rounded p-1.5">
             <Dumbbell className="w-6 h-6 text-white" />
@@ -66,13 +67,13 @@ const AdminLayout = () => {
         <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname.startsWith(item.path);
-
+            const isActive =
+              pathname === item.path || pathname.startsWith(`${item.path}/`);
             return (
               <Link
-                key={item.path}
+                key={item.path}b
                 to={item.path}
-                onClick={() = className="cursor-pointer"> setIsMobileMenuOpen(false)}
+                onClick={() => setIsMobileMenuOpen(false)}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
                   isActive
                     ? "bg-brand-600 text-white font-medium"
@@ -87,7 +88,7 @@ const AdminLayout = () => {
             );
           })}
 
-        <button
+          <button
             type="button"
             onClick={toggleChatWindow}
             className="flex w-full items-center justify-between px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors cursor-pointer"
@@ -118,8 +119,8 @@ const AdminLayout = () => {
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
         <header className="md:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between z-10">
           <div className="flex items-center gap-3">
-            <button 
-              onClick={() = className="cursor-pointer"> setIsMobileMenuOpen(true)}
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
               className="p-1 -ml-1 text-slate-600 hover:bg-slate-100 rounded-lg"
             >
               <Menu className="h-6 w-6" />

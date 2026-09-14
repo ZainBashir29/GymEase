@@ -109,7 +109,7 @@ const ProductDetailsPage = () => {
               <div className="mr-4 flex items-center border border-slate-300 rounded-lg">
                 <button
                   type="button"
-                  onClick={() = className="cursor-pointer"> setQuantity(Math.max(1, quantity - 1))}
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   className="px-4 py-2 text-slate-500 hover:text-slate-700"
                   disabled={product.stock === 0}
                 >
@@ -120,7 +120,7 @@ const ProductDetailsPage = () => {
                 </span>
                 <button
                   type="button"
-                  onClick={() = className="cursor-pointer">
+                  onClick={() =>
                     setQuantity(Math.min(product.stock, quantity + 1))
                   }
                   className="px-4 py-2 text-slate-500 hover:text-slate-700"

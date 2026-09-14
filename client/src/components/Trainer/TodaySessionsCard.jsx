@@ -150,7 +150,7 @@ const SessionRow = ({ session, onClick, onMarkConducted }) => {
 
   return (
     <div 
-      onClick={() = className="cursor-pointer"> onClick(session)}
+      onClick={() => onClick(session)}
       className="flex cursor-pointer items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-4 py-3.5 transition-colors hover:bg-slate-100 hover:border-slate-200 group"
     >
       <div className="min-w-0 flex-1">
@@ -275,7 +275,7 @@ const TodaySessionsCard = () => {
                 session={session}
                 onClick={setSelectedSession}
                 onMarkConducted={handleMarkConducted}
-              / className="cursor-pointer">
+              />
             ))}
           </div>
         )}

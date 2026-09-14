@@ -199,7 +199,7 @@ const AdminMembersPage = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       {member.isActive && (
                         <button
-                          onClick={() = className="cursor-pointer"> handleDelete(member._id)}
+                          onClick={() => handleDelete(member._id)}
                           className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors inline-flex items-center gap-2"
                           title="Deactivate Member"
                         >

@@ -185,7 +185,7 @@ const MemberSettingsPage = () => {
                 </div>
               )}
               <button
-                onClick={() = className="cursor-pointer"> fileInputRef.current?.click()}
+                onClick={() => fileInputRef.current?.click()}
                 disabled={isUploadingPic}
                 className="absolute bottom-0 right-0 p-2 bg-white rounded-full border border-slate-200 shadow-sm text-slate-600 hover:text-brand-600 transition-colors disabled:opacity-50 cursor-pointer"
               >
@@ -196,7 +196,7 @@ const MemberSettingsPage = () => {
                 ref={fileInputRef}
                 onChange={handleProfilePictureUpload}
                 accept="image/*"
-                className="hidden cursor-pointer"
+                className="hidden"
               />
             </div>
             <div>
@@ -207,7 +207,7 @@ const MemberSettingsPage = () => {
                 Upload a new avatar. Larger images will be resized.
               </p>
               <button
-                onClick={() = className="cursor-pointer"> fileInputRef.current?.click()}
+                onClick={() => fileInputRef.current?.click()}
                 disabled={isUploadingPic}
                 className="text-sm font-medium text-brand-600 hover:text-brand-700 disabled:opacity-50"
               >

@@ -61,7 +61,7 @@ const GymPlansPage = () => {
           </div>
           <div className="flex flex-col sm:flex-row gap-3 mt-4 sm:mt-0 w-full sm:w-auto">
             <button 
-              onClick={() = className="cursor-pointer"> setIsCancelModalOpen(true)}
+              onClick={() => setIsCancelModalOpen(true)}
               className="w-full sm:w-auto shrink-0 px-6 py-2 bg-white text-red-600 font-medium rounded-lg hover:bg-red-50 border border-red-200 transition-colors"
             >
               Cancel Plan
@@ -101,7 +101,7 @@ const GymPlansPage = () => {
               </div>
             ) : (
               <button 
-                onClick={() = className="cursor-pointer"> navigate("/member/plans/custom/questionnaire")}
+                onClick={() => navigate("/member/plans/custom/questionnaire")}
                 className="inline-flex items-center gap-2 px-8 py-4 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl transition-all hover:scale-105"
               >
                 Start Questionnaire

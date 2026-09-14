@@ -88,7 +88,7 @@ const CartDrawer = () => {
                         <div className="flex flex-1 items-end justify-between text-sm">
                           <div className="flex items-center space-x-3">
                             <button
-                              onClick={() = className="cursor-pointer">
+                              onClick={() =>
                                 updateQuantity(
                                   item.productId?._id,
                                   Math.max(1, item.quantity - 1),
@@ -103,7 +103,7 @@ const CartDrawer = () => {
                               {item.quantity}
                             </span>
                             <button
-                              onClick={() = className="cursor-pointer">
+                              onClick={() =>
                                 updateQuantity(
                                   item.productId?._id,
                                   item.quantity + 1,
@@ -118,7 +118,7 @@ const CartDrawer = () => {
                           <div className="flex">
                             <button
                               type="button"
-                              onClick={() = className="cursor-pointer"> removeItem(item.productId?._id)}
+                              onClick={() => removeItem(item.productId?._id)}
                               className="font-medium text-red-600 hover:text-red-500"
                             >
                               Remove

@@ -6,7 +6,6 @@ const AdminMembershipsPage = () => {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPlanId, setEditingPlanId] = useState(null);
   const [formData, setFormData] = useState({
@@ -14,7 +13,7 @@ const AdminMembershipsPage = () => {
     price: "",
     duration: "",
     maxTrainers: 1,
-    details: "", 
+    details: "",
   });
   const [submitting, setSubmitting] = useState(false);
 
@@ -195,16 +194,16 @@ const AdminMembershipsPage = () => {
 
               <div className="flex gap-2 mt-auto pt-4 border-t border-slate-100">
                 <button
-                  onClick={() = className="cursor-pointer"> openEditModal(plan)}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-lg transition-colors border border-slate-200"
+                  onClick={() => openEditModal(plan)}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-lg transition-colors border border-slate-200 cursor-pointer"
                 >
                   <Edit2 className="w-4 h-4" />
                   Edit
                 </button>
                 {plan.isActive && (
                   <button
-                    onClick={() = className="cursor-pointer"> handleDelete(plan._id)}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-transparent"
+                    onClick={() => handleDelete(plan._id)}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-transparent cursor-pointer"
                   >
                     <Trash2 className="w-4 h-4" />
                     Deactivate
@@ -216,7 +215,6 @@ const AdminMembershipsPage = () => {
         )}
       </div>
 
-      
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm overflow-y-auto">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md my-8">
@@ -227,8 +225,8 @@ const AdminMembershipsPage = () => {
                   : "Add New Membership Plan"}
               </h3>
               <button
-                onClick={() = className="cursor-pointer"> setIsModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 transition-colors p-1"
+                onClick={() => setIsModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 transition-colors p-1 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -247,7 +245,7 @@ const AdminMembershipsPage = () => {
                     setFormData({ ...formData, name: e.target.value })
                   }
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
-                  placeholder="e.g. Premium Plan"
+                  placeholder="e.g. Standard"
                 />
               </div>
 
@@ -270,7 +268,7 @@ const AdminMembershipsPage = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Duration (Days)
+                    Duration
                   </label>
                   <input
                     type="number"
@@ -305,7 +303,7 @@ const AdminMembershipsPage = () => {
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Plan Details / Perks
+                  Plan Perks
                 </label>
                 <textarea
                   rows="3"
@@ -314,7 +312,7 @@ const AdminMembershipsPage = () => {
                     setFormData({ ...formData, details: e.target.value })
                   }
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none text-sm"
-                  placeholder="Enter perks separated by commas (e.g. 24/7 Access, Free Towels)"
+                  placeholder=""
                 />
                 <p className="text-xs text-slate-500 mt-1">
                   Separate each perk with a comma.
@@ -325,7 +323,7 @@ const AdminMembershipsPage = () => {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full py-3 bg-brand-600 text-white font-bold rounded-xl hover:bg-brand-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full py-3 bg-brand-600 text-white font-bold rounded-xl hover:bg-brand-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
                 >
                   {submitting ? (
                     <>

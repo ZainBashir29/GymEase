@@ -215,7 +215,7 @@ const CustomPlanQuestionnaire = () => {
                   return (
                     <button
                       key={opt.id}
-                      onClick={() = className="cursor-pointer"> handleSelect(opt.id)}
+                      onClick={() => handleSelect(opt.id)}
                       className={`text-left p-6 rounded-2xl border-2 transition-all group relative overflow-hidden
                         ${
                           isSelected
@@ -284,7 +284,7 @@ const CustomPlanQuestionnaire = () => {
               </button>
             ) : (
               <button
-                onClick={() = className="cursor-pointer"> setCurrentStep((prev) => prev + 1)}
+                onClick={() => setCurrentStep((prev) => prev + 1)}
                 disabled={!answers[currentStep]}
                 className="flex items-center gap-2 px-8 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors disabled:opacity-50"
               >

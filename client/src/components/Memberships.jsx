@@ -144,7 +144,7 @@ const Memberships = () => {
                   ))}
                 </ul>
                 <button
-                  onClick={() = className="cursor-pointer"> handleGetStarted(plan._id)}
+                  onClick={() => handleGetStarted(plan._id)}
                   disabled={purchasingPlanId === plan._id}
                   aria-describedby={plan._id}
                   className={`mt-8 flex w-full items-center justify-center gap-2 rounded-md px-3 py-3 text-center text-sm font-semibold focus-visible:outline focus-visible:outline-offset-2 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 ${

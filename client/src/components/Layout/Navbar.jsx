@@ -130,7 +130,7 @@ const Navbar = () => {
                <Link
                  key={link.to}
                  to={link.to}
-                 onClick={() = className="cursor-pointer"> setIsMobileMenuOpen(false)}
+                 onClick={() => setIsMobileMenuOpen(false)}
                  className="text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-brand-600 px-6 py-4 border-b border-slate-100"
                >
                  {link.label}
@@ -140,7 +140,7 @@ const Navbar = () => {
             
             {user ? (
                <button
-                 onClick={() = className="cursor-pointer"> {
+                 onClick={() => {
                    handleLogout();
                    setIsMobileMenuOpen(false);
                  }}
@@ -151,7 +151,7 @@ const Navbar = () => {
             ) : (
                <Link
                  to="/login"
-                 onClick={() = className="cursor-pointer"> setIsMobileMenuOpen(false)}
+                 onClick={() => setIsMobileMenuOpen(false)}
                  className="text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-brand-600 px-6 py-4 sm:hidden"
                >
                  Log in

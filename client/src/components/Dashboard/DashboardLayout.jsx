@@ -27,7 +27,7 @@ const DashboardLayout = ({ children, navItems }) => {
         <header className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 md:hidden shrink-0">
           <span className="text-lg font-bold text-slate-900">GymEase</span>
           <button
-            onClick={() = className="cursor-pointer"> setIsMobileMenuOpen(true)}
+            onClick={() => setIsMobileMenuOpen(true)}
             className="p-2 text-slate-600 hover:bg-slate-100 rounded-lg"
           >
             <Menu className="h-6 w-6" />
