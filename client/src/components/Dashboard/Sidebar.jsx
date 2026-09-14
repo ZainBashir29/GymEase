@@ -70,7 +70,7 @@ const Sidebar = ({ navItems, setIsMobileMenuOpen }) => {
         </div>
         <button
           onClick={handleLogout}
-          className="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-danger ml-2"
+          className="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-danger ml-2 cursor-pointer"
         >
           <LogOut className="h-4.5 w-4.5" strokeWidth={2} />
           Log out

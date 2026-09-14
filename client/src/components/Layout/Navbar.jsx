@@ -52,7 +52,7 @@ const Navbar = () => {
               {user.role === "Member" && (
                 <button
                   onClick={toggleCart}
-                  className="relative flex h-10 w-10 items-center justify-center rounded-full text-slate-600 hover:bg-slate-100 transition-colors"
+                  className="relative flex h-10 w-10 items-center justify-center rounded-full text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
                 >
                   <ShoppingCart className="h-5 w-5" />
                   {itemCount > 0 && (
@@ -86,7 +86,7 @@ const Navbar = () => {
               </Link>
               <button
                 onClick={handleLogout}
-                className="hidden sm:block rounded-lg bg-red-200 px-4 py-2 text-sm font-semibold text-danger transition-colors hover:bg-red-300"
+                className="hidden sm:block rounded-lg bg-red-200 px-4 py-2 text-sm font-semibold text-danger transition-colors hover:bg-red-300 cursor-pointer"
               >
                 Logout
               </button>
@@ -110,7 +110,7 @@ const Navbar = () => {
 
           
           <button
-            className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg -mr-2"
+            className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg -mr-2 cursor-pointer"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? (
@@ -130,7 +130,7 @@ const Navbar = () => {
                <Link
                  key={link.to}
                  to={link.to}
-                 onClick={() => setIsMobileMenuOpen(false)}
+                 onClick={() = className="cursor-pointer"> setIsMobileMenuOpen(false)}
                  className="text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-brand-600 px-6 py-4 border-b border-slate-100"
                >
                  {link.label}
@@ -140,7 +140,7 @@ const Navbar = () => {
             
             {user ? (
                <button
-                 onClick={() => {
+                 onClick={() = className="cursor-pointer"> {
                    handleLogout();
                    setIsMobileMenuOpen(false);
                  }}
@@ -151,7 +151,7 @@ const Navbar = () => {
             ) : (
                <Link
                  to="/login"
-                 onClick={() => setIsMobileMenuOpen(false)}
+                 onClick={() = className="cursor-pointer"> setIsMobileMenuOpen(false)}
                  className="text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-brand-600 px-6 py-4 sm:hidden"
                >
                  Log in

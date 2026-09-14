@@ -139,7 +139,7 @@ const AdminOrdersPage = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <button
                           type="button"
-                          onClick={() => setSelectedOrder(order)}
+                          onClick={() = className="cursor-pointer"> setSelectedOrder(order)}
                           className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-brand-700 bg-brand-50 hover:bg-brand-100 rounded-lg transition-colors border border-brand-100"
                         >
                           <Eye className="w-3.5 h-3.5" />
@@ -163,7 +163,7 @@ const AdminOrdersPage = () => {
                         <div className="flex items-center justify-end gap-2">
                           <button
                             type="button"
-                            onClick={() => setSelectedOrder(order)}
+                            onClick={() = className="cursor-pointer"> setSelectedOrder(order)}
                             title="View Items & Details"
                             className="p-1.5 text-slate-500 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors"
                           >
@@ -214,7 +214,7 @@ const AdminOrdersPage = () => {
               </div>
               <button
                 type="button"
-                onClick={() => setSelectedOrder(null)}
+                onClick={() = className="cursor-pointer"> setSelectedOrder(null)}
                 className="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-200/60 transition-colors"
               >
                 <X className="w-5 h-5" />
@@ -350,7 +350,7 @@ const AdminOrdersPage = () => {
 
               <button
                 type="button"
-                onClick={() => setSelectedOrder(null)}
+                onClick={() = className="cursor-pointer"> setSelectedOrder(null)}
                 className="w-full sm:w-auto px-5 py-2 bg-slate-900 text-white rounded-lg text-sm font-semibold hover:bg-slate-800 transition-colors"
               >
                 Close

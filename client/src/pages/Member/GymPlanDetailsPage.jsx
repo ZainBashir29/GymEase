@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import api from "../../lib/axios.js";
-import { ArrowLeft, Dumbbell, Clock, CheckCircle2, AlertCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  Dumbbell,
+  Clock,
+  CheckCircle2,
+  AlertCircle,
+} from "lucide-react";
+import ConfirmModal from "../../components/Dashboard/ConfirmModal.jsx";
 
 const GymPlanDetailsPage = () => {
   const { id } = useParams();
@@ -20,7 +27,7 @@ const GymPlanDetailsPage = () => {
       try {
         const [planRes, activePlanRes] = await Promise.all([
           api.get(`/gym-plans/${id}`),
-          api.get("/gym-plans/active").catch(() => ({ data: { data: null } }))
+          api.get("/gym-plans/active").catch(() => ({ data: { data: null } })),
         ]);
         setPlan(planRes.data.data);
         setActivePlan(activePlanRes.data.data);
@@ -46,7 +53,10 @@ const GymPlanDetailsPage = () => {
       await api.post(`/gym-plans/activate/${id}`);
       navigate("/member/dashboard", { replace: true });
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to activate plan. Make sure you have an active membership.");
+      setError(
+        err.response?.data?.message ||
+          "Failed to activate plan. Make sure you have an active membership.",
+      );
     } finally {
       setActivating(false);
     }
@@ -63,8 +73,13 @@ const GymPlanDetailsPage = () => {
   if (!plan) {
     return (
       <div className="mx-auto max-w-3xl px-6 py-12 text-center">
-        <h2 className="text-2xl font-bold text-slate-900 mb-4">Plan Not Found</h2>
-        <Link to="/member/plans" className="text-brand-600 font-medium hover:underline">
+        <h2 className="text-2xl font-bold text-slate-900 mb-4">
+          Plan Not Found
+        </h2>
+        <Link
+          to="/member/plans"
+          className="text-brand-600 font-medium hover:underline"
+        >
           &larr; Back to Plans
         </Link>
       </div>
@@ -73,7 +88,10 @@ const GymPlanDetailsPage = () => {
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-12">
-      <Link to="/member/plans" className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-900 mb-8 transition-colors">
+      <Link
+        to="/member/plans"
+        className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-900 mb-8 transition-colors"
+      >
         <ArrowLeft className="w-4 h-4" />
         Back to Plans
       </Link>
@@ -90,10 +108,13 @@ const GymPlanDetailsPage = () => {
           <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
           <div className="flex-1">
             <p className="font-bold">You currently have an active plan.</p>
-            <p className="text-sm mt-1">You cannot activate a new plan until your current one is finished or cancelled.</p>
+            <p className="text-sm mt-1">
+              You cannot activate a new plan until your current one is finished
+              or cancelled.
+            </p>
           </div>
-          <button 
-            onClick={() => setIsCancelModalOpen(true)}
+          <button
+            onClick={() = className="cursor-pointer"> setIsCancelModalOpen(true)}
             className="shrink-0 px-4 py-2 bg-yellow-100 text-yellow-800 text-sm font-medium rounded-lg hover:bg-yellow-200 transition-colors"
           >
             Cancel Active Plan
@@ -107,7 +128,9 @@ const GymPlanDetailsPage = () => {
             <Dumbbell className="w-12 h-12 text-brand-500" />
           </div>
           <div className="flex-1">
-            <h1 className="text-3xl md:text-4xl font-black text-slate-900 mb-4">{plan.name}</h1>
+            <h1 className="text-3xl md:text-4xl font-black text-slate-900 mb-4">
+              {plan.name}
+            </h1>
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-sm font-medium text-slate-600">
               <span className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-lg shadow-sm border border-slate-100">
                 <Clock className="w-4 h-4 text-brand-500" />
@@ -123,7 +146,9 @@ const GymPlanDetailsPage = () => {
 
         <div className="p-8 md:p-12 space-y-12">
           <div>
-            <h3 className="text-xl font-bold text-slate-900 mb-4">About this plan</h3>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">
+              About this plan
+            </h3>
             <p className="text-slate-600 leading-relaxed text-lg whitespace-pre-wrap">
               {plan.description}
             </p>
@@ -135,23 +160,37 @@ const GymPlanDetailsPage = () => {
           </div>
 
           <div>
-            <h3 className="text-xl font-bold text-slate-900 mb-6">What you'll be doing</h3>
+            <h3 className="text-xl font-bold text-slate-900 mb-6">
+              What you'll be doing
+            </h3>
             <div className="space-y-4">
               {plan.sessions?.map((session, idx) => (
-                <div key={idx} className="p-5 rounded-2xl bg-slate-50 border border-slate-100 flex items-start gap-4">
+                <div
+                  key={idx}
+                  className="p-5 rounded-2xl bg-slate-50 border border-slate-100 flex items-start gap-4"
+                >
                   <div className="w-8 h-8 rounded-full bg-brand-100 text-brand-700 font-bold flex items-center justify-center shrink-0 mt-0.5">
                     {idx + 1}
                   </div>
                   <div>
-                    <h4 className="font-bold text-slate-900 text-lg mb-2">{session.name}</h4>
+                    <h4 className="font-bold text-slate-900 text-lg mb-2">
+                      {session.name}
+                    </h4>
                     <ul className="space-y-1">
                       {session.exercises?.map((ex, eIdx) => (
-                        <li key={eIdx} className="text-sm text-slate-600 flex items-center gap-2">
+                        <li
+                          key={eIdx}
+                          className="text-sm text-slate-600 flex items-center gap-2"
+                        >
                           <CheckCircle2 className="w-4 h-4 text-brand-400" />
-                          <span className="font-medium text-slate-700">{ex.name}</span>
+                          <span className="font-medium text-slate-700">
+                            {ex.name}
+                          </span>
                           <span className="text-slate-400">&mdash;</span>
                           <span>
-                            {ex.duration ? ex.duration : `${ex.sets} sets Ã— ${ex.reps} reps`}
+                            {ex.duration
+                              ? ex.duration
+                              : `${ex.sets} sets Ã— ${ex.reps} reps`}
                           </span>
                         </li>
                       ))}
@@ -161,7 +200,7 @@ const GymPlanDetailsPage = () => {
               ))}
             </div>
           </div>
-          
+
           <div className="pt-6 border-t border-slate-100 flex justify-end">
             <button
               onClick={handleActivate}
@@ -207,4 +246,3 @@ const GymPlanDetailsPage = () => {
 };
 
 export default GymPlanDetailsPage;
-

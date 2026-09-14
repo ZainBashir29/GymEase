@@ -64,10 +64,9 @@ const ChatWidget = () => {
 
   return (
     <>
-      
       <button
         onClick={toggleChatWindow}
-        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-brand-600 text-white shadow-lg transition-transform hover:scale-105 active:scale-95"
+        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-brand-600 text-white shadow-lg transition-transform hover:scale-105 active:scale-95 cursor-pointer"
       >
         {isChatOpen ? (
           <X className="h-6 w-6" />
@@ -81,18 +80,16 @@ const ChatWidget = () => {
         )}
       </button>
 
-      
       {isChatOpen && (
         <div className="fixed bottom-24 right-6 z-50 flex h-[500px] w-80 sm:w-96 flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-slate-200 transition-all">
-          
           <div className="flex items-center bg-brand-600 px-4 py-3 text-white">
             {activeConversation || showContacts ? (
               <button
-                onClick={() => {
+                onClick={() = className="cursor-pointer"> {
                   if (showContacts) setShowContacts(false);
                   else closeConversation();
                 }}
-                className="mr-2 hover:bg-brand-700 rounded-full p-1 transition-colors"
+                className="mr-2 hover:bg-brand-700 rounded-full p-1 transition-colors cursor-pointer"
               >
                 <ArrowLeft className="h-5 w-5" />
               </button>
@@ -155,27 +152,25 @@ const ChatWidget = () => {
             </div>
             {!activeConversation && !showContacts && (
               <button
-                onClick={() => {
+                onClick={() = className="cursor-pointer"> {
                   fetchContacts();
                   setShowContacts(true);
                 }}
-                className="mr-2 hover:bg-brand-700 rounded-full p-1 transition-colors"
+                className="mr-2 hover:bg-brand-700 rounded-full p-1 transition-colors cursor-pointer"
               >
                 <Plus className="h-5 w-5" />
               </button>
             )}
             <button
               onClick={toggleChatWindow}
-              className="hover:bg-brand-700 rounded-full p-1 transition-colors"
+              className="hover:bg-brand-700 rounded-full p-1 transition-colors cursor-pointer"
             >
               <X className="h-5 w-5" />
             </button>
           </div>
 
-          
           <div className="flex-1 overflow-hidden bg-slate-50 flex flex-col">
             {showContacts ? (
-              
               <div className="flex-1 overflow-y-auto">
                 {contacts.length === 0 ? (
                   <div className="flex h-full flex-col items-center justify-center text-slate-400 p-6 text-center">
@@ -187,7 +182,7 @@ const ChatWidget = () => {
                     {contacts.map((contact) => (
                       <li
                         key={contact._id}
-                        onClick={() => {
+                        onClick={() = className="cursor-pointer"> {
                           startConversation(contact._id);
                           setShowContacts(false);
                         }}
@@ -223,7 +218,6 @@ const ChatWidget = () => {
                 )}
               </div>
             ) : !activeConversation ? (
-              
               <div className="flex-1 overflow-y-auto">
                 {conversations.length === 0 ? (
                   <div className="flex h-full flex-col items-center justify-center text-slate-400 p-6 text-center">
@@ -243,7 +237,7 @@ const ChatWidget = () => {
                       return (
                         <li
                           key={conv._id}
-                          onClick={() => openConversation(conv)}
+                          onClick={() = className="cursor-pointer"> openConversation(conv)}
                           className={`flex cursor-pointer items-center p-4 transition-colors ${convUnread > 0 ? "bg-brand-50 hover:bg-brand-100" : "hover:bg-slate-100"}`}
                         >
                           <div className="relative flex-shrink-0">
@@ -288,7 +282,6 @@ const ChatWidget = () => {
                 )}
               </div>
             ) : (
-              
               <div className="flex-1 flex flex-col overflow-hidden">
                 <div className="flex-1 overflow-y-auto p-4 space-y-4">
                   {messages.map((msg, index) => {
@@ -336,7 +329,6 @@ const ChatWidget = () => {
                   <div ref={messagesEndRef} />
                 </div>
 
-                
                 <div className="border-t border-slate-200 bg-white p-3">
                   <form
                     onSubmit={handleSend}
@@ -352,7 +344,7 @@ const ChatWidget = () => {
                     <button
                       type="submit"
                       disabled={!messageText.trim()}
-                      className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-600 text-white disabled:bg-slate-300 transition-colors hover:bg-brand-700"
+                      className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-600 text-white disabled:bg-slate-300 transition-colors hover:bg-brand-700 cursor-pointer"
                     >
                       <Send className="h-4 w-4" />
                     </button>

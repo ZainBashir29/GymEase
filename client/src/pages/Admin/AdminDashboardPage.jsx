@@ -177,7 +177,7 @@ const AdminDashboardPage = () => {
         </div>
         <button
           onClick={fetchDashboardData}
-          className="flex items-center gap-2 px-4 py-2 bg-white ring-1 ring-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors shadow-sm"
+          className="flex items-center gap-2 px-4 py-2 bg-white ring-1 ring-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors shadow-sm cursor-pointer"
         >
           <RefreshCcw className="w-4 h-4" />
           Refresh
@@ -418,7 +418,7 @@ const AdminDashboardPage = () => {
                           className="inline-block h-6 w-6 rounded-full ring-2 ring-white object-cover"
                         />
                       ) : (
-                        <div className="inline-block h-6 w-6 rounded-full ring-2 ring-white bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-500">
+                        <div className="h-6 w-6 rounded-full ring-2 ring-white bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-500">
                           {session.memberId?.fullName?.charAt(0) || "M"}
                         </div>
                       )}

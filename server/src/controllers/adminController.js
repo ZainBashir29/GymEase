@@ -742,14 +742,14 @@ const deleteMembershipPlan = asyncHandler(async (req, res) => {
 });
 
 const addTrainer = asyncHandler(async (req, res) => {
-  const { fullName, username, email, password, expertise } = req.body;
+  const { fullName, email, password, expertise } = req.body;
 
-  if (!fullName || !username || !email || !password || !expertise) {
+  if (!fullName || !email || !password || !expertise) {
     throw new ApiError(400, "All fields are required");
   }
 
   const existingTrainer = await Trainer.findOne({
-    $or: [{ username }, { email }],
+    email
   });
 
   if (existingTrainer) {
@@ -761,7 +761,6 @@ const addTrainer = asyncHandler(async (req, res) => {
 
   const trainer = await Trainer.create({
     fullName,
-    username,
     email,
     password,
     expertise,

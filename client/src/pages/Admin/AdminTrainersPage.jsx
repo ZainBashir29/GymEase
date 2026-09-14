@@ -18,12 +18,10 @@ const AdminTrainersPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [includeInactive, setIncludeInactive] = useState(true);
 
-  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTrainerId, setEditingTrainerId] = useState(null);
   const [formData, setFormData] = useState({
     fullName: "",
-    username: "",
     email: "",
     password: "",
     expertise: "",
@@ -71,7 +69,6 @@ const AdminTrainersPage = () => {
     setEditingTrainerId(null);
     setFormData({
       fullName: "",
-      username: "",
       email: "",
       password: "",
       expertise: "",
@@ -85,9 +82,8 @@ const AdminTrainersPage = () => {
     setEditingTrainerId(trainer._id);
     setFormData({
       fullName: trainer.fullName,
-      username: trainer.username || "",
       email: trainer.email,
-      password: "", 
+      password: "",
       expertise: trainer.expertise,
     });
     setProfilePicture(null);
@@ -102,7 +98,6 @@ const AdminTrainersPage = () => {
 
     try {
       if (editingTrainerId) {
-        
         const form = new FormData();
         form.append("fullName", formData.fullName);
         form.append("email", formData.email);
@@ -115,8 +110,6 @@ const AdminTrainersPage = () => {
           headers: { "Content-Type": "multipart/form-data" },
         });
       } else {
-        
-        
         await api.post("/admin/trainers/add", formData);
       }
 
@@ -124,7 +117,6 @@ const AdminTrainersPage = () => {
       setEditingTrainerId(null);
       setFormData({
         fullName: "",
-        username: "",
         email: "",
         password: "",
         expertise: "",
@@ -161,7 +153,7 @@ const AdminTrainersPage = () => {
         </div>
         <button
           onClick={openAddModal}
-          className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors shadow-sm font-medium"
+          className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors shadow-sm font-medium cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           Add Trainer
@@ -279,7 +271,7 @@ const AdminTrainersPage = () => {
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => openEditModal(trainer)}
-                          className="p-2 text-slate-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors"
+                          className="p-2 text-slate-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors cursor-pointer"
                           title="Edit Trainer"
                         >
                           <Edit2 className="w-4 h-4" />
@@ -287,7 +279,7 @@ const AdminTrainersPage = () => {
                         {trainer.isActive && (
                           <button
                             onClick={() => handleDelete(trainer._id)}
-                            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
                             title="Deactivate Trainer"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -303,7 +295,6 @@ const AdminTrainersPage = () => {
         </div>
       </div>
 
-      
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm overflow-y-auto">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md my-8">
@@ -313,7 +304,7 @@ const AdminTrainersPage = () => {
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 transition-colors p-1"
+                className="text-slate-400 hover:text-slate-600 transition-colors p-1 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -338,27 +329,9 @@ const AdminTrainersPage = () => {
                     setFormData({ ...formData, fullName: e.target.value })
                   }
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
-                  placeholder="e.g. John Doe"
+                  placeholder="Trainer's Name"
                 />
               </div>
-
-              {!editingTrainerId && (
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Username
-                  </label>
-                  <input
-                    type="text"
-                    required={!editingTrainerId}
-                    value={formData.username}
-                    onChange={(e) =>
-                      setFormData({ ...formData, username: e.target.value })
-                    }
-                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
-                    placeholder="e.g. johndoe"
-                  />
-                </div>
-              )}
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
@@ -372,7 +345,7 @@ const AdminTrainersPage = () => {
                     setFormData({ ...formData, email: e.target.value })
                   }
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
-                  placeholder="e.g. john@example.com"
+                  placeholder="Email Address"
                 />
               </div>
 
@@ -389,14 +362,14 @@ const AdminTrainersPage = () => {
                       setFormData({ ...formData, password: e.target.value })
                     }
                     className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
-                    placeholder="••••••••"
+                    placeholder="Trainer's Password"
                   />
                 </div>
               )}
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Expertise / Specialty
+                  Expertise
                 </label>
                 <input
                   type="text"
@@ -406,7 +379,7 @@ const AdminTrainersPage = () => {
                     setFormData({ ...formData, expertise: e.target.value })
                   }
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
-                  placeholder="e.g. Weightlifting, Yoga, Calisthenics"
+                  placeholder="e.g. Weightlifting, HIIT Expert, Fat Loss"
                 />
               </div>
 
@@ -446,7 +419,7 @@ const AdminTrainersPage = () => {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full py-3 bg-brand-600 text-white font-bold rounded-xl hover:bg-brand-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full py-3 bg-brand-600 text-white font-bold rounded-xl hover:bg-brand-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer"
                 >
                   {submitting ? (
                     <>

@@ -5,7 +5,7 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, confirmText 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0">
-      <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" onClick={isLoading ? undefined : onClose} />
+      <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity cursor-pointer" onClick={isLoading ? undefined : onClose} />
       
       <div className="relative w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl animate-in fade-in zoom-in-95 duration-200">
         <div className="p-6">
@@ -30,7 +30,7 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, confirmText 
             type="button"
             onClick={onClose}
             disabled={isLoading}
-            className="w-full sm:w-auto px-4 py-2.5 text-sm font-semibold text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors disabled:opacity-50"
+            className="w-full sm:w-auto px-4 py-2.5 text-sm font-semibold text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors disabled:opacity-50 cursor-pointer"
           >
             {cancelText}
           </button>
@@ -38,7 +38,7 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, confirmText 
             type="button"
             onClick={onConfirm}
             disabled={isLoading}
-            className={`flex w-full sm:w-auto items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-white rounded-xl transition-colors disabled:opacity-50 ${isDanger ? 'bg-red-600 hover:bg-red-700 shadow-sm shadow-red-200' : 'bg-brand-600 hover:bg-brand-700 shadow-sm shadow-brand-200'}`}
+            className={`flex w-full sm:w-auto items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-white rounded-xl transition-colors disabled:opacity-50 ${isDanger ? 'bg-red-600 hover:bg-red-700 shadow-sm shadow-red-200' : 'bg-brand-600 hover:bg-brand-700 shadow-sm shadow-brand-200'} cursor-pointer`}
           >
             {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
             {confirmText}

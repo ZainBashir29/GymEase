@@ -64,7 +64,7 @@ const Memberships = () => {
             Choose the right plan for you
           </p>
           <p className="mt-6 text-lg leading-8 text-slate-600">
-            Whether you're just getting started or are a seasoned athlete, we
+            Whether you're just getting started or are already an athlete, we
             have a membership plan that fits your goals.
           </p>
         </div>
@@ -117,7 +117,7 @@ const Memberships = () => {
                   }`}
                 >
                   Includes access to gym equipment and up to {plan.maxTrainers}{" "}
-                  personal trainer(s).
+                  personal trainer/s.
                 </p>
                 <ul
                   role="list"
@@ -144,7 +144,7 @@ const Memberships = () => {
                   ))}
                 </ul>
                 <button
-                  onClick={() => handleGetStarted(plan._id)}
+                  onClick={() = className="cursor-pointer"> handleGetStarted(plan._id)}
                   disabled={purchasingPlanId === plan._id}
                   aria-describedby={plan._id}
                   className={`mt-8 flex w-full items-center justify-center gap-2 rounded-md px-3 py-3 text-center text-sm font-semibold focus-visible:outline focus-visible:outline-offset-2 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 ${

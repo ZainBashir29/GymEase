@@ -57,20 +57,59 @@ const ProgressCard = () => {
   }
 
   if (!progress.hasActivePlan) {
+    const getWorkingDaysSoFar = () => {
+      const today = new Date();
+      const start = new Date(today.getFullYear(), today.getMonth(), 1);
+      let count = 0;
+      for (let d = start; d <= today; d.setDate(d.getDate() + 1)) {
+        if (d.getDay() !== 0 && d.getDay() !== 6) {
+          count++;
+        }
+      }
+      return count;
+    };
+
+    const workingDaysSoFar = getWorkingDaysSoFar();
+    const missedDays = Math.max(0, workingDaysSoFar - progress.visitsThisMonth);
+
+    const fallbackChartData = {
+      labels: ["Present", "Missed"],
+      datasets: [
+        {
+          data: [progress.visitsThisMonth, missedDays],
+          backgroundColor: ["#10b981", "#ef4444"],
+          hoverBackgroundColor: ["#059669", "#dc2626"],
+          borderWidth: 0,
+        },
+      ],
+    };
+
     return (
       <div className="rounded-2xl border border-slate-200 bg-white p-6">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 mb-6">
           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50">
             <TrendingUp className="h-5 w-5 text-brand-600" strokeWidth={2} />
           </div>
           <h3 className="text-base font-bold text-slate-900">Your Progress</h3>
         </div>
 
-        <p className="mt-4 text-sm text-slate-600">{progress.message}</p>
+        <div className="mt-6 flex justify-center">
+          <div className="h-40 w-40 relative">
+            <Doughnut
+              data={fallbackChartData}
+              options={{
+                cutout: "75%",
+                plugins: {
+                  legend: { display: false },
+                },
+              }}
+            />
+          </div>
+        </div>
 
-        <div className="mt-5 grid grid-cols-2 gap-4">
+        <div className="mt-6 grid grid-cols-2 gap-4">
           <StatBlock
-            label="Visits this month"
+            label="Visits (this month)"
             value={progress.visitsThisMonth}
             accent
           />
@@ -89,9 +128,9 @@ const ProgressCard = () => {
 
         <Link
           to="/member/plans"
-          className="mt-5 inline-block text-sm font-semibold text-brand-600 hover:text-brand-700"
+          className="mt-6 inline-block w-full text-center rounded-lg bg-slate-50 px-4 py-3 text-sm font-semibold text-brand-600 hover:bg-slate-100 transition-colors"
         >
-          Select a gym plan for detailed tracking &raar;
+          Select a gym plan for detailed tracking &rarr;
         </Link>
       </div>
     );

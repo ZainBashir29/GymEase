@@ -215,7 +215,7 @@ const CustomPlanQuestionnaire = () => {
                   return (
                     <button
                       key={opt.id}
-                      onClick={() => handleSelect(opt.id)}
+                      onClick={() = className="cursor-pointer"> handleSelect(opt.id)}
                       className={`text-left p-6 rounded-2xl border-2 transition-all group relative overflow-hidden
                         ${
                           isSelected
@@ -277,14 +277,14 @@ const CustomPlanQuestionnaire = () => {
               <button
                 onClick={handleSubmit}
                 disabled={!answers[currentStep]}
-                className="flex items-center gap-2 px-8 py-3 bg-brand-600 text-white font-bold rounded-xl hover:bg-brand-700 transition-all hover:shadow-lg disabled:opacity-50 disabled:hover:shadow-none"
+                className="flex items-center gap-2 px-8 py-3 bg-brand-600 text-white font-bold rounded-xl hover:bg-brand-700 transition-all hover:shadow-lg disabled:opacity-50 disabled:hover:shadow-none cursor-pointer"
               >
                 Generate Plan
                 <Wand2 className="w-5 h-5" />
               </button>
             ) : (
               <button
-                onClick={() => setCurrentStep((prev) => prev + 1)}
+                onClick={() = className="cursor-pointer"> setCurrentStep((prev) => prev + 1)}
                 disabled={!answers[currentStep]}
                 className="flex items-center gap-2 px-8 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors disabled:opacity-50"
               >

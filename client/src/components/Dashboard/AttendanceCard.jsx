@@ -84,7 +84,7 @@ const AttendanceCard = () => {
         <button
           onClick={handleMarkAttendance}
           disabled={isMarking}
-          className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
         >
           {isMarking ? (
             <Loader2 className="h-4 w-4 animate-spin" />

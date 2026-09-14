@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 
-const TRUST_POINTS = [
+const trustPoints = [
   "No setup fees",
   "Cancel anytime",
   "Real trainers, real plans",
@@ -15,7 +15,6 @@ const Hero = () => {
         className="pointer-events-none absolute left-1/2 top-0 h-150 w-225 -translate-x-1/2 rounded-full bg-brand-400/40 blur-3xl"
       />
 
-      
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-24 text-center sm:py-32">
         <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-4 py-1.5 text-sm font-medium text-brand-700">
           <span className="h-1.5 w-1.5 rounded-full bg-brand-600" />
@@ -29,8 +28,8 @@ const Hero = () => {
 
         <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-600">
           GymEase brings memberships, personalized training plans, progress
-          tracking, and your gym store together — so you can focus on showing
-          up, not managing paperwork.
+          tracking, and your gym store together so you can focus on your
+          progress, not the manual work around it.
         </p>
 
         <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -50,7 +49,7 @@ const Hero = () => {
         </div>
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
-          {TRUST_POINTS.map((point) => (
+          {trustPoints.map((point) => (
             <div
               key={point}
               className="flex items-center gap-2 text-sm text-slate-500"

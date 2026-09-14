@@ -111,7 +111,7 @@ const AdminStorePage = () => {
         </div>
         <button 
           onClick={openAddModal}
-          className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors shadow-sm font-medium"
+          className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors shadow-sm font-medium cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           Add Product
@@ -157,7 +157,7 @@ const AdminStorePage = () => {
                 
                 <div className="flex gap-2 mt-auto pt-4 border-t border-slate-100">
                   <button 
-                    onClick={() => openEditModal(product)}
+                    onClick={() = className="cursor-pointer"> openEditModal(product)}
                     className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-lg transition-colors border border-slate-200"
                   >
                     <Edit2 className="w-4 h-4" />
@@ -165,7 +165,7 @@ const AdminStorePage = () => {
                   </button>
                   {product.isActive && (
                     <button 
-                      onClick={() => handleDelete(product._id)}
+                      onClick={() = className="cursor-pointer"> handleDelete(product._id)}
                       className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-transparent"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -188,7 +188,7 @@ const AdminStorePage = () => {
                 {editingProductId ? "Edit Product" : "Add New Product"}
               </h3>
               <button 
-                onClick={() => setIsModalOpen(false)}
+                onClick={() = className="cursor-pointer"> setIsModalOpen(false)}
                 className="text-slate-400 hover:text-slate-600 transition-colors p-1"
               >
                 <X className="w-5 h-5" />

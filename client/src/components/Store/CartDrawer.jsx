@@ -16,9 +16,9 @@ const CartDrawer = () => {
 
   if (!isCartOpen) return null;
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden">
+    <div className="fixed inset-0 z-[100] overflow-hidden">
       <div
-        className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity"
+        className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity cursor-pointer"
         onClick={closeCart}
       />
       <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
@@ -31,7 +31,7 @@ const CartDrawer = () => {
               <div className="ml-3 flex h-7 items-center">
                 <button
                   type="button"
-                  className="relative -m-2 p-2 text-slate-400 hover:text-slate-500"
+                  className="relative -m-2 p-2 text-slate-400 hover:text-slate-500 cursor-pointer"
                   onClick={closeCart}
                 >
                   <span className="absolute -inset-0.5" />
@@ -52,7 +52,7 @@ const CartDrawer = () => {
                   </p>
                   <button
                     onClick={closeCart}
-                    className="mt-4 rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
+                    className="mt-4 rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 cursor-pointer"
                   >
                     Continue Shopping
                   </button>
@@ -75,7 +75,7 @@ const CartDrawer = () => {
                               <Link
                                 to={`/store/product/${item.productId?._id}`}
                                 onClick={closeCart}
-                              >
+                               className="cursor-pointer">
                                 {item.productId?.name}
                               </Link>
                             </h3>
@@ -88,7 +88,7 @@ const CartDrawer = () => {
                         <div className="flex flex-1 items-end justify-between text-sm">
                           <div className="flex items-center space-x-3">
                             <button
-                              onClick={() =>
+                              onClick={() = className="cursor-pointer">
                                 updateQuantity(
                                   item.productId?._id,
                                   Math.max(1, item.quantity - 1),
@@ -103,7 +103,7 @@ const CartDrawer = () => {
                               {item.quantity}
                             </span>
                             <button
-                              onClick={() =>
+                              onClick={() = className="cursor-pointer">
                                 updateQuantity(
                                   item.productId?._id,
                                   item.quantity + 1,
@@ -118,7 +118,7 @@ const CartDrawer = () => {
                           <div className="flex">
                             <button
                               type="button"
-                              onClick={() => removeItem(item.productId?._id)}
+                              onClick={() = className="cursor-pointer"> removeItem(item.productId?._id)}
                               className="font-medium text-red-600 hover:text-red-500"
                             >
                               Remove
@@ -149,7 +149,7 @@ const CartDrawer = () => {
                   <button
                     onClick={handleCheckout}
                     disabled={loading}
-                    className="flex w-full items-center justify-center rounded-md border border-transparent bg-brand-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-brand-700 disabled:opacity-70"
+                    className="flex w-full items-center justify-center rounded-md border border-transparent bg-brand-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-brand-700 disabled:opacity-70 cursor-pointer"
                   >
                     {loading ? (
                       <Loader2 className="h-5 w-5 animate-spin" />
@@ -163,7 +163,7 @@ const CartDrawer = () => {
                     or{" "}
                     <button
                       type="button"
-                      className="font-medium text-brand-600 hover:text-brand-500"
+                      className="font-medium text-brand-600 hover:text-brand-500 cursor-pointer"
                       onClick={closeCart}
                     >
                       Continue Shopping

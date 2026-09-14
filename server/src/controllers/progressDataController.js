@@ -4,6 +4,8 @@ import ApiResponse from "../utils/ApiResponse.js";
 import Session from "../models/gymPlans/sessionModel.js";
 import MemberPlan from "../models/gymPlans/memberPlanModel.js";
 import ProgressData from "../models/progressDataModel.js";
+import MembershipSubscription from "../models/membershipSubscriptionModel.js";
+import Attendance from "../models/attendanceModel.js";
 
 const getMemberProgress = asyncHandler(async (req, res) => {
   const memberId = req.user?._id;

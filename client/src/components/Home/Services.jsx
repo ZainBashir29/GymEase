@@ -7,7 +7,7 @@ import {
   ScanLine,
 } from "lucide-react";
 
-const SERVICES = [
+const servicesPoints = [
   {
     icon: Dumbbell,
     title: "Personalized Plans",
@@ -24,13 +24,13 @@ const SERVICES = [
     icon: LineChart,
     title: "Progress Tracking",
     description:
-      "See your sessions, attendance, and progress at a glance — no spreadsheets required.",
+      "See your sessions, attendance, and progress at a glance, no spreadsheets required.",
   },
   {
     icon: MessageCircle,
     title: "Chat with Trainers",
     description:
-      "Message your trainer directly for guidance, feedback, or to flag an issue with admin.",
+      "Message your trainer directly for guidance, feedback, or to discuss an issue with admin.",
   },
   {
     icon: ShoppingBag,
@@ -42,7 +42,7 @@ const SERVICES = [
     icon: ScanLine,
     title: "Quick Check-in",
     description:
-      "Scan your membership card at the door — no manual sign-in sheets, no waiting.",
+      "Scan your membership card at the door, no manual sign-in signatures, no waiting.",
   },
 ];
 
@@ -55,13 +55,13 @@ const Services = () => {
             One app, everything handled
           </h2>
           <p className="mt-4 text-lg text-slate-600">
-            From your first sign-up to your hundredth session, GymEase keeps it
+            From your first sign-up to your hundreth session, GymEase keeps it
             simple.
           </p>
         </div>
 
         <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {SERVICES.map(({ icon: Icon, title, description }) => (
+          {servicesPoints.map(({ icon: Icon, title, description }) => (
             <div
               key={title}
               className="group rounded-2xl border border-slate-200 bg-white p-6 transition-all hover:border-brand-200 hover:shadow-lg hover:shadow-slate-200/50"

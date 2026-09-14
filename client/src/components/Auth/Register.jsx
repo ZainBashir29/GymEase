@@ -6,9 +6,9 @@ import AuthLayout from "./AuthLayout.jsx";
 import FormInput from "./FormInput.jsx";
 import GoogleAuthButton from "./GoogleAuthButton.jsx";
 
-const MIN_AGE = 13;
+const minimumAge = 13;
 
-const INITIAL_FORM = {
+const initialForm = {
   fullName: "",
   username: "",
   email: "",
@@ -20,7 +20,7 @@ const INITIAL_FORM = {
 const Register = () => {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState(INITIAL_FORM);
+  const [formData, setFormData] = useState(initialForm);
   const [fieldErrors, setFieldErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState("");
@@ -46,8 +46,8 @@ const Register = () => {
 
     if (!formData.age) {
       errors.age = "Age is required";
-    } else if (Number(formData.age) < MIN_AGE) {
-      errors.age = `You must be at least ${MIN_AGE} years old`;
+    } else if (Number(formData.age) < minimumAge) {
+      errors.age = `You must be at least ${minimumAge} years old`;
     }
 
     if (!formData.password) {
@@ -111,7 +111,7 @@ const Register = () => {
             started.
           </p>
           <button
-            onClick={() =>
+            onClick={() = className="cursor-pointer">
               navigate("/login", { state: { redirectTo: "/pricing" } })
             }
             className="mt-6 w-full rounded-lg bg-brand-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
@@ -148,8 +148,8 @@ const Register = () => {
           id="fullName"
           name="fullName"
           type="text"
-          label="Full name"
-          placeholder="John Doe"
+          label="Full Name"
+          placeholder="Your Name"
           value={formData.fullName}
           onChange={handleChange}
           error={fieldErrors.fullName}
@@ -160,7 +160,7 @@ const Register = () => {
           name="username"
           type="text"
           label="Username"
-          placeholder="johndoe"
+          placeholder="username"
           value={formData.username}
           onChange={handleChange}
           error={fieldErrors.username}
@@ -171,7 +171,7 @@ const Register = () => {
           name="email"
           type="email"
           label="Email"
-          placeholder="you@example.com"
+          placeholder="Email Address"
           value={formData.email}
           onChange={handleChange}
           error={fieldErrors.email}
@@ -182,8 +182,8 @@ const Register = () => {
           name="age"
           type="number"
           label="Age"
-          placeholder="25"
-          min={MIN_AGE}
+          placeholder="20"
+          min={minimumAge}
           value={formData.age}
           onChange={handleChange}
           error={fieldErrors.age}
@@ -197,7 +197,7 @@ const Register = () => {
             type="file"
             accept="image/*"
             onChange={handleFileChange}
-            className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100"
+            className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 cursor-pointer"
           />
         </div>
 
@@ -217,7 +217,7 @@ const Register = () => {
           name="confirmPassword"
           type="password"
           label="Confirm password"
-          placeholder="••••••••"
+          placeholder="Re-enter your password"
           value={formData.confirmPassword}
           onChange={handleChange}
           error={fieldErrors.confirmPassword}
@@ -226,7 +226,7 @@ const Register = () => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
         >
           {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
           {isSubmitting ? "Creating account..." : "Create account"}

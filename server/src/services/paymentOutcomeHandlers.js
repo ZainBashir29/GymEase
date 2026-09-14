@@ -11,6 +11,11 @@ const safepay = Safepay(process.env.SAFEPAY_SECRET_KEY, {
 });
 
 const handleSuccessfulPayment = async (trackerToken) => {
+  const payment = await Payment.findOne({ trackerToken });
+  if (payment && payment.status === "successful") {
+    return payment;
+  }
+
   const updatedPayment = await Payment.findOneAndUpdate(
     { trackerToken },
     { $set: { status: "successful" } },
@@ -23,6 +28,18 @@ const handleSuccessfulPayment = async (trackerToken) => {
   }
 
   if (updatedPayment.type === "MembershipSubscription") {
+    // Cancel any existing active subscriptions for this member
+    await MembershipSubscription.updateMany(
+      {
+        memberId: updatedPayment.memberId,
+        status: "active"
+      },
+      {
+        $set: { status: "cancelled" }
+      }
+    );
+
+    // Activate the newly paid pending subscription
     await MembershipSubscription.findOneAndUpdate(
       {
         membershipPlanId: updatedPayment.paymentCauseId,

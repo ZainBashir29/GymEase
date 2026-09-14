@@ -48,7 +48,7 @@ const ForgotPassword = () => {
             name="email"
             type="email"
             label="Email"
-            placeholder="you@example.com"
+            placeholder="Email Address"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -57,7 +57,7 @@ const ForgotPassword = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60 mt-4"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60 mt-4 cursor-pointer"
           >
             {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
             {isSubmitting ? "Sending..." : "Send reset link"}

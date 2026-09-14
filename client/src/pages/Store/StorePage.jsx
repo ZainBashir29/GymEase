@@ -71,7 +71,7 @@ const StorePage = () => {
               key={product._id}
               className="group relative border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow"
             >
-              <Link to={`/store/product/${product._id}`}>
+              <Link to={`/store/product/${product._id}`} className="flex flex-col h-full">
                 <div className="aspect-square w-full overflow-hidden bg-slate-200 lg:h-80 lg:aspect-auto">
                   <img
                     src={product.imageUrl}
@@ -79,8 +79,8 @@ const StorePage = () => {
                     className="h-full w-full object-cover object-center"
                   />
                 </div>
-                <div className="flex flex-col p-4">
-                  <h3 className="text-sm text-slate-700 font-medium">
+                <div className="flex flex-col flex-1 p-4">
+                  <h3 className="text-sm text-slate-700 font-medium line-clamp-2 min-h-[2.5rem]">
                     {product.name}
                   </h3>
                   <p className="mt-1 text-sm text-slate-500">
@@ -90,9 +90,9 @@ const StorePage = () => {
                     Rs {product.price}
                   </p>
 
-                  <div className="mt-4">
+                  <div className="mt-auto pt-4">
                     <button
-                      onClick={(e) => handleAddToCart(e, product._id)}
+                      onClick={(e) = className="cursor-pointer"> handleAddToCart(e, product._id)}
                       disabled={
                         addingToCart === product._id || product.stock === 0
                       }

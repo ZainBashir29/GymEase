@@ -60,7 +60,7 @@ const ChangePassword = () => {
             name="password"
             type="password"
             label="New Password"
-            placeholder="????????"
+            placeholder="Your New Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -71,7 +71,7 @@ const ChangePassword = () => {
             name="confirmPassword"
             type="password"
             label="Confirm New Password"
-            placeholder="????????"
+            placeholder="Re-enter New Password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
@@ -80,8 +80,8 @@ const ChangePassword = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60 mt-4"
-          >
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60 mt-4 cursor-pointer"
+          > 
             {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
             {isSubmitting ? "Resetting..." : "Reset password"}
           </button>

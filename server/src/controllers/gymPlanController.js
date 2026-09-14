@@ -388,6 +388,13 @@ const activateCustomPlan = asyncHandler(async (req, res) => {
     );
   }
 
+  if (subscription.membershipPlanId?.name === "Basic") {
+    throw new ApiError(
+      403,
+      "Basic plan members cannot request custom gym plans. Please upgrade to Standard or Premium."
+    );
+  }
+
   const maxTrainers = subscription.membershipPlanId?.maxTrainers || 1;
 
   const trainers = await Trainer.find({ isActive: true });

@@ -31,7 +31,7 @@ const SessionModal = ({ session, onClose, onMarkConducted }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0">
-      <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={onClose} />
+      <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm cursor-pointer" onClick={onClose} />
       
       <div className="relative w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl">
         
@@ -54,7 +54,7 @@ const SessionModal = ({ session, onClose, onMarkConducted }) => {
               </div>
             </div>
           </div>
-          <button onClick={onClose} className="rounded-full p-2 text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition-colors">
+          <button onClick={onClose} className="rounded-full p-2 text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition-colors cursor-pointer">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -104,14 +104,14 @@ const SessionModal = ({ session, onClose, onMarkConducted }) => {
           {error && <p className="text-center text-sm text-danger">{error}</p>}
           
           <div className="flex gap-3">
-            <button onClick={onClose} className="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors">
+            <button onClick={onClose} className="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer">
               Close
             </button>
             {!session.trainerCompletedAt && (
               <button
                 onClick={handleMark}
                 disabled={isMarking}
-                className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-brand-700 disabled:opacity-60 transition-colors"
+                className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-brand-700 disabled:opacity-60 transition-colors cursor-pointer"
               >
                 {isMarking ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
                 {isMarking ? "Marking..." : "Mark Conducted"}
@@ -150,7 +150,7 @@ const SessionRow = ({ session, onClick, onMarkConducted }) => {
 
   return (
     <div 
-      onClick={() => onClick(session)}
+      onClick={() = className="cursor-pointer"> onClick(session)}
       className="flex cursor-pointer items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-4 py-3.5 transition-colors hover:bg-slate-100 hover:border-slate-200 group"
     >
       <div className="min-w-0 flex-1">
@@ -275,7 +275,7 @@ const TodaySessionsCard = () => {
                 session={session}
                 onClick={setSelectedSession}
                 onMarkConducted={handleMarkConducted}
-              />
+              / className="cursor-pointer">
             ))}
           </div>
         )}

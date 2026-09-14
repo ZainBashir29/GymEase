@@ -7,6 +7,7 @@ import ConfirmModal from "../../components/Dashboard/ConfirmModal.jsx";
 const GymPlansPage = () => {
   const [plans, setPlans] = useState([]);
   const [activePlan, setActivePlan] = useState(null);
+  const [membership, setMembership] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
@@ -16,15 +17,16 @@ const GymPlansPage = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [plansRes, activePlanRes] = await Promise.all([
+        const [plansRes, activePlanRes, membershipRes] = await Promise.all([
           api.get("/gym-plans"),
-          api.get("/gym-plans/active").catch(() => ({ data: { data: null } }))
+          api.get("/gym-plans/active").catch(() => ({ data: { data: null } })),
+          api.get("/memberships/current").catch(() => ({ data: { data: null } }))
         ]);
-        
         
         const activePlansOnly = (plansRes.data.data || []).filter(p => p.isActive !== false);
         setPlans(activePlansOnly);
         setActivePlan(activePlanRes.data.data);
+        setMembership(membershipRes.data.data);
       } catch (error) {
         console.error("Failed to fetch gym plans:", error);
       } finally {
@@ -59,7 +61,7 @@ const GymPlansPage = () => {
           </div>
           <div className="flex flex-col sm:flex-row gap-3 mt-4 sm:mt-0 w-full sm:w-auto">
             <button 
-              onClick={() => setIsCancelModalOpen(true)}
+              onClick={() = className="cursor-pointer"> setIsCancelModalOpen(true)}
               className="w-full sm:w-auto shrink-0 px-6 py-2 bg-white text-red-600 font-medium rounded-lg hover:bg-red-50 border border-red-200 transition-colors"
             >
               Cancel Plan
@@ -86,13 +88,26 @@ const GymPlansPage = () => {
             <p className="text-slate-300 text-lg max-w-2xl mb-8">
               Answer a few quick questions about your fitness goals, experience level, and availability, and we'll instantly generate a personalized multi-week workout plan tailored entirely to you.
             </p>
-            <button 
-              onClick={() => navigate("/member/plans/custom/questionnaire")}
-              className="inline-flex items-center gap-2 px-8 py-4 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl transition-all hover:scale-105"
-            >
-              Start Questionnaire
-              <ChevronRight className="w-5 h-5" />
-            </button>
+            {membership?.membershipPlanId?.name === "Basic" ? (
+              <div className="flex flex-col items-center md:items-start gap-2">
+                <button 
+                  disabled
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-slate-700 text-slate-300 font-bold rounded-xl cursor-not-allowed"
+                >
+                  Start Questionnaire
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+                <p className="text-sm text-brand-300 font-medium">Upgrade to Standard or Premium to unlock Custom Plans</p>
+              </div>
+            ) : (
+              <button 
+                onClick={() = className="cursor-pointer"> navigate("/member/plans/custom/questionnaire")}
+                className="inline-flex items-center gap-2 px-8 py-4 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl transition-all hover:scale-105"
+              >
+                Start Questionnaire
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            )}
           </div>
           
           <div className="hidden md:block w-48 h-48 rounded-full border-8 border-slate-800 bg-slate-800 relative shadow-2xl overflow-hidden shrink-0">

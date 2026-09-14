@@ -12,7 +12,7 @@ const STATUS_STYLES = {
 const UpcomingSessionRow = ({ session, onClick }) => {
   return (
     <div
-      onClick={() => onClick(session)}
+      onClick={() = className="cursor-pointer"> onClick(session)}
       className="flex cursor-pointer items-center justify-between rounded-xl border border-slate-100 bg-white px-4 py-3.5 shadow-sm transition-colors hover:bg-slate-50 hover:border-slate-200 group"
     >
       <div className="min-w-0 flex-1">
@@ -144,7 +144,7 @@ const UpcomingScheduleCard = () => {
                       key={session._id}
                       session={session}
                       onClick={setSelectedSession}
-                    />
+                    / className="cursor-pointer">
                   ))}
                 </div>
               </div>

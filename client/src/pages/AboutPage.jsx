@@ -1,7 +1,7 @@
 import React from "react";
 import { Users, Dumbbell, Target } from "lucide-react";
 
-const VALUES = [
+const values = [
   {
     icon: Target,
     title: "Innovation First",
@@ -18,7 +18,7 @@ const VALUES = [
     icon: Dumbbell,
     title: "Strength in Simplicity",
     description:
-      "Complex operations shouldn't require complex software. We prioritize clean, intuitive interfaces that anyone can master in minutes.",
+      "Complex operations should not require complex software. We prioritize clean, user-friendly interfaces that anyone can master in minutes.",
   },
 ];
 
@@ -40,9 +40,9 @@ const AboutPage = () => {
               Our Mission at GymEase
             </h1>
             <p className="mt-6 text-lg leading-8 text-slate-300">
-              We're redefining gym management by blending cutting-edge
-              technology with the passion of fitness. Empowering owners,
-              trainers, and members to achieve more together.
+              We're redefining gym management by mixing technology with the
+              passion of fitness. Empowering owners, trainers, and members to
+              achieve more together.
             </p>
           </div>
         </div>
@@ -62,7 +62,7 @@ const AboutPage = () => {
 
           <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
             <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3">
-              {VALUES.map((item) => {
+              {values.map((item) => {
                 const Icon = item.icon;
                 return (
                   <div key={item.title} className="flex flex-col">

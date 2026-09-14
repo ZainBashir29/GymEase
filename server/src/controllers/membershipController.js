@@ -61,12 +61,8 @@ const createMembershipSubscription = asyncHandler(async (req, res) => {
     status: "active",
   });
 
-  if (existingMembershipSubscription) {
-    throw new ApiError(
-      400,
-      "You already have an active membership subscription",
-    );
-  }
+  // We allow creating a pending subscription even if an active one exists
+  // It will be activated once payment succeeds.
 
   const existingPendingMembershipSubscription =
     await MembershipSubscription.findOne({
@@ -101,13 +97,18 @@ const createMembershipSubscription = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Invalid membership plan id");
   }
 
+  let startDate = new Date();
+  if (existingMembershipSubscription && existingMembershipSubscription.endDate > startDate) {
+    startDate = new Date(existingMembershipSubscription.endDate);
+  }
+
+  const endDate = new Date(startDate.getTime() + membershipPlan.duration * 24 * 60 * 60 * 1000);
+
   const pendingMembershipSubscription = await MembershipSubscription.create({
     membershipPlanId,
     memberId: req.user?._id,
-    startDate: new Date(),
-    endDate: new Date(
-      Date.now() + membershipPlan.duration * 24 * 60 * 60 * 1000,
-    ),
+    startDate,
+    endDate,
     status: "pending",
   });
 
@@ -192,6 +193,7 @@ const getSubscriptionHistory = asyncHandler(async (req, res) => {
     {
       $match: {
         memberId: new mongoose.Types.ObjectId(req.user?._id),
+        status: { $ne: "pending" }
       },
     },
     {

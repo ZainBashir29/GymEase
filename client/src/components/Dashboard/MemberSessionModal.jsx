@@ -49,11 +49,11 @@ const MemberSessionModal = ({ session, onClose, onMarkCompleted }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0">
       <div
-        className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm"
+        className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm cursor-pointer"
         onClick={onClose}
       />
 
-      <div className="relative w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl">
+      <div className="relative w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl my-10">
         <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50 p-6">
           <div className="flex items-center gap-4">
             <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-brand-100 ring-2 ring-white">
@@ -86,7 +86,7 @@ const MemberSessionModal = ({ session, onClose, onMarkCompleted }) => {
           </div>
           <button
             onClick={onClose}
-            className="rounded-full p-2 text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition-colors"
+            className="rounded-full p-2 text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition-colors cursor-pointer"
           >
             <X className="h-5 w-5" />
           </button>
@@ -170,7 +170,7 @@ const MemberSessionModal = ({ session, onClose, onMarkCompleted }) => {
               <button
                 onClick={handleMark}
                 disabled={isCompleting}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand-600 py-3 text-sm font-bold text-white shadow-sm hover:bg-brand-700 disabled:opacity-60 transition-colors"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand-600 py-3 text-sm font-bold text-white shadow-sm hover:bg-brand-700 disabled:opacity-60 transition-colors cursor-pointer"
               >
                 {isCompleting ? (
                   <>
@@ -195,7 +195,7 @@ const MemberSessionModal = ({ session, onClose, onMarkCompleted }) => {
 
           <button
             onClick={onClose}
-            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors"
+            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
           >
             Close
           </button>

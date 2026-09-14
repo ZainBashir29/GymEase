@@ -32,7 +32,6 @@ const MEMBER_NAV_ITEMS = [
   { label: "Membership", to: "/member/membership", icon: CreditCard },
   { label: "Store", to: "/store", icon: ShoppingBag },
   { label: "Orders", to: "/member/orders", icon: Package },
-  { label: "Messages", to: "/member/dashboard/chat", icon: MessageCircle },
   { label: "Settings", to: "/member/settings", icon: Settings },
 ];
 
@@ -170,7 +169,6 @@ const MemberSettingsPage = () => {
           </div>
         )}
 
-        
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-8">
           <div className="p-6 flex flex-col sm:flex-row items-center gap-6">
             <div className="relative">
@@ -187,9 +185,9 @@ const MemberSettingsPage = () => {
                 </div>
               )}
               <button
-                onClick={() => fileInputRef.current?.click()}
+                onClick={() = className="cursor-pointer"> fileInputRef.current?.click()}
                 disabled={isUploadingPic}
-                className="absolute bottom-0 right-0 p-2 bg-white rounded-full border border-slate-200 shadow-sm text-slate-600 hover:text-brand-600 transition-colors disabled:opacity-50"
+                className="absolute bottom-0 right-0 p-2 bg-white rounded-full border border-slate-200 shadow-sm text-slate-600 hover:text-brand-600 transition-colors disabled:opacity-50 cursor-pointer"
               >
                 <Camera className="w-4 h-4" />
               </button>
@@ -198,7 +196,7 @@ const MemberSettingsPage = () => {
                 ref={fileInputRef}
                 onChange={handleProfilePictureUpload}
                 accept="image/*"
-                className="hidden"
+                className="hidden cursor-pointer"
               />
             </div>
             <div>
@@ -209,7 +207,7 @@ const MemberSettingsPage = () => {
                 Upload a new avatar. Larger images will be resized.
               </p>
               <button
-                onClick={() => fileInputRef.current?.click()}
+                onClick={() = className="cursor-pointer"> fileInputRef.current?.click()}
                 disabled={isUploadingPic}
                 className="text-sm font-medium text-brand-600 hover:text-brand-700 disabled:opacity-50"
               >
@@ -219,7 +217,6 @@ const MemberSettingsPage = () => {
           </div>
         </div>
 
-        
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-8">
           <div className="px-6 py-5 border-b border-slate-200">
             <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
@@ -270,7 +267,7 @@ const MemberSettingsPage = () => {
                 <button
                   type="submit"
                   disabled={isUpdating}
-                  className="px-6 py-2.5 bg-brand-600 text-white font-medium rounded-lg hover:bg-brand-700 transition-colors disabled:opacity-50"
+                  className="px-6 py-2.5 bg-brand-600 text-white font-medium rounded-lg hover:bg-brand-700 transition-colors disabled:opacity-50 cursor-pointer"
                 >
                   {isUpdating ? "Saving..." : "Save Changes"}
                 </button>
@@ -279,7 +276,6 @@ const MemberSettingsPage = () => {
           </div>
         </div>
 
-        
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-8">
           <div className="px-6 py-5 border-b border-slate-200">
             <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
@@ -318,7 +314,7 @@ const MemberSettingsPage = () => {
                 <button
                   type="submit"
                   disabled={isUpdatingPassword}
-                  className="px-6 py-2.5 bg-slate-900 text-white font-medium rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50"
+                  className="px-6 py-2.5 bg-slate-900 text-white font-medium rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50 cursor-pointer"
                 >
                   {isUpdatingPassword ? "Updating..." : "Update Password"}
                 </button>
@@ -327,7 +323,6 @@ const MemberSettingsPage = () => {
           </div>
         </div>
 
-        
         <div className="bg-red-50 rounded-2xl border border-red-100 shadow-sm overflow-hidden">
           <div className="px-6 py-5 border-b border-red-200">
             <h2 className="text-lg font-semibold text-red-700 flex items-center gap-2">
@@ -344,7 +339,7 @@ const MemberSettingsPage = () => {
             <button
               onClick={handleDeleteAccount}
               disabled={isDeleting}
-              className="px-6 py-2.5 bg-white border border-red-200 text-red-600 font-medium rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50 flex items-center gap-2"
+              className="px-6 py-2.5 bg-white border border-red-200 text-red-600 font-medium rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50 flex items-center gap-2 cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
               {isDeleting ? "Deleting..." : "Delete Account"}
