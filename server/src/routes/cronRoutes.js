@@ -2,12 +2,12 @@ import express from "express";
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
-import warnExpiringMemberships from "./warnExpiringMemberships.js";
-import expireMemberships from "./expireMemberships.js";
-import markMissedSessions from "./markMissedSessions.js";
-import completeFinishedMemberPlans from "./completeFinishedMemberPlans.js";
-import reconcilePayments from "./reconcilePayments.js";
-import markAbsentees from "./markAbsentees.js";
+import warnExpiringMemberships from "../crons/warnExpiringMemberships.js";
+import expireMemberships from "../crons/expireMemberships.js";
+import markMissedSessions from "../crons/markMissedSessions.js";
+import completeFinishedMemberPlans from "../crons/completeFinishedMemberPlans.js";
+import reconcilePayments from "../crons/reconcilePayments.js";
+import markAbsentees from "../crons/markAbsentees.js";
 
 const router = express.Router();
 
