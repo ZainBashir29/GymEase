@@ -11,19 +11,18 @@ const safepay = Safepay(process.env.SAFEPAY_SECRET_KEY, {
 });
 
 const handleSuccessfulPayment = async (trackerToken) => {
-  const payment = await Payment.findOne({ trackerToken });
-  if (payment && payment.status === "successful") {
-    return payment;
-  }
-
   const updatedPayment = await Payment.findOneAndUpdate(
-    { trackerToken },
+    { trackerToken, status: "pending" },
     { $set: { status: "successful" } },
     { returnDocument: "after" },
   );
 
   if (!updatedPayment) {
-    console.error(`Could not find payment for tracker ${trackerToken}`);
+    const existingPayment = await Payment.findOne({ trackerToken });
+    if (existingPayment && existingPayment.status === "successful") {
+      return existingPayment;
+    }
+    console.error(`Could not process payment for tracker ${trackerToken}. It may not exist or is not pending.`);
     return null;
   }
 
@@ -136,13 +135,15 @@ const handleSuccessfulPayment = async (trackerToken) => {
 
 const handleFailedPayment = async (trackerToken) => {
   const updatedPayment = await Payment.findOneAndUpdate(
-    { trackerToken },
+    { trackerToken, status: "pending" },
     { $set: { status: "failed" } },
     { returnDocument: "after" },
   );
 
   if (!updatedPayment) {
-    console.error(`Could not find payment for tracker ${trackerToken}`);
+    const existingPayment = await Payment.findOne({ trackerToken });
+    if (existingPayment && existingPayment.status === "failed") return existingPayment;
+    console.error(`Could not process failed payment for tracker ${trackerToken}.`);
     return null;
   }
 
@@ -167,8 +168,8 @@ const handleFailedPayment = async (trackerToken) => {
 };
 
 const handleRefundedPayment = async (paymentId) => {
-  const updatedPayment = await Payment.findByIdAndUpdate(
-    paymentId,
+  const updatedPayment = await Payment.findOneAndUpdate(
+    { _id: paymentId, status: "successful" },
     { $set: { status: "refunded" } },
     { returnDocument: "after" },
   );
