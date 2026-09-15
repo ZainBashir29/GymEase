@@ -56,6 +56,7 @@ import attendanceRoutes from "./routes/attendanceRoutes.js";
 import progressDataRoutes from "./routes/progressDataRoutes.js";
 import conversationRoutes from "./routes/conversationRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
+import cronRoutes from "./routes/cronRoutes.js";
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/memberships", membershipRoutes);
@@ -68,6 +69,7 @@ app.use("/api/v1/attendance", attendanceRoutes);
 app.use("/api/v1/progress-data", progressDataRoutes);
 app.use("/api/v1/conversations", conversationRoutes);
 app.use("/api/v1/messages", messageRoutes);
+app.use("/api/v1/cron", cronRoutes);
 
 app.get("/health-check", (req, res) => {
   res.status(200).json(new ApiResponse(200, {}, "Everything is working fine"));

@@ -3,7 +3,7 @@ import http from "http";
 import app from "./app.js";
 import connectDB from "./db/index.js";
 import { PORT } from "./constants.js";
-import startCronJobs from "./crons/index.js";
+// import startCronJobs from "./crons/index.js";
 import { initializeSocket } from "./socket/index.js";
 
 connectDB()
@@ -21,7 +21,7 @@ connectDB()
       console.log(`Server is listening on port ${PORT}`);
     });
 
-    startCronJobs();
+    // startCronJobs();
   })
   .catch((error) => {
     console.log("Error in executing mongodb connection", error);
