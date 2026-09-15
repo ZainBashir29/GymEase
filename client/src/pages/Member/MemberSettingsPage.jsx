@@ -69,7 +69,7 @@ const MemberSettingsPage = () => {
         await api.patch("/auth/member/update/email", { email });
       }
 
-      setUser({ ...user, fullName, username, email });
+      login({ ...user, fullName, username, email });
       setMessage({ type: "success", text: "Profile updated successfully!" });
     } catch (error) {
       setMessage({

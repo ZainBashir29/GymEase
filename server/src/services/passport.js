@@ -1,6 +1,7 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import Member from "../models/memberModel.js";
+import User from "../models/userModel.js";
 
 passport.use(
   new GoogleStrategy(
@@ -14,15 +15,21 @@ passport.use(
         let member = await Member.findOne({ googleId: profile.id });
 
         if (!member) {
-          member = await Member.findOne({ email: profile.emails[0].value });
+          let user = await User.findOne({ email: profile.emails[0].value.toLowerCase() });
 
-          if (member) {
-            member.googleId = profile.id;
-            await member.save({ validateBeforeSave: false });
+          if (user) {
+            if (user.role !== "Member") {
+              return done(null, false, { message: "Admins and Trainers must use email and password to log in." });
+            }
+            
+            user.googleId = profile.id;
+            await user.save({ validateBeforeSave: false });
+            
+            return done(null, user);
           } else {
             member = await Member.create({
               fullName: profile.displayName,
-              email: profile.emails[0].value,
+              email: profile.emails[0].value.toLowerCase(),
               googleId: profile.id,
               profilePicture: profile.photos[0].value,
               isProfileCompleted: false,
@@ -31,6 +38,7 @@ passport.use(
               username: `google_${profile.id}`,
               age: 18,
             });
+            return done(null, member);
           }
         }
 

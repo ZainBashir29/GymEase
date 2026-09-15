@@ -35,6 +35,8 @@ const StorePage = () => {
     try {
       setAddingToCart(productId);
       await addToCart(productId, 1);
+    } catch (error) {
+      alert(error.response?.data?.message || "Failed to add to cart");
     } finally {
       setAddingToCart(null);
     }
@@ -71,7 +73,10 @@ const StorePage = () => {
               key={product._id}
               className="group relative border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow"
             >
-              <Link to={`/store/product/${product._id}`} className="flex flex-col h-full">
+              <Link
+                to={`/store/product/${product._id}`}
+                className="flex flex-col h-full"
+              >
                 <div className="aspect-square w-full overflow-hidden bg-slate-200 lg:h-80 lg:aspect-auto">
                   <img
                     src={product.imageUrl}
@@ -96,7 +101,7 @@ const StorePage = () => {
                       disabled={
                         addingToCart === product._id || product.stock === 0
                       }
-                      className="flex w-full items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-slate-800 disabled:opacity-70"
+                      className="flex w-full items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-slate-800 disabled:opacity-70 cursor-pointer"
                     >
                       {addingToCart === product._id ? (
                         <Loader2 className="h-4 w-4 animate-spin" />

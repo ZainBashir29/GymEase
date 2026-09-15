@@ -39,9 +39,21 @@ const runDailyBatch = async () => {
 const startCronJobs = () => {
   cron.schedule("5 0 * * *", runDailyBatch);
 
-  cron.schedule("0 */2 * * *", reconcilePayments);
+  cron.schedule("0 */2 * * *", async () => {
+    try {
+      await reconcilePayments();
+    } catch (error) {
+      console.error("reconcilePayments failed:", error);
+    }
+  });
 
-  cron.schedule("55 23 * * *", markAbsentees);
+  cron.schedule("55 23 * * *", async () => {
+    try {
+      await markAbsentees();
+    } catch (error) {
+      console.error("markAbsentees failed:", error);
+    }
+  });
 
   console.log("All cron jobs scheduled");
 };

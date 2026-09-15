@@ -114,7 +114,7 @@ const Register = () => {
             onClick={() =>
               navigate("/login", { state: { redirectTo: "/pricing" } })
             }
-            className="mt-6 w-full rounded-lg bg-brand-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700"
+            className="mt-6 w-full rounded-lg bg-brand-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 cursor-pointer"
           >
             Log in to continue
           </button>

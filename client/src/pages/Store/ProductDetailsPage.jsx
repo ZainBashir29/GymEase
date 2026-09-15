@@ -36,6 +36,8 @@ const ProductDetailsPage = () => {
     try {
       setAddingToCart(true);
       await addToCart(product._id, quantity);
+    } catch (error) {
+      alert(error.response?.data?.message || "Failed to add to cart");
     } finally {
       setAddingToCart(false);
     }
@@ -110,7 +112,7 @@ const ProductDetailsPage = () => {
                 <button
                   type="button"
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="px-4 py-2 text-slate-500 hover:text-slate-700"
+                  className="px-4 py-2 text-slate-500 hover:text-slate-700 cursor-pointer"
                   disabled={product.stock === 0}
                 >
                   <Minus className="h-4 w-4" />
@@ -123,7 +125,7 @@ const ProductDetailsPage = () => {
                   onClick={() =>
                     setQuantity(Math.min(product.stock, quantity + 1))
                   }
-                  className="px-4 py-2 text-slate-500 hover:text-slate-700"
+                  className="px-4 py-2 text-slate-500 hover:text-slate-700 cursor-pointer"
                   disabled={product.stock === 0 || quantity >= product.stock}
                 >
                   <Plus className="h-4 w-4" />
@@ -133,7 +135,7 @@ const ProductDetailsPage = () => {
                 type="button"
                 onClick={handleAddToCart}
                 disabled={addingToCart || product.stock === 0}
-                className="flex max-w-xs flex-1 items-center justify-center rounded-lg bg-brand-600 px-8 py-3 text-base font-medium text-white hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 focus:ring-offset-slate-50 sm:w-full disabled:opacity-70 disabled:cursor-not-allowed"
+                className="flex max-w-xs flex-1 items-center justify-center rounded-lg bg-brand-600 px-8 py-3 text-base font-medium text-white hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 focus:ring-offset-slate-50 sm:w-full disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
               >
                 {addingToCart ? (
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />

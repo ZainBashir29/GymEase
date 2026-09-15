@@ -19,6 +19,7 @@ import {
   getAllOrders,
   updateOrderStatus,
 } from "../controllers/storeController.js";
+import requireActiveMembership from "../middlewares/requireActiveMembershipMiddleware.js";
 
 const router = express.Router();
 
@@ -35,7 +36,9 @@ router
   .route("/products/delete/:id")
   .delete(verifyJwt, role("Admin"), deleteProduct);
 
-router.route("/cart/add").post(verifyJwt, role("Member"), addToCart);
+router
+  .route("/cart/add")
+  .post(verifyJwt, role("Member"), requireActiveMembership, addToCart);
 router.route("/cart").get(verifyJwt, role("Member"), getCart);
 router
   .route("/cart/update")
@@ -45,8 +48,12 @@ router
   .delete(verifyJwt, role("Member"), removeCartItem);
 router.route("/cart/clear").delete(verifyJwt, role("Member"), clearCart);
 
-router.route("/checkout").get(verifyJwt, role("Member"), checkout);
-router.route("/orders/create").post(verifyJwt, role("Member"), createOrder);
+router
+  .route("/checkout")
+  .get(verifyJwt, role("Member"), requireActiveMembership, checkout);
+router
+  .route("/orders/create")
+  .post(verifyJwt, role("Member"), requireActiveMembership, createOrder);
 router.route("/orders/me").get(verifyJwt, role("Member"), getMemberOrders);
 
 router.route("/orders").get(verifyJwt, role("Admin"), getAllOrders);

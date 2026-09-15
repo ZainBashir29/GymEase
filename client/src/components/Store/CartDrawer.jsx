@@ -120,7 +120,7 @@ const CartDrawer = () => {
                             <button
                               type="button"
                               onClick={() => removeItem(item.productId?._id)}
-                              className="font-medium text-red-600 hover:text-red-500"
+                              className="font-medium text-red-600 hover:text-red-500 cursor-pointer"
                             >
                               Remove
                             </button>

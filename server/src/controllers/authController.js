@@ -61,15 +61,17 @@ const registerMember = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid age");
   }
 
-  const existingMember = await Member.findOne({
-    $or: [{ email }, { username }],
-  });
+  const lowercasedUsername = username.toLowerCase();
+  const lowercasedEmail = email.toLowerCase();
 
-  if (existingMember) {
-    throw new ApiError(
-      409,
-      "Member with the same email or username already exists",
-    );
+  const existingEmail = await User.findOne({ email: lowercasedEmail });
+  if (existingEmail) {
+    throw new ApiError(409, "A user with this email already exists");
+  }
+
+  const existingUsername = await Member.findOne({ username: lowercasedUsername });
+  if (existingUsername) {
+    throw new ApiError(409, "Member with the same username already exists");
   }
 
   let profilePicture;
@@ -90,9 +92,9 @@ const registerMember = asyncHandler(async (req, res) => {
 
   const member = await Member.create({
     fullName,
-    email,
+    email: lowercasedEmail,
     password,
-    username: username.toLowerCase(),
+    username: lowercasedUsername,
     age,
     profilePicture: profilePicture?.url || "",
     profilePicturePublicId: profilePicture?.public_id || "",
@@ -130,7 +132,7 @@ const login = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Password is required");
   }
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email: email.toLowerCase() });
 
   if (!user) {
     throw new ApiError(404, "No user account found");
@@ -172,7 +174,7 @@ const login = asyncHandler(async (req, res) => {
 });
 
 const logout = asyncHandler(async (req, res) => {
-  const updatedUser = await User.findOneAndUpdate(
+  const updatedUser = await User.findByIdAndUpdate(
     req.user._id,
     {
       $set: {
@@ -198,14 +200,19 @@ const googleCallback = asyncHandler(async (req, res) => {
   const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
     user._id,
   );
+  let redirectUrl = `${process.env.CLIENT_URL}/member/dashboard`;
+  if (!user.isProfileCompleted) {
+    redirectUrl = `${process.env.CLIENT_URL}/complete-profile`;
+  } else if (user.role === "Admin") {
+    redirectUrl = `${process.env.CLIENT_URL}/admin/dashboard`;
+  } else if (user.role === "Trainer") {
+    redirectUrl = `${process.env.CLIENT_URL}/trainer/dashboard`;
+  }
+
   res
     .cookie("accessToken", accessToken, cookieOptions)
     .cookie("refreshToken", refreshToken, cookieOptions)
-    .redirect(
-      user.isProfileCompleted
-        ? `${process.env.CLIENT_URL}/member/dashboard`
-        : `${process.env.CLIENT_URL}/complete-profile`,
-    );
+    .redirect(redirectUrl);
 });
 
 const completeProfile = asyncHandler(async (req, res) => {
@@ -219,11 +226,19 @@ const completeProfile = asyncHandler(async (req, res) => {
   if (age < 13) {
     throw new ApiError(400, "Age is too small");
   }
+  
+  const lowercasedUsername = username.toLowerCase();
+  
+  const existingMember = await Member.findOne({ username: lowercasedUsername });
+  if (existingMember && existingMember._id.toString() !== req.user._id.toString()) {
+    throw new ApiError(409, "Username is already taken");
+  }
+
   const member = await Member.findByIdAndUpdate(
     req.user._id,
     {
       $set: {
-        username,
+        username: lowercasedUsername,
         age,
         isProfileCompleted: true,
       },
@@ -254,9 +269,9 @@ const forgotPassword = asyncHandler(async (req, res) => {
   if (!email) {
     throw new ApiError(400, "Email is required");
   }
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email: email.toLowerCase() });
   if (!user) {
-    throw new ApiError(404, "An email was sent if the email was valid");
+    return res.status(200).json(new ApiResponse(200, {}, "Email sent successfully"));
   }
   const token = crypto.randomBytes(32).toString("hex");
   const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
@@ -443,11 +458,18 @@ const updateUsername = asyncHandler(async (req, res) => {
   if (!username) {
     throw new ApiError(400, "Username is required");
   }
+  const lowercasedUsername = username.toLowerCase();
+  
+  const existingMember = await Member.findOne({ username: lowercasedUsername });
+  if (existingMember && existingMember._id.toString() !== req.user._id.toString()) {
+    throw new ApiError(409, "Username is already taken");
+  }
+
   const member = await Member.findByIdAndUpdate(
     req.user._id,
     {
       $set: {
-        username,
+        username: lowercasedUsername,
       },
     },
     {
@@ -470,11 +492,18 @@ const updateEmail = asyncHandler(async (req, res) => {
   if (!email.includes("@")) {
     throw new ApiError(400, "Invalid email format");
   }
+  const lowercasedEmail = email.toLowerCase();
+  
+  const existingMember = await Member.findOne({ email: lowercasedEmail });
+  if (existingMember && existingMember._id.toString() !== req.user._id.toString()) {
+    throw new ApiError(409, "Email is already taken");
+  }
+
   const member = await Member.findByIdAndUpdate(
     req.user._id,
     {
       $set: {
-        email,
+        email: lowercasedEmail,
       },
     },
     {

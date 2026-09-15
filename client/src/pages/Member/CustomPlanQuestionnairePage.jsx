@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../lib/axios.js";
+
 import {
   Check,
   ChevronRight,
@@ -8,6 +9,16 @@ import {
   Wand2,
   Sparkles,
   Activity,
+  Flame,
+  BicepsFlexed,
+  Footprints,
+  Accessibility,
+  Sprout,
+  Zap,
+  CalendarDays,
+  Shirt,
+  PersonStanding,
+  Target,
 } from "lucide-react";
 
 const questions = [
@@ -17,25 +28,25 @@ const questions = [
       {
         id: "weight_loss",
         label: "Weight Loss",
-        icon: "🔥",
+        icon: Flame,
         desc: "Burn fat and slim down",
       },
       {
         id: "muscle_gain",
         label: "Muscle Gain",
-        icon: "💪",
+        icon: BicepsFlexed,
         desc: "Build strength and size",
       },
       {
         id: "endurance",
         label: "Endurance",
-        icon: "🏃",
+        icon: Footprints,
         desc: "Improve stamina and cardio",
       },
       {
         id: "flexibility",
         label: "Flexibility",
-        icon: "🧘",
+        icon: Accessibility,
         desc: "Increase mobility and range",
       },
     ],
@@ -46,19 +57,19 @@ const questions = [
       {
         id: "beginner",
         label: "Beginner",
-        icon: "🌱",
+        icon: Sprout,
         desc: "Just starting out",
       },
       {
         id: "intermediate",
         label: "Intermediate",
-        icon: "⚡",
+        icon: Zap,
         desc: "Familiar with basic workouts",
       },
       {
         id: "advanced",
         label: "Advanced",
-        icon: "🔥",
+        icon: Flame,
         desc: "Experienced and fit",
       },
     ],
@@ -66,10 +77,30 @@ const questions = [
   {
     title: "How many days per week can you train?",
     options: [
-      { id: "3", label: "3 Days", icon: "📅", desc: "Light commitment" },
-      { id: "4", label: "4 Days", icon: "📅", desc: "Moderate commitment" },
-      { id: "5", label: "5 Days", icon: "📅", desc: "Serious commitment" },
-      { id: "6", label: "6 Days", icon: "📅", desc: "Maximum results" },
+      {
+        id: "3",
+        label: "3 Days",
+        icon: CalendarDays,
+        desc: "Light commitment",
+      },
+      {
+        id: "4",
+        label: "4 Days",
+        icon: CalendarDays,
+        desc: "Moderate commitment",
+      },
+      {
+        id: "5",
+        label: "5 Days",
+        icon: CalendarDays,
+        desc: "Serious commitment",
+      },
+      {
+        id: "6",
+        label: "6 Days",
+        icon: CalendarDays,
+        desc: "Maximum results",
+      },
     ],
   },
   {
@@ -78,20 +109,25 @@ const questions = [
       {
         id: "upper_body",
         label: "Upper Body",
-        icon: "👕",
+        icon: Shirt,
         desc: "Chest, back, arms, shoulders",
       },
       {
         id: "lower_body",
         label: "Lower Body",
-        icon: "👖",
+        icon: PersonStanding,
         desc: "Legs and glutes",
       },
-      { id: "core", label: "Core", icon: "🎯", desc: "Abs and stability" },
+      {
+        id: "core",
+        label: "Core",
+        icon: Target,
+        desc: "Abs and stability",
+      },
       {
         id: "full_body",
         label: "Full Body",
-        icon: "🧍",
+        icon: PersonStanding,
         desc: "Balanced overall development",
       },
     ],
@@ -118,7 +154,9 @@ const CustomPlanQuestionnaire = () => {
   };
 
   const handleBack = () => {
-    if (currentStep > 0) setCurrentStep((prev) => prev - 1);
+    if (currentStep > 0) {
+      setCurrentStep((prev) => prev - 1);
+    }
   };
 
   const handleSubmit = async () => {
@@ -137,7 +175,7 @@ const CustomPlanQuestionnaire = () => {
     } catch (err) {
       setError(
         err.response?.data?.message ||
-          "Failed to generate custom plan. Make sure you have an active membership and no other active plans.",
+          "Failed to generate custom plan. Make sure you have an active membership and no other active plans."
       );
       setSubmitting(false);
     }
@@ -149,13 +187,17 @@ const CustomPlanQuestionnaire = () => {
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-6">
       <div className="max-w-3xl mx-auto">
+
+        {/* Header */}
         <div className="text-center mb-12">
           <div className="w-16 h-16 bg-brand-100 rounded-full flex items-center justify-center mx-auto mb-6 text-brand-600 shadow-sm">
             <Wand2 className="w-8 h-8" />
           </div>
+
           <h1 className="text-3xl font-black text-slate-900 mb-2">
             Custom Plan Generator
           </h1>
+
           <p className="text-slate-500">
             Let AI craft the perfect workout regimen for your body.
           </p>
@@ -166,8 +208,10 @@ const CustomPlanQuestionnaire = () => {
             <span>
               Question {currentStep + 1} of {questions.length}
             </span>
+
             <span>{Math.round(progress)}% Completed</span>
           </div>
+
           <div className="w-full h-3 bg-slate-200 rounded-full overflow-hidden">
             <div
               className="h-full bg-brand-500 rounded-full transition-all duration-500 ease-out relative overflow-hidden"
@@ -184,16 +228,20 @@ const CustomPlanQuestionnaire = () => {
           </div>
         )}
 
+        {/* Question Card */}
         <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/40 border border-slate-100 p-8 md:p-12 mb-8 relative overflow-hidden">
           {submitting ? (
             <div className="py-20 flex flex-col items-center justify-center text-center">
               <div className="relative">
                 <Activity className="w-16 h-16 text-brand-500 animate-pulse" />
+
                 <Sparkles className="w-6 h-6 text-yellow-400 absolute -top-2 -right-2 animate-bounce" />
               </div>
+
               <h3 className="text-2xl font-bold text-slate-900 mt-6 mb-2">
                 Generating Your Plan...
               </h3>
+
               <p className="text-slate-500 max-w-sm">
                 We are analyzing your inputs and assigning the best available
                 trainer to guide you.
@@ -201,6 +249,7 @@ const CustomPlanQuestionnaire = () => {
             </div>
           ) : (
             <div className="animate-in slide-in-from-right-8 fade-in duration-300">
+
               <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-8">
                 {question.title}
               </h2>
@@ -208,6 +257,9 @@ const CustomPlanQuestionnaire = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {question.options.map((opt) => {
                   const isSelected = answers[currentStep] === opt.id;
+
+                  const Icon = opt.icon;
+
                   return (
                     <button
                       key={opt.id}
@@ -221,23 +273,41 @@ const CustomPlanQuestionnaire = () => {
                       `}
                     >
                       <div className="flex items-start gap-4">
+
+
                         <div
-                          className={`text-3xl ${isSelected ? "scale-110 transition-transform" : "grayscale group-hover:grayscale-0 transition-all"}`}
+                          className={`shrink-0 ${
+                            isSelected
+                              ? "text-brand-600 scale-110 transition-transform"
+                              : "text-slate-400 group-hover:text-brand-500 transition-all"
+                          }`}
                         >
-                          {opt.icon}
+                          <Icon className="w-8 h-8" strokeWidth={1.8} />
                         </div>
+
                         <div className="flex-1">
                           <h3
-                            className={`font-bold text-lg mb-1 ${isSelected ? "text-brand-900" : "text-slate-900"}`}
+                            className={`font-bold text-lg mb-1 ${
+                              isSelected
+                                ? "text-brand-900"
+                                : "text-slate-900"
+                            }`}
                           >
                             {opt.label}
                           </h3>
+
                           <p
-                            className={`text-sm ${isSelected ? "text-brand-700" : "text-slate-500"}`}
+                            className={`text-sm ${
+                              isSelected
+                                ? "text-brand-700"
+                                : "text-slate-500"
+                            }`}
                           >
                             {opt.desc}
                           </p>
                         </div>
+
+                        {/* Selected indicator */}
                         {isSelected && (
                           <div className="w-6 h-6 rounded-full bg-brand-500 text-white flex items-center justify-center shrink-0">
                             <Check className="w-4 h-4" />
@@ -252,8 +322,10 @@ const CustomPlanQuestionnaire = () => {
           )}
         </div>
 
+        {/* Navigation */}
         {!submitting && (
           <div className="flex items-center justify-between">
+
             <button
               onClick={handleBack}
               disabled={currentStep === 0}
@@ -295,3 +367,5 @@ const CustomPlanQuestionnaire = () => {
 };
 
 export default CustomPlanQuestionnaire;
+
+
