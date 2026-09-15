@@ -672,7 +672,15 @@ const getTrainerAllSessions = asyncHandler(async (req, res) => {
 const getMemberAllSessions = asyncHandler(async (req, res) => {
   const memberSessions = await Session.find({
     memberId: req.user?._id,
-  }).populate("trainerId", "fullName profilePicture");
+  })
+    .populate("trainerId", "fullName profilePicture")
+    .populate({
+      path: "memberPlanId",
+      populate: {
+        path: "gymPlanId",
+        select: "name",
+      },
+    });
 
   res
     .status(200)

@@ -175,7 +175,7 @@ const CustomPlanQuestionnaire = () => {
     } catch (err) {
       setError(
         err.response?.data?.message ||
-          "Failed to generate custom plan. Make sure you have an active membership and no other active plans."
+          "Failed to generate custom plan. Make sure you have an active membership and no other active plans.",
       );
       setSubmitting(false);
     }
@@ -187,8 +187,6 @@ const CustomPlanQuestionnaire = () => {
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-6">
       <div className="max-w-3xl mx-auto">
-
-        {/* Header */}
         <div className="text-center mb-12">
           <div className="w-16 h-16 bg-brand-100 rounded-full flex items-center justify-center mx-auto mb-6 text-brand-600 shadow-sm">
             <Wand2 className="w-8 h-8" />
@@ -228,7 +226,6 @@ const CustomPlanQuestionnaire = () => {
           </div>
         )}
 
-        {/* Question Card */}
         <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/40 border border-slate-100 p-8 md:p-12 mb-8 relative overflow-hidden">
           {submitting ? (
             <div className="py-20 flex flex-col items-center justify-center text-center">
@@ -249,7 +246,6 @@ const CustomPlanQuestionnaire = () => {
             </div>
           ) : (
             <div className="animate-in slide-in-from-right-8 fade-in duration-300">
-
               <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-8">
                 {question.title}
               </h2>
@@ -273,8 +269,6 @@ const CustomPlanQuestionnaire = () => {
                       `}
                     >
                       <div className="flex items-start gap-4">
-
-
                         <div
                           className={`shrink-0 ${
                             isSelected
@@ -288,9 +282,7 @@ const CustomPlanQuestionnaire = () => {
                         <div className="flex-1">
                           <h3
                             className={`font-bold text-lg mb-1 ${
-                              isSelected
-                                ? "text-brand-900"
-                                : "text-slate-900"
+                              isSelected ? "text-brand-900" : "text-slate-900"
                             }`}
                           >
                             {opt.label}
@@ -298,16 +290,13 @@ const CustomPlanQuestionnaire = () => {
 
                           <p
                             className={`text-sm ${
-                              isSelected
-                                ? "text-brand-700"
-                                : "text-slate-500"
+                              isSelected ? "text-brand-700" : "text-slate-500"
                             }`}
                           >
                             {opt.desc}
                           </p>
                         </div>
 
-                        {/* Selected indicator */}
                         {isSelected && (
                           <div className="w-6 h-6 rounded-full bg-brand-500 text-white flex items-center justify-center shrink-0">
                             <Check className="w-4 h-4" />
@@ -322,14 +311,12 @@ const CustomPlanQuestionnaire = () => {
           )}
         </div>
 
-        {/* Navigation */}
         {!submitting && (
           <div className="flex items-center justify-between">
-
             <button
               onClick={handleBack}
               disabled={currentStep === 0}
-              className={`flex items-center gap-2 px-6 py-3 font-medium rounded-xl transition-colors
+              className={`flex items-center gap-2 px-6 py-3 font-medium rounded-xl transition-colors cursor-pointer
                 ${
                   currentStep === 0
                     ? "text-slate-300 cursor-not-allowed"
@@ -353,7 +340,7 @@ const CustomPlanQuestionnaire = () => {
               <button
                 onClick={() => setCurrentStep((prev) => prev + 1)}
                 disabled={!answers[currentStep]}
-                className="flex items-center gap-2 px-8 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors disabled:opacity-50"
+                className="flex items-center gap-2 px-8 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors disabled:opacity-50 cursor-pointer"
               >
                 Next
                 <ChevronRight className="w-5 h-5" />
@@ -367,5 +354,3 @@ const CustomPlanQuestionnaire = () => {
 };
 
 export default CustomPlanQuestionnaire;
-
-

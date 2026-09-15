@@ -39,11 +39,17 @@ const UpcomingScheduleCard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedSession, setSelectedSession] = useState(null);
+  const [gymPlanName, setGymPlanName] = useState("");
 
   const fetchUpcomingSessions = async () => {
     try {
       const { data } = await api.get("/gym-plans/sessions/member");
       const allSessions = data.data || [];
+
+      if (allSessions.length > 0) {
+        const planName = allSessions[0]?.memberPlanId?.gymPlanId?.name;
+        if (planName) setGymPlanName(planName);
+      }
 
       const startOfTomorrow = new Date();
       startOfTomorrow.setHours(24, 0, 0, 0);
@@ -111,8 +117,13 @@ const UpcomingScheduleCard = () => {
             <p className="text-xs font-medium uppercase tracking-wide text-indigo-600">
               Schedule
             </p>
-            <h3 className="text-base font-bold text-slate-900">
+            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
               Upcoming Workouts
+              {gymPlanName && (
+                <span className="bg-indigo-100 text-indigo-700 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                  {gymPlanName}
+                </span>
+              )}
             </h3>
           </div>
         </div>
