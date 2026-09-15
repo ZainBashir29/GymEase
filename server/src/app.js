@@ -6,6 +6,7 @@ import passport from "passport";
 import "./services/passport.js";
 import verifyJwt from "./middlewares/authMiddleware.js";
 import { verifyWebhookSignature } from "./controllers/paymentController.js";
+import ApiResponse from "./utils/ApiResponse.js";
 
 const app = express();
 
@@ -67,6 +68,10 @@ app.use("/api/v1/attendance", attendanceRoutes);
 app.use("/api/v1/progress-data", progressDataRoutes);
 app.use("/api/v1/conversations", conversationRoutes);
 app.use("/api/v1/messages", messageRoutes);
+
+app.get("/health-check", (req, res) => {
+  res.status(200).json(new ApiResponse(200, {}, "Everything is working fine"));
+});
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
