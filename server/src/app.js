@@ -10,10 +10,14 @@ import ApiResponse from "./utils/ApiResponse.js";
 
 const app = express();
 
+app.set("trust proxy", 1);
+
 app.use(passport.initialize());
 
 const allowedOrigins = process.env.CORS_ORIGIN
-  ? process.env.CORS_ORIGIN.split(",").map((origin) => origin.trim())
+  ? process.env.CORS_ORIGIN.split(",").map((origin) =>
+      origin.trim().replace(/\/$/, ""),
+    )
   : ["http://localhost:5173", "http://192.168.1.11:5173"];
 
 app.use(
