@@ -31,7 +31,7 @@ const reconcilePayments = async () => {
         payment.trackerToken,
       );
 
-      const state = response?.data?.tracker?.state;
+      const state = response?.data?.state;
 
       if (state === "TRACKER_ENDED") {
         await handleSuccessfulPayment(payment.trackerToken);

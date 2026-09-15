@@ -8,7 +8,7 @@ import { initializeSocket } from "./socket/index.js";
 
 connectDB()
   .then(() => {
-    app.on("error", () => {
+    app.on("error", (error) => {
       console.log("Error in connecting express with mongodb", error);
       throw error;
     });
@@ -25,5 +25,5 @@ connectDB()
   })
   .catch((error) => {
     console.log("Error in executing mongodb connection", error);
-    throw error;
+    process.exit(1);
   });

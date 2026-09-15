@@ -14,9 +14,10 @@ import api from "../../lib/axios.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 
 const formatDate = (dateStr) =>
-  new Date(dateStr).toLocaleDateString("en-US", {
-    month: "short",
+  new Date(dateStr).toLocaleDateString("en-PK", {
+    timeZone: "Asia/Karachi",
     day: "numeric",
+    month: "short",
     year: "numeric",
   });
 

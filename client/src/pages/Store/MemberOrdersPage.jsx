@@ -13,7 +13,7 @@ import DashboardLayout from "../../components/Dashboard/DashboardLayout.jsx";
 import api from "../../lib/axios.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 
-const MEMBER_NAV_ITEMS = [
+const memberNavbarItems = [
   {
     label: "Dashboard",
     to: "/member/dashboard",
@@ -61,7 +61,7 @@ const MemberOrdersPage = () => {
   };
 
   return (
-    <DashboardLayout navItems={MEMBER_NAV_ITEMS}>
+    <DashboardLayout navItems={memberNavbarItems}>
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-slate-900">Your Orders</h1>
         <p className="mt-1 text-sm text-slate-500">

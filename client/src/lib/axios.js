@@ -30,7 +30,7 @@ const api = axios.create({
   withCredentials: true,
 });
 
-const AUTH_ENDPOINTS_NO_REFRESH = [
+const noRefreshEndpoints = [
   "/auth/login",
   "/auth/register",
   "/auth/current-user",
@@ -42,7 +42,7 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    const isExemptEndpoint = AUTH_ENDPOINTS_NO_REFRESH.some((path) =>
+    const isExemptEndpoint = noRefreshEndpoints.some((path) =>
       originalRequest.url?.includes(path),
     );
 

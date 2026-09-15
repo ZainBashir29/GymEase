@@ -32,8 +32,10 @@ const sendEmail = async ({ to, subject, html }) => {
       subject,
       html,
     });
+    return true;
   } catch (err) {
-    console.error("Error while sending mail:", err);
+    console.error("Error while sending email:", err);
+    throw err;
   }
 };
 

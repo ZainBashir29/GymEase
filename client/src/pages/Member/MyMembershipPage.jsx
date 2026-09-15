@@ -18,7 +18,7 @@ import {
   Package,
 } from "lucide-react";
 
-const MEMBER_NAV_ITEMS = [
+const memberNavbarItems = [
   {
     label: "Dashboard",
     to: "/member/dashboard",
@@ -80,7 +80,7 @@ const MyMembershipPage = () => {
   };
 
   return (
-    <DashboardLayout navItems={MEMBER_NAV_ITEMS}>
+    <DashboardLayout navItems={memberNavbarItems}>
       <div className="mx-auto max-w-4xl p-6">
         <h1 className="text-2xl font-bold text-slate-900 mb-6">
           My Membership
@@ -179,14 +179,17 @@ const MyMembershipPage = () => {
                   Cancel Subscription
                 </button>
                 {(() => {
-                  const daysRemaining = Math.ceil((new Date(subscription.endDate) - new Date()) / (1000 * 60 * 60 * 24));
+                  const daysRemaining = Math.ceil(
+                    (new Date(subscription.endDate) - new Date()) /
+                      (1000 * 60 * 60 * 24),
+                  );
                   const isExpiringSoon = daysRemaining <= 7;
                   return (
                     <Link
                       to="/pricing"
                       className={`px-5 py-2.5 font-medium rounded-lg transition-colors ${
-                        isExpiringSoon 
-                          ? "bg-brand-600 text-white hover:bg-brand-700" 
+                        isExpiringSoon
+                          ? "bg-brand-600 text-white hover:bg-brand-700"
                           : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                       }`}
                     >
@@ -201,7 +204,9 @@ const MyMembershipPage = () => {
         {history.length > 0 && (
           <div className="mt-12 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             <div className="px-6 py-5 border-b border-slate-200">
-              <h3 className="text-lg font-bold text-slate-900">Membership History</h3>
+              <h3 className="text-lg font-bold text-slate-900">
+                Membership History
+              </h3>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse min-w-[600px]">
@@ -232,7 +237,8 @@ const MyMembershipPage = () => {
                                 : "bg-slate-100 text-slate-700"
                           }`}
                         >
-                          {hist.status.charAt(0).toUpperCase() + hist.status.slice(1)}
+                          {hist.status.charAt(0).toUpperCase() +
+                            hist.status.slice(1)}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-slate-500">

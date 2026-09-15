@@ -17,7 +17,7 @@ const router = Router();
 
 router.route("/plans").get(getAllMembershipPlans);
 
-router.route("/plan/:id").get(getMembershipPlanById);
+router.route("/plan/:membershipPlanId").get(getMembershipPlanById);
 
 router
   .route("/create")

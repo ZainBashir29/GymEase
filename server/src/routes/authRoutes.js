@@ -52,17 +52,13 @@ router
   .route("/complete-profile")
   .post(verifyJwt, role("Member"), completeProfile);
 
-router
-  .route("/forgot-password")
-  .post(forgotPassword);
+router.route("/forgot-password").post(forgotPassword);
 
-router
-  .route("/change-password/:token")
-  .post(changePassword);
+router.route("/change-password/:token").post(changePassword);
 
 router
   .route("/refresh-token")
-  .post(role("Member", "Trainer", "Admin"), refreshAccessToken);
+  .post(verifyJwt, role("Member", "Trainer", "Admin"), refreshAccessToken);
 
 router
   .route("/member/update/full-name")

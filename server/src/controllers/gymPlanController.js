@@ -13,6 +13,7 @@ import QuestionnaireResponse from "../models/gymPlans/questionnaireResponseModel
 import ProgressData from "../models/progressDataModel.js";
 import mongoose from "mongoose";
 import Trainer from "../models/trainerModel.js";
+import Attendance from "../models/attendanceModel.js";
 
 const findAvailableTrainer = async (allowedTrainers, targetDate, session) => {
   if (!allowedTrainers || allowedTrainers.length === 0) return null;
@@ -191,9 +192,9 @@ const activatePopularPlan = asyncHandler(async (req, res) => {
       if (validDays.includes(targetDate.getDay())) {
         const rotatedTrainers = [
           ...allowedTrainers.slice(workoutIndex % allowedTrainers.length),
-          ...allowedTrainers.slice(0, workoutIndex % allowedTrainers.length)
+          ...allowedTrainers.slice(0, workoutIndex % allowedTrainers.length),
         ];
-        
+
         const trainerId = await findAvailableTrainer(
           rotatedTrainers,
           targetDate,
@@ -336,7 +337,7 @@ const cancelMemberPlan = asyncHandler(async (req, res) => {
 
   try {
     memberPlan.status = "cancelled";
-    await memberPlan.save({ validateBeforeSave: false }, { session });
+    await memberPlan.save({ validateBeforeSave: false, session });
 
     const deletedFutureSessions = await Session.deleteMany(
       {
@@ -396,7 +397,7 @@ const activateCustomPlan = asyncHandler(async (req, res) => {
   if (subscription.membershipPlanId?.name === "Basic") {
     throw new ApiError(
       403,
-      "Basic plan members cannot request custom gym plans. Please upgrade to Standard or Premium."
+      "Basic plan members cannot request custom gym plans. Please upgrade to Standard or Premium.",
     );
   }
 
@@ -483,7 +484,7 @@ const activateCustomPlan = asyncHandler(async (req, res) => {
       if (validDays.includes(targetDate.getDay())) {
         const rotatedTrainers = [
           ...allowedTrainers.slice(sessionIndex % allowedTrainers.length),
-          ...allowedTrainers.slice(0, sessionIndex % allowedTrainers.length)
+          ...allowedTrainers.slice(0, sessionIndex % allowedTrainers.length),
         ];
 
         const trainerId = await findAvailableTrainer(

@@ -6,7 +6,7 @@ import TrainerProgressCard from "../../components/Trainer/TrainerProgressCard.js
 import UpcomingScheduleCard from "../../components/Trainer/UpcomingScheduleCard.jsx";
 import AttendanceCard from "../../components/Dashboard/AttendanceCard.jsx";
 
-const TRAINER_NAV_ITEMS = [
+const trainerNavbarItems = [
   {
     label: "Dashboard",
     to: "/trainer/dashboard",
@@ -20,7 +20,7 @@ const TrainerDashboardPage = () => {
   const { user } = useAuth();
 
   return (
-    <DashboardLayout navItems={TRAINER_NAV_ITEMS}>
+    <DashboardLayout navItems={trainerNavbarItems}>
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-slate-900">
           Welcome back, {user?.fullName?.split(" ")[0]}

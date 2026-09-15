@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { ShoppingBag, MessageCircle, ArrowRight } from "lucide-react";
 
-const QUICK_LINKS = [
+const quickLinks = [
   {
     label: "Browse Store",
     description: "Supplements & gym gear",
@@ -19,7 +19,7 @@ const QUICK_LINKS = [
 const QuickLinks = () => {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      {QUICK_LINKS.map(({ label, description, to, icon: Icon }) => (
+      {quickLinks.map(({ label, description, to, icon: Icon }) => (
         <Link
           key={to}
           to={to}

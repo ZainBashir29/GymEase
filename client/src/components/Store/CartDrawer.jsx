@@ -75,7 +75,8 @@ const CartDrawer = () => {
                               <Link
                                 to={`/store/product/${item.productId?._id}`}
                                 onClick={closeCart}
-                               className="cursor-pointer">
+                                className="cursor-pointer"
+                              >
                                 {item.productId?.name}
                               </Link>
                             </h3>

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Dumbbell, Loader2, CalendarX, CheckCircle2, X, Clock, Activity, User as UserIcon } from "lucide-react";
 import api from "../../lib/axios.js";
 
-const STATUS_STYLES = {
+const statusStyles = {
   completed: "bg-success/10 text-success",
   missed: "bg-danger/10 text-danger",
   upcoming: "bg-brand-100 text-brand-700",
@@ -48,7 +48,7 @@ const SessionModal = ({ session, onClose, onMarkConducted }) => {
               <h2 className="text-lg font-bold text-slate-900">{session.memberId?.fullName || "Member"}</h2>
               <div className="flex items-center gap-2 mt-0.5">
                 <p className="text-sm font-medium text-slate-500">{session.workoutName}</p>
-                <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${STATUS_STYLES[session.status]}`}>
+                <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${statusStyles[session.status]}`}>
                   {session.status}
                 </span>
               </div>
@@ -160,7 +160,7 @@ const SessionRow = ({ session, onClick, onMarkConducted }) => {
           </p>
           <span
             className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
-              STATUS_STYLES[session.status]
+              statusStyles[session.status]
             }`}
           >
             {session.status}

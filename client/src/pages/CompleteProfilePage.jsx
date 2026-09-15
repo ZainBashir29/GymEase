@@ -6,7 +6,7 @@ import AuthLayout from "../components/Auth/AuthLayout.jsx";
 import FormInput from "../components/Auth/FormInput.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 
-const MIN_AGE = 13;
+const minimumAge = 13;
 
 const CompleteProfilePage = () => {
   const navigate = useNavigate();
@@ -30,8 +30,8 @@ const CompleteProfilePage = () => {
 
     if (!formData.age) {
       errors.age = "Age is required";
-    } else if (Number(formData.age) < MIN_AGE) {
-      errors.age = `You must be at least ${MIN_AGE} years old`;
+    } else if (Number(formData.age) < minimumAge) {
+      errors.age = `You must be at least ${minimumAge} years old`;
     }
 
     setFieldErrors(errors);
@@ -105,7 +105,7 @@ const CompleteProfilePage = () => {
           name="username"
           type="text"
           label="Choose a Username"
-          placeholder="johndoe123"
+          placeholder="username"
           value={formData.username}
           onChange={handleChange}
           error={fieldErrors.username}
@@ -116,8 +116,8 @@ const CompleteProfilePage = () => {
           name="age"
           type="number"
           label="Your Age"
-          placeholder="25"
-          min={MIN_AGE}
+          placeholder="20"
+          min={minimumAge}
           value={formData.age}
           onChange={handleChange}
           error={fieldErrors.age}
@@ -126,7 +126,7 @@ const CompleteProfilePage = () => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
         >
           {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
           {isSubmitting ? "Saving..." : "Complete Profile"}

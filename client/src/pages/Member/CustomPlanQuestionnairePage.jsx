@@ -10,7 +10,7 @@ import {
   Activity,
 } from "lucide-react";
 
-const QUESTIONS = [
+const questions = [
   {
     title: "What is your primary fitness goal?",
     options: [
@@ -110,8 +110,7 @@ const CustomPlanQuestionnaire = () => {
     newAnswers[currentStep] = optionId;
     setAnswers(newAnswers);
 
-    
-    if (currentStep < QUESTIONS.length - 1) {
+    if (currentStep < questions.length - 1) {
       setTimeout(() => {
         setCurrentStep((prev) => prev + 1);
       }, 300);
@@ -133,7 +132,7 @@ const CustomPlanQuestionnaire = () => {
 
     try {
       await api.post("/gym-plans/custom/activate", { answers });
-      
+
       navigate("/member/dashboard", { replace: true });
     } catch (err) {
       setError(
@@ -144,13 +143,12 @@ const CustomPlanQuestionnaire = () => {
     }
   };
 
-  const question = QUESTIONS[currentStep];
-  const progress = ((currentStep + 1) / QUESTIONS.length) * 100;
+  const question = questions[currentStep];
+  const progress = ((currentStep + 1) / questions.length) * 100;
 
   return (
     <div className="min-h-screen bg-slate-50 py-12 px-6">
       <div className="max-w-3xl mx-auto">
-        
         <div className="text-center mb-12">
           <div className="w-16 h-16 bg-brand-100 rounded-full flex items-center justify-center mx-auto mb-6 text-brand-600 shadow-sm">
             <Wand2 className="w-8 h-8" />
@@ -163,11 +161,10 @@ const CustomPlanQuestionnaire = () => {
           </p>
         </div>
 
-        
         <div className="mb-8 relative">
           <div className="flex justify-between text-xs font-semibold text-slate-400 mb-2 px-1">
             <span>
-              Question {currentStep + 1} of {QUESTIONS.length}
+              Question {currentStep + 1} of {questions.length}
             </span>
             <span>{Math.round(progress)}% Completed</span>
           </div>
@@ -187,7 +184,6 @@ const CustomPlanQuestionnaire = () => {
           </div>
         )}
 
-        
         <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/40 border border-slate-100 p-8 md:p-12 mb-8 relative overflow-hidden">
           {submitting ? (
             <div className="py-20 flex flex-col items-center justify-center text-center">
@@ -256,7 +252,6 @@ const CustomPlanQuestionnaire = () => {
           )}
         </div>
 
-        
         {!submitting && (
           <div className="flex items-center justify-between">
             <button
@@ -273,7 +268,7 @@ const CustomPlanQuestionnaire = () => {
               Back
             </button>
 
-            {currentStep === QUESTIONS.length - 1 ? (
+            {currentStep === questions.length - 1 ? (
               <button
                 onClick={handleSubmit}
                 disabled={!answers[currentStep]}

@@ -15,6 +15,7 @@ import {
   handleFailedPayment,
   handleRefundedPayment,
 } from "../services/paymentOutcomeHandlers.js";
+import mongoose from "mongoose";
 
 const safepay = Safepay(process.env.SAFEPAY_SECRET_KEY, {
   authType: "secret",
@@ -328,7 +329,7 @@ const verifyWebhookSignature = asyncHandler(async (req, res) => {
 });
 
 const refundPayment = asyncHandler(async (req, res) => {
-  const { paymentId } = req.body;
+  const { paymentId } = req.params;
 
   if (!paymentId || !mongoose.isValidObjectId(paymentId)) {
     throw new ApiError(400, "Payment ID is required");

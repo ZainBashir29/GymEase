@@ -4,7 +4,7 @@ import { Dumbbell, ShoppingCart, Menu, X } from "lucide-react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useCart } from "../../context/CartContext.jsx";
 
-const NAV_LINKS = [
+const navbarLinks = [
   { label: "Home", to: "/" },
   { label: "About", to: "/about" },
   { label: "Pricing", to: "/pricing" },
@@ -35,7 +35,7 @@ const Navbar = () => {
         </Link>
 
         <div className="hidden items-center gap-8 md:flex">
-          {NAV_LINKS.map((link) => (
+          {navbarLinks.map((link) => (
             <Link
               key={link.to}
               to={link.to}
@@ -108,7 +108,6 @@ const Navbar = () => {
             </>
           )}
 
-          
           <button
             className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg -mr-2 cursor-pointer"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -122,40 +121,38 @@ const Navbar = () => {
         </div>
       </nav>
 
-      
       {isMobileMenuOpen && (
         <div className="md:hidden border-t border-slate-200 bg-white absolute w-full left-0 right-0 shadow-lg">
           <div className="flex flex-col">
-            {NAV_LINKS.map((link) => (
-               <Link
-                 key={link.to}
-                 to={link.to}
-                 onClick={() => setIsMobileMenuOpen(false)}
-                 className="text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-brand-600 px-6 py-4 border-b border-slate-100"
-               >
-                 {link.label}
-               </Link>
+            {navbarLinks.map((link) => (
+              <Link
+                key={link.to}
+                to={link.to}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-brand-600 px-6 py-4 border-b border-slate-100"
+              >
+                {link.label}
+              </Link>
             ))}
-            
-            
+
             {user ? (
-               <button
-                 onClick={() => {
-                   handleLogout();
-                   setIsMobileMenuOpen(false);
-                 }}
-                 className="text-left text-base font-medium text-red-600 hover:bg-red-50 px-6 py-4 sm:hidden"
-               >
-                 Logout
-               </button>
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setIsMobileMenuOpen(false);
+                }}
+                className="text-left text-base font-medium text-red-600 hover:bg-red-50 px-6 py-4 sm:hidden"
+              >
+                Logout
+              </button>
             ) : (
-               <Link
-                 to="/login"
-                 onClick={() => setIsMobileMenuOpen(false)}
-                 className="text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-brand-600 px-6 py-4 sm:hidden"
-               >
-                 Log in
-               </Link>
+              <Link
+                to="/login"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-brand-600 px-6 py-4 sm:hidden"
+              >
+                Log in
+              </Link>
             )}
           </div>
         </div>

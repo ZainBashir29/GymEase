@@ -9,7 +9,7 @@ import {
 import api from "../../lib/axios.js";
 import SessionModal from "./SessionModal.jsx";
 
-const STATUS_STYLES = {
+const statusStyles = {
   completed: "bg-success/10 text-success",
   missed: "bg-danger/10 text-danger",
   upcoming: "bg-brand-100 text-brand-700",
@@ -46,7 +46,7 @@ const UpcomingSessionRow = ({ session, onClick, onMarkConducted }) => {
             {session.workoutName}
           </p>
           <span
-            className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${STATUS_STYLES[session.status]}`}
+            className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${statusStyles[session.status]}`}
           >
             {session.status}
           </span>
