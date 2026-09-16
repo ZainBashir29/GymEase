@@ -1,0 +1,13 @@
+name: Reconcile Payments Cron 
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */2 * * *"
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          curl -X POST https://gymease-9hkk.onrender.com/api/v1/cron/reconcile-payments \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}"
