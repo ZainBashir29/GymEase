@@ -1,0 +1,13 @@
+name: Daily Cron Trigger
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          curl -X POST https://gymease-9hkk.onrender.com/api/v1/cron/daily \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}"
