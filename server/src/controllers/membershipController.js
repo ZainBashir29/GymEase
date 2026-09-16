@@ -61,35 +61,10 @@ const createMembershipSubscription = asyncHandler(async (req, res) => {
     status: "active",
   });
 
-  // We allow creating a pending subscription even if an active one exists
-  // It will be activated once payment succeeds.
-
-  const existingPendingMembershipSubscription =
-    await MembershipSubscription.findOne({
-      memberId: req.user?._id,
-      status: "pending",
-    });
-
-  if (existingPendingMembershipSubscription) {
-    if (
-      existingPendingMembershipSubscription.membershipPlanId.toString() ===
-      membershipPlanId.toString()
-    ) {
-      return res
-        .status(200)
-        .json(
-          new ApiResponse(
-            200,
-            existingPendingMembershipSubscription,
-            "Pending membership subscription already exists. Continuing to checkout.",
-          ),
-        );
-    }
-    throw new ApiError(
-      400,
-      "You already have a pending membership subscription. Complete payment to activate it.",
-    );
-  }
+  await MembershipSubscription.deleteMany({
+    memberId: req.user?._id,
+    status: "pending",
+  });
 
   const membershipPlan = await MembershipPlan.findById(membershipPlanId);
 
@@ -98,11 +73,16 @@ const createMembershipSubscription = asyncHandler(async (req, res) => {
   }
 
   let startDate = new Date();
-  if (existingMembershipSubscription && existingMembershipSubscription.endDate > startDate) {
+  if (
+    existingMembershipSubscription &&
+    existingMembershipSubscription.endDate > startDate
+  ) {
     startDate = new Date(existingMembershipSubscription.endDate);
   }
 
-  const endDate = new Date(startDate.getTime() + membershipPlan.duration * 24 * 60 * 60 * 1000);
+  const endDate = new Date(
+    startDate.getTime() + membershipPlan.duration * 24 * 60 * 60 * 1000,
+  );
 
   const pendingMembershipSubscription = await MembershipSubscription.create({
     membershipPlanId,
@@ -193,7 +173,7 @@ const getSubscriptionHistory = asyncHandler(async (req, res) => {
     {
       $match: {
         memberId: new mongoose.Types.ObjectId(req.user?._id),
-        status: { $ne: "pending" }
+        status: { $ne: "pending" },
       },
     },
     {
