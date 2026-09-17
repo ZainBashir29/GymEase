@@ -102,11 +102,19 @@ const ProductDetailsPage = () => {
             </div>
             <div className="mt-6 flex items-center">
               <p
-                className={`text-sm font-medium ${product.stock > 0 ? "text-emerald-600" : "text-red-600"}`}
+                className={`text-sm font-medium ${
+                  product.stock === 0
+                    ? "text-red-600"
+                    : product.stock <= 10
+                      ? "text-orange-600"
+                      : "text-emerald-600"
+                }`}
               >
-                {product.stock > 0
-                  ? `${product.stock} in stock`
-                  : "Out of stock"}
+                {product.stock === 0
+                  ? "Out of stock"
+                  : product.stock <= 10
+                    ? `Only ${product.stock} left in stock!`
+                    : "In Stock"}
               </p>
             </div>
             <div className="mt-10 flex">

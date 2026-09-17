@@ -354,6 +354,10 @@ const createOrder = asyncHandler(async (req, res) => {
   const deliveryFee = 200;
   const finalAmount = totalAmount + deliveryFee;
 
+  if (finalAmount > 100000) {
+    throw new ApiError(400, "Maximum order value of Rs. 100,000 exceeded. Please remove some items.");
+  }
+
   const order = await Order.create({
     memberId,
     products: cart.products.map((item) => ({

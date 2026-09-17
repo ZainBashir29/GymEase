@@ -147,10 +147,15 @@ const CartDrawer = () => {
                   <p>Rs {checkoutData.totalAmount}</p>
                 </div>
                 <div className="mt-6">
+                  {checkoutData.totalAmount > 100000 && (
+                    <p className="text-sm text-red-600 mb-3 text-center">
+                      Maximum order limit (Rs. 100,000) exceeded.
+                    </p>
+                  )}
                   <button
                     onClick={handleCheckout}
-                    disabled={loading}
-                    className="flex w-full items-center justify-center rounded-md border border-transparent bg-brand-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-brand-700 disabled:opacity-70 cursor-pointer"
+                    disabled={loading || checkoutData.totalAmount > 100000}
+                    className="flex w-full items-center justify-center rounded-md border border-transparent bg-brand-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-brand-700 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
                   >
                     {loading ? (
                       <Loader2 className="h-5 w-5 animate-spin" />
