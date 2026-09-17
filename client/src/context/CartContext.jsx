@@ -47,7 +47,7 @@ export const CartProvider = ({ children }) => {
       await fetchCart();
     } catch (error) {
       console.error("Error updating quantity:", error);
-      throw error;
+      alert(error.response?.data?.message || "Failed to update quantity");
     }
   };
   const removeItem = async (productId) => {
@@ -77,7 +77,7 @@ export const CartProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Error creating order:", error);
-      throw error;
+      alert(error.response?.data?.message || "Failed to create order. Please try again.");
     } finally {
       setLoading(false);
     }
