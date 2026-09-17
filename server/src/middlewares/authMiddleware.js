@@ -18,6 +18,9 @@ const verifyJwt = asyncHandler( async (req, _, next) => {
     if(!user) {
         throw new ApiError(401, "Invalid access token");
     }
+    if(!user.isActive) {
+        throw new ApiError(403, "This account has been deactivated");
+    }
     req.user = user;
     next();
 } ) 

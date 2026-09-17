@@ -54,6 +54,9 @@ const initializeSocket = (httpServer) => {
       if (!user) {
         return next(new Error("User not found"));
       }
+      if (!user.isActive) {
+        return next(new Error("Account deactivated"));
+      }
       socket.user = user;
       next();
     } catch (error) {

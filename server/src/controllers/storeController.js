@@ -181,6 +181,10 @@ const addToCart = asyncHandler(async (req, res) => {
 
   const requestedQuantity = quantity || 1;
 
+  if (requestedQuantity <= 0) {
+    throw new ApiError(400, "Quantity must be greater than 0");
+  }
+
   if (requestedQuantity > product.stock) {
     throw new ApiError(400, "Requested quantity exceeds available stock");
   }
@@ -245,6 +249,10 @@ const updateCartQuantity = asyncHandler(async (req, res) => {
   const product = await StoreProduct.findById(productId);
 
   if (!product) throw new ApiError(404, "Product no longer exists");
+
+  if (quantity <= 0) {
+    throw new ApiError(400, "Quantity must be greater than 0");
+  }
 
   if (quantity > product.stock) {
     throw new ApiError(400, "Requested quantity exceeds available stock");

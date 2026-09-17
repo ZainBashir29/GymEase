@@ -404,6 +404,9 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     if (!user) {
       throw new ApiError(401, "Invalid refresh token");
     }
+    if (!user.isActive) {
+      throw new ApiError(403, "This account has been deactivated");
+    }
     if (receivedRefreshToken !== user.refreshToken) {
       throw new ApiError(401, "Refresh token is expired or invalid");
     }
@@ -526,20 +529,20 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
   if (!newPassword) {
     throw new ApiError(400, "New password is required");
   }
-  const member = await Member.findById(req.user._id);
-  if (!member) {
-    throw new ApiError(500, "Could not find member");
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    throw new ApiError(500, "Could not find user");
   }
-  const isPasswordCorrect = await member.isPasswordCorrect(oldPassword);
+  const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
   if (!isPasswordCorrect) {
     throw new ApiError(400, "Incorrect old password");
   }
   try {
-    member.password = newPassword;
-    await member.save({ validateBeforeSave: false });
+    user.password = newPassword;
+    await user.save({ validateBeforeSave: false });
     res
       .status(200)
-      .json(new ApiResponse(200, member, "Password changed successfully"));
+      .json(new ApiResponse(200, user, "Password changed successfully"));
   } catch (error) {
     throw new ApiError(500, "Could not change password");
   }
