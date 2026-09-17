@@ -95,16 +95,23 @@ const Memberships = () => {
                 >
                   {plan.name}
                 </h3>
-                <p className="mt-4 flex items-baseline gap-x-2">
+                <p className="mt-4 flex items-baseline gap-x-1">
                   <span
-                    className={`text-5xl font-bold tracking-tight ${
+                    className={`text-xl font-semibold ${
+                      planIdx === 1 ? "text-white/80" : "text-slate-500"
+                    }`}
+                  >
+                    Rs.
+                  </span>
+                  <span
+                    className={`text-4xl sm:text-5xl font-bold tracking-tight ${
                       planIdx === 1 ? "text-white" : "text-slate-900"
                     }`}
                   >
-                    Rs. {plan.price.toLocaleString()}
+                    {plan.price.toLocaleString()}
                   </span>
                   <span
-                    className={`text-base ${
+                    className={`ml-1 text-sm font-medium ${
                       planIdx === 1 ? "text-brand-200" : "text-slate-500"
                     }`}
                   >

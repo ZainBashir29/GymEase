@@ -94,7 +94,7 @@ const StorePage = () => {
                     {product.category}
                   </p>
                   <p className="mt-2 text-lg font-bold text-slate-900">
-                    Rs {product.price.toLocaleString()}
+                    Rs. {product.price.toLocaleString()}
                   </p>
 
                   <div className="mt-auto pt-4">

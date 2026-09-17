@@ -110,9 +110,9 @@ const AdminDashboardPage = () => {
     }),
     datasets: [
       {
-        label: "Daily Revenue (Rs)",
+        label: "Daily Revenue (Rs.)",
         data: last30Days.map((d) => dailyDataMap[d] || 0),
-        backgroundColor: "rgba(37, 99, 235, 0.8)", 
+        backgroundColor: "rgba(37, 99, 235, 0.8)",
         borderRadius: 4,
       },
     ],
@@ -126,12 +126,7 @@ const AdminDashboardPage = () => {
     datasets: [
       {
         data: revenue?.revenueByType?.map((r) => r.totalRevenue) || [],
-        backgroundColor: [
-          "#3b82f6", 
-          "#10b981", 
-          "#8b5cf6", 
-          "#f59e0b", 
-        ],
+        backgroundColor: ["#3b82f6", "#10b981", "#8b5cf6", "#f59e0b"],
         borderWidth: 0,
         hoverOffset: 4,
       },
@@ -187,7 +182,7 @@ const AdminDashboardPage = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <StatCard
           title="Total Revenue"
-          value={`Rs ${revenue?.totalRevenue?.toLocaleString() || 0}`}
+          value={`Rs. ${revenue?.totalRevenue?.toLocaleString() || 0}`}
           icon={DollarSign}
           colorClass="bg-green-100 text-green-700"
         />
@@ -223,7 +218,6 @@ const AdminDashboardPage = () => {
         />
       </div>
 
-      
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm ring-1 ring-slate-100 flex flex-col">
           <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
@@ -255,7 +249,7 @@ const AdminDashboardPage = () => {
                       {type._id || "Other"}
                     </span>
                     <span className="font-bold text-slate-900">
-                      Rs {type.totalRevenue.toLocaleString()}
+                      Rs. {type.totalRevenue.toLocaleString()}
                     </span>
                   </div>
                 ))}
@@ -269,7 +263,6 @@ const AdminDashboardPage = () => {
         </div>
       </div>
 
-      
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-100 overflow-hidden flex flex-col">
           <div className="p-6 border-b border-slate-100 flex justify-between items-center">

@@ -212,7 +212,7 @@ const AdminOrdersPage = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="font-bold text-slate-900">
-                          Rs {order.totalAmount?.toLocaleString()}
+                          Rs. {order.totalAmount?.toLocaleString()}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -331,7 +331,7 @@ const AdminOrdersPage = () => {
                 <h4 className="text-sm font-bold text-slate-900 mb-3 flex items-center justify-between">
                   <span>Ordered Items</span>
                   <span className="text-xs font-semibold text-slate-500">
-                    {selectedOrder.products?.length || 0} item type(s)
+                    {selectedOrder.products?.length || 0} item type/s
                   </span>
                 </h4>
                 <div className="border border-slate-200 rounded-xl overflow-hidden divide-y divide-slate-100">
@@ -371,14 +371,14 @@ const AdminOrdersPage = () => {
                                   </span>
                                 )}
                                 <span className="text-xs text-slate-500">
-                                  Rs {price.toLocaleString()} × {qty}
+                                  Rs. {price.toLocaleString()} x {qty}
                                 </span>
                               </div>
                             </div>
                           </div>
                           <div className="text-right shrink-0">
                             <span className="text-sm font-bold text-slate-900">
-                              Rs {lineTotal.toLocaleString()}
+                              Rs. {lineTotal.toLocaleString()}
                             </span>
                           </div>
                         </div>
@@ -396,7 +396,7 @@ const AdminOrdersPage = () => {
                 <div className="flex justify-between text-slate-600">
                   <span>Items Subtotal</span>
                   <span>
-                    Rs{" "}
+                    Rs.{" "}
                     {(
                       selectedOrder.products?.reduce(
                         (sum, i) =>
@@ -408,12 +408,12 @@ const AdminOrdersPage = () => {
                 </div>
                 <div className="flex justify-between text-slate-600">
                   <span>Delivery Fee</span>
-                  <span>Rs 200</span>
+                  <span>Rs. 200</span>
                 </div>
                 <div className="pt-2 border-t border-slate-200 flex justify-between font-bold text-base text-slate-900">
                   <span>Total Amount</span>
                   <span className="text-brand-600">
-                    Rs {selectedOrder.totalAmount?.toLocaleString()}
+                    Rs. {selectedOrder.totalAmount?.toLocaleString()}
                   </span>
                 </div>
               </div>

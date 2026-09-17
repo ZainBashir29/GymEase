@@ -136,15 +136,15 @@ const CartDrawer = () => {
               <div className="border-t border-slate-200 px-4 py-6 sm:px-6">
                 <div className="flex justify-between text-base font-medium text-slate-900 mb-2">
                   <p>Subtotal</p>
-                  <p>Rs {checkoutData.subtotal?.toLocaleString()}</p>
+                  <p>Rs. {checkoutData.subtotal?.toLocaleString()}</p>
                 </div>
                 <div className="flex justify-between text-sm text-slate-500 mb-4">
                   <p>Delivery Fee</p>
-                  <p>Rs {checkoutData.deliveryFee?.toLocaleString()}</p>
+                  <p>Rs. {checkoutData.deliveryFee?.toLocaleString()}</p>
                 </div>
                 <div className="flex justify-between text-lg font-bold text-slate-900 mb-6">
                   <p>Total</p>
-                  <p>Rs {checkoutData.totalAmount?.toLocaleString()}</p>
+                  <p>Rs. {checkoutData.totalAmount?.toLocaleString()}</p>
                 </div>
                 <div className="mt-6">
                   {checkoutData.totalAmount > 100000 && (

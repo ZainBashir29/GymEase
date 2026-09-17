@@ -165,7 +165,7 @@ const AdminMembershipsPage = () => {
                 </h3>
                 <div className="flex items-baseline gap-1">
                   <span className="text-3xl font-black text-brand-600">
-                    Rs {plan.price.toLocaleString()}
+                    Rs. {plan.price.toLocaleString()}
                   </span>
                   <span className="text-slate-500 font-medium">
                     / {plan.duration} days

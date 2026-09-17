@@ -186,7 +186,7 @@ const AdminStorePage = () => {
                     {product.name}
                   </h3>
                   <span className="font-black text-brand-600 ml-2">
-                    Rs {product.price}
+                    Rs. {product.price.toLocaleString()}
                   </span>
                 </div>
 
@@ -234,132 +234,135 @@ const AdminStorePage = () => {
             </div>
 
             <div className="p-6 overflow-y-auto">
-              <form id="storeForm" onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Product Name
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
-                  placeholder="e.g. Whey Protein"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Description
-                </label>
-                <textarea
-                  required
-                  rows="3"
-                  value={formData.description}
-                  onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none"
-                  placeholder=""
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
+              <form
+                id="storeForm"
+                onSubmit={handleSubmit}
+                className="space-y-4"
+              >
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Price (Rs)
+                    Product Name
                   </label>
                   <input
-                    type="number"
+                    type="text"
                     required
-                    min="0"
-                    value={formData.price}
+                    value={formData.name}
                     onChange={(e) =>
-                      setFormData({ ...formData, price: e.target.value })
+                      setFormData({ ...formData, name: e.target.value })
                     }
                     className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
-                    placeholder="0"
+                    placeholder="e.g. Whey Protein"
                   />
                 </div>
+
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Stock
+                    Description
                   </label>
-                  <input
-                    type="number"
+                  <textarea
                     required
-                    min="0"
-                    value={formData.stock}
+                    rows="3"
+                    value={formData.description}
                     onChange={(e) =>
-                      setFormData({ ...formData, stock: e.target.value })
+                      setFormData({ ...formData, description: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
-                    placeholder="100"
+                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none"
+                    placeholder=""
                   />
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Category
-                </label>
-                <select
-                  value={formData.category}
-                  onChange={(e) =>
-                    setFormData({ ...formData, category: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
-                >
-                  <option value="Supplement">Supplement</option>
-                  <option value="Equipment">Equipment</option>
-                  <option value="Apparel">Apparel</option>
-                  <option value="Accessory">Accessory</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Product Image{" "}
-                  {editingProductId && (
-                    <span className="text-slate-400 font-normal">
-                      (Leave blank to keep current)
-                    </span>
-                  )}
-                </label>
-                <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-200 border-dashed rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer relative">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setImageFile(e.target.files[0])}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    required={!editingProductId}
-                  />
-                  <div className="space-y-1 text-center">
-                    {imageFile ? (
-                      <div className="text-brand-600 font-medium break-all">
-                        {imageFile.name}
-                      </div>
-                    ) : (
-                      <>
-                        <ImageIcon className="mx-auto h-12 w-12 text-slate-400" />
-                        <div className="flex text-sm text-slate-600">
-                          <span className="relative cursor-pointer rounded-md bg-transparent font-medium text-brand-600 focus-within:outline-none hover:text-brand-500">
-                            Upload a file
-                          </span>
-                          <p className="pl-1">or drag and drop</p>
-                        </div>
-                        <p className="text-xs text-slate-500">
-                          PNG, JPG, GIF up to 10MB
-                        </p>
-                      </>
-                    )}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                      Price (Rs.)
+                    </label>
+                    <input
+                      type="number"
+                      required
+                      min="0"
+                      value={formData.price}
+                      onChange={(e) =>
+                        setFormData({ ...formData, price: e.target.value })
+                      }
+                      className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
+                      placeholder="0"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                      Stock
+                    </label>
+                    <input
+                      type="number"
+                      required
+                      min="0"
+                      value={formData.stock}
+                      onChange={(e) =>
+                        setFormData({ ...formData, stock: e.target.value })
+                      }
+                      className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
+                      placeholder="100"
+                    />
                   </div>
                 </div>
-              </div>
 
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Category
+                  </label>
+                  <select
+                    value={formData.category}
+                    onChange={(e) =>
+                      setFormData({ ...formData, category: e.target.value })
+                    }
+                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  >
+                    <option value="Supplement">Supplement</option>
+                    <option value="Equipment">Equipment</option>
+                    <option value="Apparel">Apparel</option>
+                    <option value="Accessory">Accessory</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                    Product Image{" "}
+                    {editingProductId && (
+                      <span className="text-slate-400 font-normal">
+                        (Leave blank to keep current)
+                      </span>
+                    )}
+                  </label>
+                  <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-200 border-dashed rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer relative">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setImageFile(e.target.files[0])}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      required={!editingProductId}
+                    />
+                    <div className="space-y-1 text-center">
+                      {imageFile ? (
+                        <div className="text-brand-600 font-medium break-all">
+                          {imageFile.name}
+                        </div>
+                      ) : (
+                        <>
+                          <ImageIcon className="mx-auto h-12 w-12 text-slate-400" />
+                          <div className="flex text-sm text-slate-600">
+                            <span className="relative cursor-pointer rounded-md bg-transparent font-medium text-brand-600 focus-within:outline-none hover:text-brand-500">
+                              Upload a file
+                            </span>
+                            <p className="pl-1">or drag and drop</p>
+                          </div>
+                          <p className="text-xs text-slate-500">
+                            PNG, JPG, GIF up to 5MB
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </form>
             </div>
 
@@ -380,9 +383,7 @@ const AdminStorePage = () => {
                 {submitting ? (
                   <>
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    {editingProductId
-                      ? "Saving..."
-                      : "Adding..."}
+                    {editingProductId ? "Saving..." : "Adding..."}
                   </>
                 ) : editingProductId ? (
                   "Save Changes"
