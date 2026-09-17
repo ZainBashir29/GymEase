@@ -81,7 +81,9 @@ const StorePage = () => {
                   <img
                     src={product.imageUrl}
                     alt={product.name}
-                    className="h-full w-full object-cover object-center"
+                    loading="lazy"
+                    className="h-full w-full object-cover object-center opacity-0 transition-opacity duration-300"
+                    onLoad={(e) => e.target.classList.remove('opacity-0')}
                   />
                 </div>
                 <div className="flex flex-col flex-1 p-4">

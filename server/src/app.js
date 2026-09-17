@@ -80,8 +80,13 @@ app.get("/health-check", (req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
-  const message = err.message || "Internal server error";
+  let statusCode = err.statusCode || 500;
+  let message = err.message || "Internal server error";
+
+  if (err.name === "MulterError" && err.code === "LIMIT_FILE_SIZE") {
+    statusCode = 400;
+    message = "File too large. Maximum size is 5MB.";
+  }
 
   res.status(statusCode).json({
     success: false,
