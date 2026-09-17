@@ -101,7 +101,7 @@ const Memberships = () => {
                       planIdx === 1 ? "text-white" : "text-slate-900"
                     }`}
                   >
-                    Rs. {plan.price}
+                    Rs. {plan.price.toLocaleString()}
                   </span>
                   <span
                     className={`text-base ${

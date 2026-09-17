@@ -91,7 +91,7 @@ const ProductDetailsPage = () => {
             <div className="mt-3">
               <h2 className="sr-only">Product information</h2>
               <p className="text-3xl tracking-tight text-slate-900">
-                Rs {product.price}
+                Rs {product.price.toLocaleString()}
               </p>
             </div>
             <div className="mt-6">

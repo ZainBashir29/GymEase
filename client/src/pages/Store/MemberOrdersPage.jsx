@@ -129,7 +129,7 @@ const MemberOrdersPage = () => {
                         <div>
                           <div className="flex justify-between text-base font-medium text-slate-900">
                             <h3>{item.productId?.name}</h3>
-                            <p className="ml-4">Rs {item.productId?.price}</p>
+                            <p className="ml-4">Rs {item.productId?.price?.toLocaleString()}</p>
                           </div>
                           <p className="mt-1 text-sm text-slate-500">
                             Qty: {item.quantity}

@@ -80,7 +80,7 @@ const CartDrawer = () => {
                                 {item.productId?.name}
                               </Link>
                             </h3>
-                            <p className="ml-4">Rs {item.productId?.price}</p>
+                            <p className="ml-4">Rs {item.productId?.price?.toLocaleString()}</p>
                           </div>
                           <p className="mt-1 text-sm text-slate-500">
                             {item.productId?.category}
@@ -136,15 +136,15 @@ const CartDrawer = () => {
               <div className="border-t border-slate-200 px-4 py-6 sm:px-6">
                 <div className="flex justify-between text-base font-medium text-slate-900 mb-2">
                   <p>Subtotal</p>
-                  <p>Rs {checkoutData.subtotal}</p>
+                  <p>Rs {checkoutData.subtotal?.toLocaleString()}</p>
                 </div>
                 <div className="flex justify-between text-sm text-slate-500 mb-4">
                   <p>Delivery Fee</p>
-                  <p>Rs {checkoutData.deliveryFee}</p>
+                  <p>Rs {checkoutData.deliveryFee?.toLocaleString()}</p>
                 </div>
                 <div className="flex justify-between text-lg font-bold text-slate-900 mb-6">
                   <p>Total</p>
-                  <p>Rs {checkoutData.totalAmount}</p>
+                  <p>Rs {checkoutData.totalAmount?.toLocaleString()}</p>
                 </div>
                 <div className="mt-6">
                   {checkoutData.totalAmount > 100000 && (

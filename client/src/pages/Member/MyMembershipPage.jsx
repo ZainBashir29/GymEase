@@ -130,7 +130,7 @@ const MyMembershipPage = () => {
               </div>
               <div className="text-right">
                 <div className="text-2xl font-bold text-slate-900">
-                  Rs. {subscription.membershipPlanId.price}
+                  Rs. {subscription.membershipPlanId.price?.toLocaleString()}
                 </div>
                 <div className="text-sm text-slate-500">
                   /{subscription.membershipPlanId.duration} days
