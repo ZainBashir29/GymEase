@@ -80,7 +80,7 @@ const CompleteProfilePage = () => {
             <CheckCircle2 className="h-7 w-7 text-brand-600" strokeWidth={2} />
           </div>
           <p className="mt-4 text-sm text-slate-600">
-            Taking you to your dashboard...
+            Profile completed successfully! Setting up your account...
           </p>
           <Loader2 className="mt-4 h-5 w-5 animate-spin text-brand-600" />
         </div>

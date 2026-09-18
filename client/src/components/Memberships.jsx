@@ -53,6 +53,7 @@ const Memberships = () => {
           "Couldn't start checkout. Please try again.",
       );
       setPurchasingPlanId(null);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
@@ -72,104 +73,110 @@ const Memberships = () => {
           <div className="mt-16 flex justify-center items-center h-64">
             <Loader2 className="h-10 w-10 animate-spin text-brand-600" />
           </div>
-        ) : error ? (
-          <div className="mt-16 text-center text-red-500 bg-red-50 p-4 rounded-xl border border-red-200">
-            <p className="font-medium">{error}</p>
-          </div>
         ) : (
-          <div className="isolate mx-auto mt-16 grid max-w-md grid-cols-1 gap-y-8 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-3 lg:gap-x-8 xl:gap-x-12">
-            {plans.map((plan, planIdx) => (
-              <div
-                key={plan._id}
-                className={`rounded-3xl p-8 ring-1 sm:p-10 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col ${
-                  planIdx === 1
-                    ? "bg-brand-900 ring-brand-900 text-white shadow-2xl scale-105 z-10"
-                    : "bg-white ring-slate-200 shadow-md hover:ring-brand-200"
-                }`}
-              >
-                <h3
-                  id={plan._id}
-                  className={`text-lg font-semibold leading-8 ${
-                    planIdx === 1 ? "text-white" : "text-brand-600"
-                  }`}
-                >
-                  {plan.name}
-                </h3>
-                <p className="mt-4 flex items-baseline gap-x-1">
-                  <span
-                    className={`text-xl font-semibold ${
-                      planIdx === 1 ? "text-white/80" : "text-slate-500"
-                    }`}
-                  >
-                    Rs.
-                  </span>
-                  <span
-                    className={`text-4xl sm:text-5xl font-bold tracking-tight ${
-                      planIdx === 1 ? "text-white" : "text-slate-900"
-                    }`}
-                  >
-                    {plan.price.toLocaleString()}
-                  </span>
-                  <span
-                    className={`ml-1 text-sm font-medium ${
-                      planIdx === 1 ? "text-brand-200" : "text-slate-500"
-                    }`}
-                  >
-                    / {plan.duration} days
-                  </span>
-                </p>
-                <p
-                  className={`mt-6 text-sm leading-6 ${
-                    planIdx === 1 ? "text-slate-300" : "text-slate-600"
-                  }`}
-                >
-                  Includes access to gym equipment and up to {plan.maxTrainers}{" "}
-                  personal trainer/s.
-                </p>
-                <ul
-                  role="list"
-                  className={`mt-8 space-y-3 text-sm leading-6 sm:mt-10 flex-1 ${
-                    planIdx === 1 ? "text-slate-300" : "text-slate-600"
-                  }`}
-                >
-                  {plan.details.map((detail, index) => (
-                    <li key={index} className="flex gap-x-3 items-center">
-                      <div
-                        className={`flex h-6 w-6 flex-none items-center justify-center rounded-full ${
-                          planIdx === 1 ? "bg-brand-500/20" : "bg-brand-50"
-                        }`}
-                      >
-                        <Check
-                          className={`h-4 w-4 ${
-                            planIdx === 1 ? "text-brand-300" : "text-brand-600"
-                          }`}
-                          aria-hidden="true"
-                        />
-                      </div>
-                      {detail}
-                    </li>
-                  ))}
-                </ul>
-                <button
-                  onClick={() => handleGetStarted(plan._id)}
-                  disabled={purchasingPlanId === plan._id}
-                  aria-describedby={plan._id}
-                  className={`mt-8 flex w-full items-center justify-center gap-2 rounded-md px-3 py-3 text-center text-sm font-semibold focus-visible:outline focus-visible:outline-offset-2 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 ${
-                    planIdx === 1
-                      ? "bg-brand-500 text-white hover:bg-brand-400 focus-visible:outline-brand-500"
-                      : "bg-brand-600 text-white hover:bg-brand-700 focus-visible:outline-brand-600"
-                  }`}
-                >
-                  {purchasingPlanId === plan._id && (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  )}
-                  {purchasingPlanId === plan._id
-                    ? "Redirecting..."
-                    : "Get started"}
+          <>
+            {error && (
+              <div className="mx-auto mt-8 max-w-2xl text-center text-red-600 bg-red-50 p-4 rounded-xl border border-red-200 flex justify-between items-center">
+                <p className="font-medium">{error}</p>
+                <button onClick={() => setError("")} className="text-red-500 hover:text-red-700 ml-4 font-bold cursor-pointer">
+                  &times;
                 </button>
               </div>
-            ))}
-          </div>
+            )}
+            <div className="isolate mx-auto mt-16 grid max-w-md grid-cols-1 gap-y-8 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-3 lg:gap-x-8 xl:gap-x-12">
+              {plans.map((plan, planIdx) => (
+                <div
+                  key={plan._id}
+                  className={`rounded-3xl p-8 ring-1 sm:p-10 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col ${
+                    planIdx === 1
+                      ? "bg-brand-900 ring-brand-900 text-white shadow-2xl scale-105 z-10"
+                      : "bg-white ring-slate-200 shadow-md hover:ring-brand-200"
+                  }`}
+                >
+                  <h3
+                    id={plan._id}
+                    className={`text-lg font-semibold leading-8 ${
+                      planIdx === 1 ? "text-white" : "text-brand-600"
+                    }`}
+                  >
+                    {plan.name}
+                  </h3>
+                  <p className="mt-4 flex items-baseline gap-x-1">
+                    <span
+                      className={`text-xl font-semibold ${
+                        planIdx === 1 ? "text-white/80" : "text-slate-500"
+                      }`}
+                    >
+                      Rs.
+                    </span>
+                    <span
+                      className={`text-4xl sm:text-5xl font-bold tracking-tight ${
+                        planIdx === 1 ? "text-white" : "text-slate-900"
+                      }`}
+                    >
+                      {plan.price.toLocaleString()}
+                    </span>
+                    <span
+                      className={`ml-1 text-sm font-medium ${
+                        planIdx === 1 ? "text-brand-200" : "text-slate-500"
+                      }`}
+                    >
+                      / {plan.duration} days
+                    </span>
+                  </p>
+                  <p
+                    className={`mt-6 text-sm leading-6 ${
+                      planIdx === 1 ? "text-slate-300" : "text-slate-600"
+                    }`}
+                  >
+                    Includes access to gym equipment and up to {plan.maxTrainers}{" "}
+                    personal trainer/s.
+                  </p>
+                  <ul
+                    role="list"
+                    className={`mt-8 space-y-3 text-sm leading-6 sm:mt-10 flex-1 ${
+                      planIdx === 1 ? "text-slate-300" : "text-slate-600"
+                    }`}
+                  >
+                    {plan.details.map((detail, index) => (
+                      <li key={index} className="flex gap-x-3 items-center">
+                        <div
+                          className={`flex h-6 w-6 flex-none items-center justify-center rounded-full ${
+                            planIdx === 1 ? "bg-brand-500/20" : "bg-brand-50"
+                          }`}
+                        >
+                          <Check
+                            className={`h-4 w-4 ${
+                              planIdx === 1 ? "text-brand-300" : "text-brand-600"
+                            }`}
+                            aria-hidden="true"
+                          />
+                        </div>
+                        {detail}
+                      </li>
+                    ))}
+                  </ul>
+                  <button
+                    onClick={() => handleGetStarted(plan._id)}
+                    disabled={purchasingPlanId === plan._id}
+                    aria-describedby={plan._id}
+                    className={`mt-8 flex w-full items-center justify-center gap-2 rounded-md px-3 py-3 text-center text-sm font-semibold focus-visible:outline focus-visible:outline-offset-2 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 ${
+                      planIdx === 1
+                        ? "bg-brand-500 text-white hover:bg-brand-400 focus-visible:outline-brand-500"
+                        : "bg-brand-600 text-white hover:bg-brand-700 focus-visible:outline-brand-600"
+                    }`}
+                  >
+                    {purchasingPlanId === plan._id && (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    )}
+                    {purchasingPlanId === plan._id
+                      ? "Redirecting..."
+                      : "Get started"}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
     </div>

@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../lib/axios.js";
-import { Dumbbell, Clock, ChevronRight, Wand2 } from "lucide-react";
+import { Dumbbell, Clock, ChevronRight, Wand2, LayoutDashboard, CreditCard, ShoppingBag, Package, Settings } from "lucide-react";
 import ConfirmModal from "../../components/Dashboard/ConfirmModal.jsx";
+import DashboardLayout from "../../components/Dashboard/DashboardLayout.jsx";
+
+const memberSidebarItems = [
+  { label: "Dashboard", to: "/member/dashboard", icon: LayoutDashboard },
+  { label: "Gym Plans", to: "/member/plans", icon: Dumbbell },
+  { label: "Membership", to: "/member/membership", icon: CreditCard },
+  { label: "Store", to: "/store", icon: ShoppingBag },
+  { label: "Orders", to: "/member/orders", icon: Package },
+  { label: "Settings", to: "/member/settings", icon: Settings },
+];
 
 const GymPlansPage = () => {
   const [plans, setPlans] = useState([]);
@@ -37,7 +47,7 @@ const GymPlansPage = () => {
   }, []);
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-12">
+    <DashboardLayout navItems={memberSidebarItems}>
       <div className="mb-12">
         <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Gym Plans</h1>
         <p className="mt-4 text-lg text-slate-600">
@@ -188,9 +198,8 @@ const GymPlansPage = () => {
         isDanger={true}
         isLoading={isCancelling}
       />
-    </div>
+    </DashboardLayout>
   );
 };
 
 export default GymPlansPage;
-

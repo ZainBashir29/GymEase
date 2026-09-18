@@ -61,6 +61,23 @@ const createMembershipSubscription = asyncHandler(async (req, res) => {
     status: "active",
   });
 
+  if (
+    existingMembershipSubscription &&
+    existingMembershipSubscription.membershipPlanId.toString() === membershipPlanId.toString()
+  ) {
+    const daysRemaining = Math.ceil(
+      (new Date(existingMembershipSubscription.endDate) - new Date()) /
+        (1000 * 60 * 60 * 24),
+    );
+
+    if (daysRemaining > 3) {
+      throw new ApiError(
+        400,
+        `You cannot renew this plan yet. You still have ${daysRemaining} days remaining.`,
+      );
+    }
+  }
+
   await MembershipSubscription.deleteMany({
     memberId: req.user?._id,
     status: "pending",
@@ -72,17 +89,20 @@ const createMembershipSubscription = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Invalid membership plan id");
   }
 
-  let startDate = new Date();
-  if (
-    existingMembershipSubscription &&
-    existingMembershipSubscription.endDate > startDate
-  ) {
-    startDate = new Date(existingMembershipSubscription.endDate);
-  }
-
-  const endDate = new Date(
+  const startDate = new Date();
+  let endDate = new Date(
     startDate.getTime() + membershipPlan.duration * 24 * 60 * 60 * 1000,
   );
+
+  // If renewing the exact same plan, roll over the remaining days
+  if (
+    existingMembershipSubscription &&
+    existingMembershipSubscription.membershipPlanId.toString() === membershipPlanId.toString() &&
+    existingMembershipSubscription.endDate > startDate
+  ) {
+    const remainingTimeMs = existingMembershipSubscription.endDate.getTime() - startDate.getTime();
+    endDate = new Date(endDate.getTime() + remainingTimeMs);
+  }
 
   const pendingMembershipSubscription = await MembershipSubscription.create({
     membershipPlanId,

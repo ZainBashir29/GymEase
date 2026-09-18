@@ -243,12 +243,12 @@ const MembershipCard = () => {
           onClick={() => setIsModalOpen(false)}
         >
           <div
-            className="relative w-full max-w-lg scale-110 md:scale-125 transition-all cursor-pointer"
+            className="relative w-full max-w-sm sm:max-w-md md:max-w-lg scale-100 md:scale-110 transition-all cursor-auto mx-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute -right-4 -top-4 z-50 flex h-8 w-8 items-center justify-center rounded-full bg-white text-slate-900 shadow-md hover:bg-slate-100 cursor-pointer"
+              className="absolute -right-2 -top-4 sm:-right-4 sm:-top-4 z-50 flex h-8 w-8 items-center justify-center rounded-full bg-white text-slate-900 shadow-md hover:bg-slate-100 cursor-pointer"
             >
               <X className="h-5 w-5" />
             </button>
