@@ -20,9 +20,19 @@ const ProductDetailsPage = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
-  const { addToCart, itemCount, toggleCart } = useCart();
+  const { cart, addToCart, updateQuantity, itemCount, toggleCart } = useCart();
   const { user } = useAuth();
   const [addingToCart, setAddingToCart] = useState(false);
+
+  const cartItem = cart?.products?.find(
+    (item) => item.productId?._id === id || item.productId === id
+  );
+
+  useEffect(() => {
+    if (cartItem) {
+      setQuantity(cartItem.quantity);
+    }
+  }, [cartItem]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -45,9 +55,13 @@ const ProductDetailsPage = () => {
     }
     try {
       setAddingToCart(true);
-      await addToCart(product._id, quantity);
+      if (cartItem) {
+        await updateQuantity(product._id, quantity);
+      } else {
+        await addToCart(product._id, quantity);
+      }
     } catch (error) {
-      alert(error.response?.data?.message || "Failed to add to cart");
+      alert(error.response?.data?.message || (cartItem ? "Failed to update cart" : "Failed to add to cart"));
     } finally {
       setAddingToCart(false);
     }
@@ -169,7 +183,7 @@ const ProductDetailsPage = () => {
                 ) : (
                   <ShoppingCart className="mr-2 h-5 w-5" />
                 )}
-                Add to cart
+                {cartItem ? "Update Cart" : "Add to cart"}
               </button>
             </div>
           </div>

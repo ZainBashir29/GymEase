@@ -28,9 +28,8 @@ const memberSidebarItems = [
 const StorePage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { addToCart, itemCount, toggleCart } = useCart();
+  const { cart, itemCount, toggleCart } = useCart();
   const { user } = useAuth();
-  const [addingToCart, setAddingToCart] = useState(null);
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -44,23 +43,6 @@ const StorePage = () => {
     };
     fetchProducts();
   }, []);
-
-  const handleAddToCart = async (e, productId) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!user) {
-      window.location.href = "/login";
-      return;
-    }
-    try {
-      setAddingToCart(productId);
-      await addToCart(productId, 1);
-    } catch (error) {
-      alert(error.response?.data?.message || "Failed to add to cart");
-    } finally {
-      setAddingToCart(null);
-    }
-  };
 
   const content = loading ? (
     <div className="flex min-h-[60vh] items-center justify-center">
@@ -100,7 +82,13 @@ const StorePage = () => {
         </div>
       ) : (
         <div className="mt-8 grid grid-cols-1 gap-y-12 sm:grid-cols-2 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8">
-          {products.map((product) => (
+          {products.map((product) => {
+            const cartItem = cart?.products?.find(
+              (item) => item.productId?._id === product._id || item.productId === product._id
+            );
+            const inCartQuantity = cartItem?.quantity || 0;
+
+            return (
             <div key={product._id}>
               <Link to={`/store/product/${product._id}`}>
                 <div className="relative group cursor-pointer h-full flex flex-col bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg transition-all hover:border-brand-300">
@@ -113,8 +101,14 @@ const StorePage = () => {
                       onLoad={(e) => e.target.classList.remove("opacity-0")}
                     />
                     {product.stock <= 5 && product.stock > 0 && (
-                      <div className="absolute top-3 left-3 bg-red-500/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-full">
+                      <div className="absolute top-3 left-3 bg-red-500/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">
                         Only {product.stock} left!
+                      </div>
+                    )}
+                    {inCartQuantity > 0 && (
+                      <div className="absolute top-3 right-3 bg-slate-900/95 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm border border-slate-800">
+                        <ShoppingCart className="w-3.5 h-3.5" />
+                        {inCartQuantity} in cart
                       </div>
                     )}
                   </div>
@@ -128,25 +122,27 @@ const StorePage = () => {
                     <p className="mt-4 text-xl font-black text-brand-600">
                       Rs. {product.price.toLocaleString()}
                     </p>
-                    <button
-                      onClick={(e) => handleAddToCart(e, product._id)}
-                      disabled={
-                        product.stock === 0 || addingToCart === product._id
-                      }
-                      className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-3.5 text-sm font-bold text-white transition-all hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400 cursor-pointer"
+                    <div
+                      className={`mt-6 flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-sm font-bold transition-all ${
+                        product.stock === 0
+                          ? "cursor-not-allowed bg-slate-200 text-slate-400"
+                          : inCartQuantity > 0
+                          ? "bg-brand-50 text-brand-700 hover:bg-brand-100 border border-brand-200"
+                          : "bg-slate-900 text-white hover:bg-slate-800"
+                      }`}
                     >
-                      {addingToCart === product._id ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <ShoppingCart className="h-4 w-4" />
-                      )}
-                      {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
-                    </button>
+                      <ShoppingCart className="h-4 w-4" />
+                      {product.stock === 0
+                        ? "Out of Stock"
+                        : inCartQuantity > 0
+                        ? "Add Another"
+                        : "Add to Cart"}
+                    </div>
                   </div>
                 </div>
               </Link>
             </div>
-          ))}
+          )})}
         </div>
       )}
     </div>

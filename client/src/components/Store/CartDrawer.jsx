@@ -90,14 +90,17 @@ const CartDrawer = () => {
                         <div className="flex flex-1 items-end justify-between text-sm">
                           <div className="flex items-center space-x-3">
                             <button
-                              onClick={() =>
-                                updateQuantity(
-                                  item.productId?._id,
-                                  Math.max(1, item.quantity - 1),
-                                )
-                              }
-                              disabled={item.quantity <= 1}
-                              className="rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-500 disabled:opacity-50"
+                              onClick={() => {
+                                if (item.quantity <= 1) {
+                                  removeItem(item.productId?._id);
+                                } else {
+                                  updateQuantity(
+                                    item.productId?._id,
+                                    item.quantity - 1,
+                                  );
+                                }
+                              }}
+                              className="rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-500 cursor-pointer"
                             >
                               <Minus className="h-4 w-4" />
                             </button>

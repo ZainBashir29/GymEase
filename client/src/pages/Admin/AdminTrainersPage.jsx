@@ -11,6 +11,7 @@ import {
   Upload,
   User,
 } from "lucide-react";
+import FormInput from "../../components/Auth/FormInput.jsx";
 
 const AdminTrainersPage = () => {
   const [trainers, setTrainers] = useState([]);
@@ -350,21 +351,18 @@ const AdminTrainersPage = () => {
               </div>
 
               {!editingTrainerId && (
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    required={!editingTrainerId}
-                    value={formData.password}
-                    onChange={(e) =>
-                      setFormData({ ...formData, password: e.target.value })
-                    }
-                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
-                    placeholder="Trainer's Password"
-                  />
-                </div>
+                <FormInput
+                  id="password"
+                  name="password"
+                  type="password"
+                  label="Password"
+                  required={!editingTrainerId}
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                  placeholder="Trainer's Password"
+                />
               )}
 
               <div>

@@ -202,6 +202,9 @@ const addToCart = asyncHandler(async (req, res) => {
     );
 
     if (existingProduct) {
+      if (existingProduct.quantity + requestedQuantity > product.stock) {
+        throw new ApiError(400, "Adding this quantity would exceed available stock");
+      }
       existingProduct.quantity += requestedQuantity;
     } else {
       cart.products.push({ productId, quantity: requestedQuantity });

@@ -97,8 +97,7 @@ export const CartProvider = ({ children }) => {
     }
   }, [cart, isCartOpen]);
 
-  const itemCount =
-    cart?.products?.reduce((total, item) => total + item.quantity, 0) || 0;
+  const itemCount = cart?.products?.length || 0;
 
   return (
     <CartContext.Provider
