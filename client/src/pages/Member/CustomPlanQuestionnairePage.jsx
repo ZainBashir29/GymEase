@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import api from "../../lib/axios.js";
 
 import {
@@ -19,6 +19,7 @@ import {
   Shirt,
   PersonStanding,
   Target,
+  ArrowLeft,
 } from "lucide-react";
 
 const questions = [
@@ -140,6 +141,18 @@ const CustomPlanQuestionnaire = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const questionContainerRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (questionContainerRef.current) {
+      setTimeout(() => {
+        questionContainerRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }, 300);
+    }
+  }, []);
 
   const handleSelect = (optionId) => {
     const newAnswers = [...answers];
@@ -187,6 +200,13 @@ const CustomPlanQuestionnaire = () => {
   return (
     <div className="bg-slate-50 py-12 px-6">
       <div className="max-w-3xl mx-auto">
+        <Link 
+          to="/member/plans" 
+          className="inline-flex items-center text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors mb-6"
+        >
+          <ArrowLeft className="w-4 h-4 mr-1" />
+          Back to Gym Plans
+        </Link>
         <div className="text-center mb-12">
           <div className="w-16 h-16 bg-brand-100 rounded-full flex items-center justify-center mx-auto mb-6 text-brand-600 shadow-sm">
             <Wand2 className="w-8 h-8" />
@@ -226,7 +246,10 @@ const CustomPlanQuestionnaire = () => {
           </div>
         )}
 
-        <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/40 border border-slate-100 p-8 md:p-12 mb-8 relative overflow-hidden">
+        <div 
+          ref={questionContainerRef}
+          className="bg-white rounded-3xl shadow-xl shadow-slate-200/40 border border-slate-100 p-8 md:p-12 mb-8 relative overflow-hidden"
+        >
           {submitting ? (
             <div className="py-20 flex flex-col items-center justify-center text-center">
               <div className="relative">

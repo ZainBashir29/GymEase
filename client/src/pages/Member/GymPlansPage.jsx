@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../lib/axios.js";
-import { Dumbbell, Clock, ChevronRight, Wand2, LayoutDashboard, CreditCard, ShoppingBag, Package, Settings } from "lucide-react";
+import {
+  Dumbbell,
+  Clock,
+  ChevronRight,
+  Wand2,
+  LayoutDashboard,
+  CreditCard,
+  ShoppingBag,
+  Package,
+  Settings,
+} from "lucide-react";
 import ConfirmModal from "../../components/Dashboard/ConfirmModal.jsx";
 import DashboardLayout from "../../components/Dashboard/DashboardLayout.jsx";
 
@@ -30,10 +40,14 @@ const GymPlansPage = () => {
         const [plansRes, activePlanRes, membershipRes] = await Promise.all([
           api.get("/gym-plans"),
           api.get("/gym-plans/active").catch(() => ({ data: { data: null } })),
-          api.get("/memberships/current").catch(() => ({ data: { data: null } }))
+          api
+            .get("/memberships/current")
+            .catch(() => ({ data: { data: null } })),
         ]);
-        
-        const activePlansOnly = (plansRes.data.data || []).filter(p => p.isActive !== false);
+
+        const activePlansOnly = (plansRes.data.data || []).filter(
+          (p) => p.isActive !== false,
+        );
         setPlans(activePlansOnly);
         setActivePlan(activePlanRes.data.data);
         setMembership(membershipRes.data.data);
@@ -51,7 +65,8 @@ const GymPlansPage = () => {
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-slate-900">Gym Plans</h1>
         <p className="mt-1 text-sm text-slate-500">
-          Choose from our expertly crafted popular plans or let our AI generate a custom plan just for you.
+          Choose from our expertly crafted popular plans or let our AI generate
+          a custom plan just for you.
         </p>
       </div>
 
@@ -66,18 +81,19 @@ const GymPlansPage = () => {
               You have an active plan
             </h2>
             <p className="text-brand-700 mt-1">
-              You must complete or cancel your current plan before activating a new one.
+              You must complete or cancel your current plan before activating a
+              new one.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-3 mt-4 sm:mt-0 w-full sm:w-auto">
-            <button 
+            <button
               onClick={() => setIsCancelModalOpen(true)}
               className="w-full sm:w-auto shrink-0 px-6 py-2 bg-white text-red-600 font-medium rounded-lg hover:bg-red-50 border border-red-200 transition-colors"
             >
               Cancel Plan
             </button>
-            <Link 
-              to="/member/dashboard" 
+            <Link
+              to="/member/dashboard"
               className="w-full sm:w-auto text-center shrink-0 px-6 py-2 bg-brand-600 text-white font-medium rounded-lg hover:bg-brand-700 transition-colors"
             >
               Go to Dashboard
@@ -86,7 +102,6 @@ const GymPlansPage = () => {
         </div>
       )}
 
-      
       <div className="mb-12 overflow-hidden rounded-3xl bg-slate-900 text-white relative shadow-xl">
         <div className="absolute inset-0 bg-gradient-to-r from-brand-600/20 to-purple-600/20 mix-blend-overlay"></div>
         <div className="relative p-8 md:p-12 flex flex-col md:flex-row items-center gap-8">
@@ -96,21 +111,25 @@ const GymPlansPage = () => {
               Build a Custom Plan
             </h2>
             <p className="text-slate-300 text-lg max-w-2xl mb-8">
-              Answer a few quick questions about your fitness goals, experience level, and availability, and we'll instantly generate a personalized multi-week workout plan tailored entirely to you.
+              Answer a few quick questions about your fitness goals, experience
+              level, and availability, and we'll instantly generate a
+              personalized multi-week workout plan tailored entirely to you.
             </p>
             {membership?.membershipPlanId?.name === "Basic" ? (
               <div className="flex flex-col items-center md:items-start gap-2">
-                <button 
+                <button
                   disabled
                   className="inline-flex items-center gap-2 px-8 py-4 bg-slate-700 text-slate-300 font-bold rounded-xl cursor-not-allowed"
                 >
                   Start Questionnaire
                   <ChevronRight className="w-5 h-5" />
                 </button>
-                <p className="text-sm text-brand-300 font-medium">Upgrade to Standard or Premium to unlock Custom Plans</p>
+                <p className="text-sm text-brand-300 font-medium">
+                  Upgrade to Standard or Premium to unlock Custom Plans
+                </p>
               </div>
             ) : (
-              <button 
+              <button
                 onClick={() => navigate("/member/plans/custom/questionnaire")}
                 className="inline-flex items-center gap-2 px-8 py-4 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl transition-all hover:scale-105"
               >
@@ -119,18 +138,20 @@ const GymPlansPage = () => {
               </button>
             )}
           </div>
-          
+
           <div className="hidden md:block w-48 h-48 rounded-full border-8 border-slate-800 bg-slate-800 relative shadow-2xl overflow-hidden shrink-0">
-             <div className="absolute inset-0 flex items-center justify-center">
-                <Dumbbell className="w-24 h-24 text-brand-500" strokeWidth={1} />
-             </div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Dumbbell className="w-24 h-24 text-brand-500" strokeWidth={1} />
+            </div>
           </div>
         </div>
       </div>
 
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-slate-900">Popular Plans</h2>
-        <p className="text-slate-500 mt-1">Ready-to-go routines crafted by our elite trainers.</p>
+        <p className="text-slate-500 mt-1">
+          Ready-to-go routines crafted by our elite trainers.
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -140,20 +161,27 @@ const GymPlansPage = () => {
           </div>
         ) : plans.length === 0 ? (
           <div className="col-span-full py-12 text-center bg-white rounded-2xl shadow-sm ring-1 ring-slate-100">
-            <p className="text-slate-500">No popular plans available right now.</p>
+            <p className="text-slate-500">
+              No popular plans available right now.
+            </p>
           </div>
         ) : (
-          plans.map(plan => (
-            <div key={plan._id} className="bg-white rounded-2xl p-6 shadow-sm ring-1 ring-slate-100 flex flex-col group hover:shadow-md transition-all hover:ring-brand-200">
+          plans.map((plan) => (
+            <div
+              key={plan._id}
+              className="bg-white rounded-2xl p-6 shadow-sm ring-1 ring-slate-100 flex flex-col group hover:shadow-md transition-all hover:ring-brand-200"
+            >
               <div className="w-12 h-12 bg-brand-50 text-brand-600 rounded-xl flex items-center justify-center mb-6">
                 <Dumbbell className="w-6 h-6" />
               </div>
-              
-              <h3 className="text-xl font-bold text-slate-900 mb-2">{plan.name}</h3>
+
+              <h3 className="text-xl font-bold text-slate-900 mb-2">
+                {plan.name}
+              </h3>
               <p className="text-slate-500 text-sm mb-6 line-clamp-3 flex-1">
                 {plan.description}
               </p>
-              
+
               <div className="flex items-center gap-4 text-sm text-slate-600 mb-6 bg-slate-50 p-3 rounded-lg">
                 <div className="flex items-center gap-1.5 font-medium">
                   <Clock className="w-4 h-4 text-brand-500" />
@@ -164,8 +192,8 @@ const GymPlansPage = () => {
                   {plan.sessions?.length || 0} Sessions
                 </div>
               </div>
-              
-              <Link 
+
+              <Link
                 to={`/member/plans/${plan._id}`}
                 className="mt-auto flex items-center justify-center gap-2 w-full py-3 bg-white border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition-colors group-hover:border-brand-300 group-hover:text-brand-700"
               >
