@@ -40,6 +40,7 @@ import GymPlanDetailsPage from "./pages/Member/GymPlanDetailsPage.jsx";
 import CustomPlanQuestionnairePage from "./pages/Member/CustomPlanQuestionnairePage.jsx";
 
 import MyMembershipPage from "./pages/Member/MyMembershipPage.jsx";
+import MemberPricingPage from "./pages/Member/MemberPricingPage.jsx";
 import MemberSettingsPage from "./pages/Member/MemberSettingsPage.jsx";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
 import ChangePasswordPage from "./pages/ChangePasswordPage.jsx";
@@ -141,6 +142,10 @@ const router = createBrowserRouter([
           {
             path: "membership",
             element: <MyMembershipPage />,
+          },
+          {
+            path: "membership/plans",
+            element: <MemberPricingPage />,
           },
           {
             path: "settings",

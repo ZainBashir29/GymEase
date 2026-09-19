@@ -34,7 +34,7 @@ export const CartProvider = ({ children }) => {
       });
 
       await fetchCart();
-      openCart();
+      // openCart(); removed as per user request
     } catch (error) {
       console.error("Error adding to cart:", error);
       throw error;

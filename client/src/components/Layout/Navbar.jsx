@@ -24,7 +24,7 @@ const Navbar = () => {
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-sm">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 relative">
         <Link to="/" className="flex items-center gap-2">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-600">
             <Dumbbell className="h-5 w-5 text-white" strokeWidth={2.5} />
@@ -34,7 +34,7 @@ const Navbar = () => {
           </span>
         </Link>
 
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center gap-8 md:flex">
           {navbarLinks.map((link) => (
             <Link
               key={link.to}

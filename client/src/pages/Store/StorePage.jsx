@@ -28,7 +28,7 @@ const memberSidebarItems = [
 const StorePage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { addToCart } = useCart();
+  const { addToCart, itemCount, toggleCart } = useCart();
   const { user } = useAuth();
   const [addingToCart, setAddingToCart] = useState(null);
   useEffect(() => {
@@ -68,10 +68,23 @@ const StorePage = () => {
     </div>
   ) : (
     <div className={`mx-auto max-w-7xl ${user?.role === "Member" ? "mb-8" : "px-4 py-16 sm:px-6 lg:px-8 lg:py-24"}`}>
-      <div className="md:flex md:items-center md:justify-between mb-8">
+      <div className="flex items-center justify-between mb-8">
         <h2 className="text-2xl font-bold tracking-tight text-slate-900">
           GymEase Store
         </h2>
+        {user?.role === "Member" && (
+          <button
+            onClick={toggleCart}
+            className="relative flex h-10 w-10 items-center justify-center rounded-full text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+          >
+            <ShoppingCart className="h-5 w-5" />
+            {itemCount > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-brand-600 text-xs font-bold text-white shadow-sm ring-2 ring-white">
+                {itemCount}
+              </span>
+            )}
+          </button>
+        )}
       </div>
       {products.length === 0 ? (
         <div className="mt-16 flex flex-col items-center justify-center space-y-4">

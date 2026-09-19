@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import { Dumbbell, LogOut, ShoppingCart } from "lucide-react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useCart } from "../../context/CartContext.jsx";
@@ -69,7 +69,10 @@ const Sidebar = ({ navItems, setIsMobileMenuOpen }) => {
       )}
 
       <div className="border-t border-slate-200 p-3">
-        <div className="flex items-center gap-3 rounded-lg px-3 py-2">
+        <Link 
+          to={user?.role ? `/${user.role.toLowerCase()}/dashboard` : "#"} 
+          className="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-slate-50 transition-colors cursor-pointer"
+        >
           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700 overflow-hidden shrink-0">
             {user?.profilePicture ? (
               <img
@@ -88,7 +91,7 @@ const Sidebar = ({ navItems, setIsMobileMenuOpen }) => {
             </p>
             <p className="truncate text-xs text-slate-500">{user?.email}</p>
           </div>
-        </div>
+        </Link>
         <button
           onClick={handleLogout}
           className="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-danger ml-2 cursor-pointer"

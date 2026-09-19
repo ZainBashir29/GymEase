@@ -79,6 +79,28 @@ const MyMembershipPage = () => {
     }
   };
 
+  const handleRenew = async () => {
+    if (!subscription || !subscription.membershipPlanId) return;
+    try {
+      setLoading(true);
+      const planId = subscription.membershipPlanId._id;
+      const price = subscription.membershipPlanId.price;
+      
+      await api.post("/memberships/create", { membershipPlanId: planId });
+
+      const { data } = await api.post("/payments/initiate", {
+        type: "MembershipSubscription",
+        paymentCauseId: String(planId),
+        amount: price,
+      });
+
+      window.location.href = data.data.checkoutUrl;
+    } catch (err) {
+      alert("Failed to initiate renewal checkout.");
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <div className="mx-auto max-w-4xl p-6">
@@ -108,7 +130,7 @@ const MyMembershipPage = () => {
               plan to unlock all GymEase features and gym access.
             </p>
             <Link
-              to="/pricing"
+              to="/member/membership/plans"
               className="inline-flex items-center justify-center px-6 py-3 bg-brand-600 text-white font-semibold rounded-xl hover:bg-brand-700 transition-colors"
             >
               Browse Plans
@@ -184,16 +206,23 @@ const MyMembershipPage = () => {
                       (1000 * 60 * 60 * 24),
                   );
                   const isExpiringSoon = daysRemaining <= 7;
+                  if (isExpiringSoon) {
+                    return (
+                      <button
+                        onClick={handleRenew}
+                        className="px-5 py-2.5 font-medium rounded-lg transition-colors bg-brand-600 text-white hover:bg-brand-700 cursor-pointer"
+                      >
+                        Renew Plan
+                      </button>
+                    );
+                  }
+                  
                   return (
                     <Link
-                      to="/pricing"
-                      className={`px-5 py-2.5 font-medium rounded-lg transition-colors ${
-                        isExpiringSoon
-                          ? "bg-brand-600 text-white hover:bg-brand-700"
-                          : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-                      }`}
+                      to="/member/membership/plans"
+                      className="px-5 py-2.5 font-medium rounded-lg transition-colors bg-slate-100 text-slate-700 hover:bg-slate-200"
                     >
-                      {isExpiringSoon ? "Renew Plan" : "Change Plan"}
+                      Change Plan
                     </Link>
                   );
                 })()}

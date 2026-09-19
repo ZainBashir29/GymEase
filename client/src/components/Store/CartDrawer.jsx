@@ -50,12 +50,13 @@ const CartDrawer = () => {
                   <p className="text-sm text-slate-500">
                     Looks like you haven't added anything yet.
                   </p>
-                  <button
+                  <Link
+                    to="/store"
                     onClick={closeCart}
-                    className="mt-4 rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 cursor-pointer"
+                    className="mt-4 inline-block rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 cursor-pointer"
                   >
                     Continue Shopping
-                  </button>
+                  </Link>
                 </div>
               ) : (
                 <ul role="list" className="-my-6 divide-y divide-slate-200">
@@ -167,14 +168,14 @@ const CartDrawer = () => {
                 <div className="mt-6 flex justify-center text-center text-sm text-slate-500">
                   <p>
                     or{" "}
-                    <button
-                      type="button"
-                      className="font-medium text-brand-600 hover:text-brand-500 cursor-pointer"
+                    <Link
+                      to="/store"
+                      className="font-medium text-brand-600 hover:text-brand-500 cursor-pointer inline-flex items-center"
                       onClick={closeCart}
                     >
                       Continue Shopping
-                      <span aria-hidden="true"> &rarr;</span>
-                    </button>
+                      <span aria-hidden="true" className="ml-1"> &rarr;</span>
+                    </Link>
                   </p>
                 </div>
               </div>

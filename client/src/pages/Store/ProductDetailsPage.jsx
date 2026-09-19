@@ -20,7 +20,7 @@ const ProductDetailsPage = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
-  const { addToCart } = useCart();
+  const { addToCart, itemCount, toggleCart } = useCart();
   const { user } = useAuth();
   const [addingToCart, setAddingToCart] = useState(false);
 
@@ -65,9 +65,9 @@ const ProductDetailsPage = () => {
       </Link>
     </div>
   ) : (
-    <div className="bg-white">
+    <>
       <div className={`mx-auto max-w-2xl ${user?.role === "Member" ? "mb-8 lg:mt-4" : "px-4 py-16 sm:px-6 sm:py-24"} lg:max-w-7xl lg:px-8`}>
-        <div className="mb-8">
+        <div className="mb-8 flex items-center justify-between">
           <Link
             to="/store"
             className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900"
@@ -75,6 +75,19 @@ const ProductDetailsPage = () => {
             <ArrowLeft className="h-4 w-4" />
             Back to store
           </Link>
+          {user?.role === "Member" && (
+            <button
+              onClick={toggleCart}
+              className="relative flex h-10 w-10 items-center justify-center rounded-full text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+            >
+              <ShoppingCart className="h-5 w-5" />
+              {itemCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-brand-600 text-xs font-bold text-white shadow-sm ring-2 ring-white">
+                  {itemCount}
+                </span>
+              )}
+            </button>
+          )}
         </div>
         <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
           <div className="flex flex-col-reverse">
@@ -162,7 +175,7 @@ const ProductDetailsPage = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 
   if (user?.role === "Member") {
@@ -173,7 +186,11 @@ const ProductDetailsPage = () => {
     );
   }
 
-  return content;
+  return (
+    <div className="bg-white">
+      {content}
+    </div>
+  );
 };
 
 export default ProductDetailsPage;
