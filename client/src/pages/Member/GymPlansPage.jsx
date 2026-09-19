@@ -47,10 +47,10 @@ const GymPlansPage = () => {
   }, []);
 
   return (
-    <DashboardLayout navItems={memberSidebarItems}>
-      <div className="mb-12">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Gym Plans</h1>
-        <p className="mt-4 text-lg text-slate-600">
+    <>
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-slate-900">Gym Plans</h1>
+        <p className="mt-1 text-sm text-slate-500">
           Choose from our expertly crafted popular plans or let our AI generate a custom plan just for you.
         </p>
       </div>
@@ -198,7 +198,7 @@ const GymPlansPage = () => {
         isDanger={true}
         isLoading={isCancelling}
       />
-    </DashboardLayout>
+    </>
   );
 };
 

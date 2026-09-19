@@ -53,7 +53,7 @@ const MemberDashboard = () => {
   }, []);
 
   return (
-    <DashboardLayout navItems={memberSidebarItems}>
+    <>
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-slate-900">
           Welcome back, {user?.fullName?.split(" ")[0]}
@@ -99,7 +99,7 @@ const MemberDashboard = () => {
           <MembershipCard />
         </div>
       </div>
-    </DashboardLayout>
+    </>
   );
 };
 

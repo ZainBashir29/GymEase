@@ -2,8 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { Navigate } from "react-router-dom";
+import { RouterProvider, createBrowserRouter, Navigate, Outlet } from "react-router-dom";
 
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { CartProvider } from "./context/CartContext.jsx";
@@ -33,6 +32,8 @@ import AdminGymPlansPage from "./pages/Admin/AdminGymPlansPage.jsx";
 import AdminMembershipsPage from "./pages/Admin/AdminMembershipsPage.jsx";
 import AdminStorePage from "./pages/Admin/AdminStorePage.jsx";
 import AdminOrdersPage from "./pages/Admin/AdminOrdersPage.jsx";
+
+import MemberLayout from "./components/Layout/MemberLayout.jsx";
 
 import GymPlansPage from "./pages/Member/GymPlansPage.jsx";
 import GymPlanDetailsPage from "./pages/Member/GymPlanDetailsPage.jsx";
@@ -101,70 +102,51 @@ const router = createBrowserRouter([
         element: <ChangePasswordPage />,
       },
       {
-        path: "/member/dashboard",
+        path: "/member",
         element: (
           <ProtectedRoute allowedRoles={["Member"]}>
-            <RequireMembership>
-              <MemberDashboardPage />
-            </RequireMembership>
+            <MemberLayout />
           </ProtectedRoute>
         ),
-      },
-      {
-        path: "/member/membership",
-        element: (
-          <ProtectedRoute allowedRoles={["Member"]}>
-            <MyMembershipPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "/member/plans",
-        element: (
-          <ProtectedRoute allowedRoles={["Member"]}>
-            <RequireMembership>
-              <GymPlansPage />
-            </RequireMembership>
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "/member/plans/custom/questionnaire",
-        element: (
-          <ProtectedRoute allowedRoles={["Member"]}>
-            <RequireMembership>
-              <CustomPlanQuestionnairePage />
-            </RequireMembership>
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "/member/plans/:id",
-        element: (
-          <ProtectedRoute allowedRoles={["Member"]}>
-            <RequireMembership>
-              <GymPlanDetailsPage />
-            </RequireMembership>
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "/member/orders",
-        element: (
-          <ProtectedRoute allowedRoles={["Member"]}>
-            <RequireMembership>
-              <MemberOrdersPage />
-            </RequireMembership>
-          </ProtectedRoute>
-        ),
-      },
-      {
-        path: "/member/settings",
-        element: (
-          <ProtectedRoute allowedRoles={["Member"]}>
-            <MemberSettingsPage />
-          </ProtectedRoute>
-        ),
+        children: [
+          {
+            element: (
+              <RequireMembership>
+                <Outlet />
+              </RequireMembership>
+            ),
+            children: [
+              {
+                path: "dashboard",
+                element: <MemberDashboardPage />,
+              },
+              {
+                path: "plans",
+                element: <GymPlansPage />,
+              },
+              {
+                path: "plans/custom/questionnaire",
+                element: <CustomPlanQuestionnairePage />,
+              },
+              {
+                path: "plans/:id",
+                element: <GymPlanDetailsPage />,
+              },
+              {
+                path: "orders",
+                element: <MemberOrdersPage />,
+              },
+            ],
+          },
+          {
+            path: "membership",
+            element: <MyMembershipPage />,
+          },
+          {
+            path: "settings",
+            element: <MemberSettingsPage />,
+          },
+        ],
       },
       {
         path: "/trainer/dashboard",

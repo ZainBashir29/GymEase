@@ -80,7 +80,7 @@ const MyMembershipPage = () => {
   };
 
   return (
-    <DashboardLayout navItems={memberNavbarItems}>
+    <>
       <div className="mx-auto max-w-4xl p-6">
         <h1 className="text-2xl font-bold text-slate-900 mb-6">
           My Membership
@@ -255,7 +255,7 @@ const MyMembershipPage = () => {
           </div>
         )}
       </div>
-    </DashboardLayout>
+    </>
   );
 };
 

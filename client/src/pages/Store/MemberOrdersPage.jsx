@@ -20,7 +20,7 @@ const memberNavbarItems = [
     icon: LayoutDashboard,
     end: true,
   },
-  { label: "My Plan", to: "/member/plans", icon: Dumbbell },
+  { label: "Gym Plans", to: "/member/plans", icon: Dumbbell },
   { label: "Membership", to: "/member/membership", icon: CreditCard },
   { label: "Store", to: "/store", icon: ShoppingBag },
   { label: "Orders", to: "/member/orders", icon: Package },
@@ -61,7 +61,7 @@ const MemberOrdersPage = () => {
   };
 
   return (
-    <DashboardLayout navItems={memberNavbarItems}>
+    <>
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-slate-900">Your Orders</h1>
         <p className="mt-1 text-sm text-slate-500">
@@ -146,7 +146,7 @@ const MemberOrdersPage = () => {
           ))}
         </div>
       )}
-    </DashboardLayout>
+    </>
   );
 };
 export default MemberOrdersPage;

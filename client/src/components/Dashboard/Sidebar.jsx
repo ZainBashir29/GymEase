@@ -1,9 +1,11 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { Dumbbell, LogOut } from "lucide-react";
+import { Dumbbell, LogOut, ShoppingCart } from "lucide-react";
 import { useAuth } from "../../context/AuthContext.jsx";
+import { useCart } from "../../context/CartContext.jsx";
 
 const Sidebar = ({ navItems, setIsMobileMenuOpen }) => {
   const { user, logout } = useAuth();
+  const { itemCount, toggleCart } = useCart();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -46,6 +48,25 @@ const Sidebar = ({ navItems, setIsMobileMenuOpen }) => {
           </NavLink>
         ))}
       </nav>
+
+      {user?.role === "Member" && (
+        <div className="px-3 py-2 border-t border-slate-200">
+          <button
+            onClick={toggleCart}
+            className="flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-900 cursor-pointer"
+          >
+            <div className="flex items-center gap-3">
+              <ShoppingCart className="h-4.5 w-4.5" strokeWidth={2} />
+              Cart
+            </div>
+            {itemCount > 0 && (
+              <span className="flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-brand-600 px-1.5 text-xs font-bold text-white">
+                {itemCount}
+              </span>
+            )}
+          </button>
+        </div>
+      )}
 
       <div className="border-t border-slate-200 p-3">
         <div className="flex items-center gap-3 rounded-lg px-3 py-2">

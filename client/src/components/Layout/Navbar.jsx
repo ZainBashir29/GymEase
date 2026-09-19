@@ -70,19 +70,21 @@ const Navbar = () => {
                       ? "/admin/dashboard"
                       : "/member/dashboard"
                 }
-                title="Go to Dashboard"
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700 hover:bg-brand-200 transition-colors overflow-hidden"
+                className="hidden sm:flex items-center gap-2.5 rounded-full bg-brand-50 pl-2 pr-4 py-1.5 text-sm font-semibold text-brand-700 hover:bg-brand-100 transition-colors border border-brand-100"
               >
-                {user?.profilePicture ? (
-                  <img
-                    src={user.profilePicture}
-                    alt="Profile"
-                    className="w-full h-full object-cover"
-                    referrerPolicy="no-referrer"
-                  />
-                ) : (
-                  user?.fullName?.charAt(0).toUpperCase()
-                )}
+                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-200 text-brand-800 overflow-hidden shrink-0">
+                  {user?.profilePicture ? (
+                    <img
+                      src={user.profilePicture}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                      referrerPolicy="no-referrer"
+                    />
+                  ) : (
+                    user?.fullName?.charAt(0).toUpperCase()
+                  )}
+                </div>
+                Dashboard
               </Link>
               <button
                 onClick={handleLogout}

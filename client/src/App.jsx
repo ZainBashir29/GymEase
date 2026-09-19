@@ -4,10 +4,16 @@ import Navbar from "./components/Layout/Navbar.jsx";
 import Footer from "./components/Layout/Footer.jsx";
 import CartDrawer from "./components/Store/CartDrawer.jsx";
 import ChatWidget from "./components/Chat/ChatWidget.jsx";
+import { useAuth } from "./context/AuthContext.jsx";
 
 function App() {
   const location = useLocation();
-  const isDashboardRoute = location.pathname.startsWith("/member") || location.pathname.startsWith("/trainer");
+  const { user } = useAuth();
+  
+  const isDashboardRoute = 
+    location.pathname.startsWith("/member") || 
+    location.pathname.startsWith("/trainer") ||
+    (user?.role === "Member" && location.pathname.startsWith("/store"));
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">

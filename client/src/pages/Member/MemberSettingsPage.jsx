@@ -155,7 +155,7 @@ const MemberSettingsPage = () => {
   };
 
   return (
-    <DashboardLayout navItems={MEMBER_NAV_ITEMS}>
+    <>
       <div className="mx-auto max-w-3xl p-6">
         <h1 className="text-2xl font-bold text-slate-900 mb-8">
           Account Settings
@@ -347,8 +347,7 @@ const MemberSettingsPage = () => {
           </div>
         </div>
       </div>
-    </DashboardLayout>
+    </>
   );
 };
-
 export default MemberSettingsPage;

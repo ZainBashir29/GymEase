@@ -185,7 +185,7 @@ const CustomPlanQuestionnaire = () => {
   const progress = ((currentStep + 1) / questions.length) * 100;
 
   return (
-    <div className="min-h-screen bg-slate-50 py-12 px-6">
+    <div className="bg-slate-50 py-12 px-6">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-12">
           <div className="w-16 h-16 bg-brand-100 rounded-full flex items-center justify-center mx-auto mb-6 text-brand-600 shadow-sm">

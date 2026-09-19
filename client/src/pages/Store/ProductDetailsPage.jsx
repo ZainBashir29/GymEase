@@ -1,9 +1,19 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Loader2, ArrowLeft, ShoppingCart, Minus, Plus } from "lucide-react";
+import { Loader2, ArrowLeft, ShoppingCart, Minus, Plus, LayoutDashboard, Dumbbell, CreditCard, ShoppingBag, Package, Settings } from "lucide-react";
 import api from "../../lib/axios.js";
 import { useCart } from "../../context/CartContext.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
+import DashboardLayout from "../../components/Dashboard/DashboardLayout.jsx";
+
+const memberSidebarItems = [
+  { label: "Dashboard", to: "/member/dashboard", icon: LayoutDashboard },
+  { label: "Gym Plans", to: "/member/plans", icon: Dumbbell },
+  { label: "Membership", to: "/member/membership", icon: CreditCard },
+  { label: "Store", to: "/store", icon: ShoppingBag },
+  { label: "Orders", to: "/member/orders", icon: Package },
+  { label: "Settings", to: "/member/settings", icon: Settings },
+];
 
 const ProductDetailsPage = () => {
   const { id } = useParams();
@@ -43,26 +53,20 @@ const ProductDetailsPage = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-10 w-10 animate-spin text-brand-600" />
-      </div>
-    );
-  }
-  if (!product) {
-    return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center space-y-4">
-        <p className="text-lg font-medium text-slate-900">Product not found</p>
-        <Link to="/store" className="text-brand-600 hover:underline">
-          Back to store
-        </Link>
-      </div>
-    );
-  }
-  return (
+  const content = loading ? (
+    <div className="flex min-h-[60vh] items-center justify-center">
+      <Loader2 className="h-10 w-10 animate-spin text-brand-600" />
+    </div>
+  ) : !product ? (
+    <div className="flex min-h-[60vh] flex-col items-center justify-center space-y-4">
+      <p className="text-lg font-medium text-slate-900">Product not found</p>
+      <Link to="/store" className="text-brand-600 hover:underline">
+        Back to store
+      </Link>
+    </div>
+  ) : (
     <div className="bg-white">
-      <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+      <div className={`mx-auto max-w-2xl ${user?.role === "Member" ? "mb-8 lg:mt-4" : "px-4 py-16 sm:px-6 sm:py-24"} lg:max-w-7xl lg:px-8`}>
         <div className="mb-8">
           <Link
             to="/store"
@@ -160,5 +164,16 @@ const ProductDetailsPage = () => {
       </div>
     </div>
   );
+
+  if (user?.role === "Member") {
+    return (
+      <DashboardLayout navItems={memberSidebarItems}>
+        {content}
+      </DashboardLayout>
+    );
+  }
+
+  return content;
 };
+
 export default ProductDetailsPage;
