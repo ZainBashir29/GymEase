@@ -1,40 +1,25 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
-// const transporter = nodemailer.createTransport({
-//   host: process.env.NODEMAILER_HOST,
-//   port: process.env.NODEMAILER_PORT,
-//   auth: {
-//     user: process.env.NODEMAILER_USER,
-//     pass: process.env.NODEMAILER_PASS,
-//   },
-// });
-
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
-try {
-  await transporter.verify();
-  console.log("Server is ready to take our messages");
-} catch (err) {
-  console.error("Verification failed:", err);
-}
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendEmail = async ({ to, subject, html }) => {
   try {
-    await transporter.sendMail({
-      from: `"GymEase Team" <${process.env.EMAIL_USER}>`,
-      to,
-      subject,
-      html,
+    const { data, error } = await resend.emails.send({
+      from: "GymEase Team <support@gymease.site>",
+      to: typeof to === 'string' ? [to] : to,
+      subject: subject,
+      html: html,
     });
+
+    if (error) {
+      console.error("Resend API Error:", error);
+      throw error;
+    }
+
+    console.log("Email sent successfully:", data);
     return true;
   } catch (err) {
-    console.error("Error while sending email:", err);
+    console.error("Error while sending email via Resend:", err);
     throw err;
   }
 };
