@@ -22,6 +22,7 @@ const Register = () => {
 
   const [formData, setFormData] = useState(initialForm);
   const [fieldErrors, setFieldErrors] = useState({});
+  const [emailSuggestion, setEmailSuggestion] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
@@ -30,6 +31,7 @@ const Register = () => {
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     setFieldErrors((prev) => ({ ...prev, [e.target.name]: "" }));
+    if (e.target.name === "email") setEmailSuggestion("");
   };
 
   const handleFileChange = (e) => {
@@ -37,28 +39,82 @@ const Register = () => {
     if (file) setProfilePicture(file);
   };
 
+  const getFieldError = (name, value, currentFormData) => {
+    switch (name) {
+      case "fullName":
+        return !value.trim() ? "Full name is required" : "";
+      case "username":
+        if (!value.trim()) return "Username is required";
+        if (!/^[a-z0-9_]+$/.test(value))
+          return "Username can only contain lowercase letters, numbers, and underscores";
+        return "";
+      case "email":
+        if (!value.trim()) return "Email is required";
+        if (/[A-Z]/.test(value)) return "Email must be in lowercase only";
+        if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(value))
+          return "Please enter a valid email address";
+        return "";
+      case "age":
+        if (!value) return "Age is required";
+        if (Number(value) < minimumAge)
+          return `You must be at least ${minimumAge} years old`;
+        return "";
+      case "password":
+        if (!value) return "Password is required";
+        if (value.length < 8) return "Password must be at least 8 characters";
+        if (!/[A-Za-z]/.test(value) || !/[0-9]/.test(value))
+          return "Password must contain at least one letter and one number";
+        return "";
+      case "confirmPassword":
+        if (value !== currentFormData.password) return "Passwords do not match";
+        return "";
+      default:
+        return "";
+    }
+  };
+
+  const suggestEmailCorrection = (email) => {
+    if (!email || !email.includes("@")) return "";
+    const [local, domain] = email.split("@");
+    if (!domain) return "";
+
+    const commonDomains = {
+      "gmail.com": [
+        "gnail.com",
+        "gamil.com",
+        "gmal.com",
+        "gmil.com",
+        "gmail.co",
+        "gmail.con",
+      ],
+      "yahoo.com": ["yaho.com", "yahooo.com", "yaboo.com"],
+      "outlook.com": ["outlok.com", "outloook.com", "outllok.com"],
+      "hotmail.com": ["hotmal.com", "hotmai.com", "hotmial.com"],
+    };
+
+    for (const [correctDomain, typos] of Object.entries(commonDomains)) {
+      if (typos.includes(domain.toLowerCase())) {
+        return `${local}@${correctDomain}`;
+      }
+    }
+    return "";
+  };
+
+  const handleBlur = (e) => {
+    const error = getFieldError(e.target.name, e.target.value, formData);
+    setFieldErrors((prev) => ({ ...prev, [e.target.name]: error }));
+
+    if (e.target.name === "email" && !error) {
+      setEmailSuggestion(suggestEmailCorrection(e.target.value));
+    }
+  };
+
   const validate = () => {
     const errors = {};
-
-    if (!formData.fullName.trim()) errors.fullName = "Full name is required";
-    if (!formData.username.trim()) errors.username = "Username is required";
-    if (!formData.email.trim()) errors.email = "Email is required";
-
-    if (!formData.age) {
-      errors.age = "Age is required";
-    } else if (Number(formData.age) < minimumAge) {
-      errors.age = `You must be at least ${minimumAge} years old`;
-    }
-
-    if (!formData.password) {
-      errors.password = "Password is required";
-    } else if (formData.password.length < 8) {
-      errors.password = "Password must be at least 8 characters";
-    }
-
-    if (formData.confirmPassword !== formData.password) {
-      errors.confirmPassword = "Passwords do not match";
-    }
+    Object.keys(formData).forEach((key) => {
+      const error = getFieldError(key, formData[key], formData);
+      if (error) errors[key] = error;
+    });
 
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
@@ -151,6 +207,7 @@ const Register = () => {
           type="text"
           value={formData.fullName}
           onChange={handleChange}
+          onBlur={handleBlur}
           placeholder="e.g. John Doe"
           required
           error={fieldErrors.fullName}
@@ -163,22 +220,42 @@ const Register = () => {
           type="text"
           value={formData.username}
           onChange={handleChange}
+          onBlur={handleBlur}
           placeholder="e.g. johndoe123"
           required
           error={fieldErrors.username}
         />
 
-        <FormInput
-          label="Email Address"
-          id="email"
-          name="email"
-          type="email"
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="e.g. john@example.com"
-          required
-          error={fieldErrors.email}
-        />
+        <div>
+          <FormInput
+            label="Email Address"
+            id="email"
+            name="email"
+            type="email"
+            value={formData.email}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            placeholder="e.g. john@example.com"
+            required
+            error={fieldErrors.email}
+          />
+          {emailSuggestion && !fieldErrors.email && (
+            <p className="mt-1 text-sm text-yellow-600">
+              Did you mean{" "}
+              <button
+                type="button"
+                onClick={() => {
+                  setFormData((prev) => ({ ...prev, email: emailSuggestion }));
+                  setEmailSuggestion("");
+                }}
+                className="font-bold underline hover:text-amber-700 cursor-pointer"
+              >
+                {emailSuggestion}
+              </button>
+              ?
+            </p>
+          )}
+        </div>
 
         <FormInput
           label="Age"
@@ -189,12 +266,11 @@ const Register = () => {
           max="100"
           value={formData.age}
           onChange={handleChange}
+          onBlur={handleBlur}
           placeholder="e.g. 24"
           required
           error={fieldErrors.age}
         />
-
-
 
         <div>
           <label className="mb-1 block text-sm font-medium text-slate-700">
@@ -215,6 +291,7 @@ const Register = () => {
           type="password"
           value={formData.password}
           onChange={handleChange}
+          onBlur={handleBlur}
           placeholder="Minimum 8 characters"
           required
           error={fieldErrors.password}
@@ -227,6 +304,7 @@ const Register = () => {
           type="password"
           value={formData.confirmPassword}
           onChange={handleChange}
+          onBlur={handleBlur}
           placeholder="••••••••"
           required
           error={fieldErrors.confirmPassword}
