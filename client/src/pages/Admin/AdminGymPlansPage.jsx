@@ -245,7 +245,7 @@ const AdminGymPlansPage = () => {
                         setFormData({ ...formData, duration: e.target.value })
                       }
                       className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
-                      placeholder="30"
+                      placeholder="e.g. 30"
                     />
                   </div>
                 </div>
@@ -262,7 +262,7 @@ const AdminGymPlansPage = () => {
                       setFormData({ ...formData, description: e.target.value })
                     }
                     className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none text-sm"
-                    placeholder="Short Description of the Plan"
+                    placeholder="e.g. Build muscle mass and increase strength..."
                   />
                 </div>
 
@@ -278,7 +278,7 @@ const AdminGymPlansPage = () => {
                       setFormData({ ...formData, details: e.target.value })
                     }
                     className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"
-                    placeholder="Plan Details"
+                    placeholder="e.g. Includes weightlifting and cardio..."
                   />
                 </div>
 

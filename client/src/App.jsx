@@ -13,6 +13,7 @@ function App() {
   const isDashboardRoute = 
     location.pathname.startsWith("/member") || 
     location.pathname.startsWith("/trainer") ||
+    location.pathname.startsWith("/payment") ||
     (user?.role === "Member" && location.pathname.startsWith("/store"));
 
   return (

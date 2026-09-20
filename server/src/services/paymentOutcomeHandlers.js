@@ -5,10 +5,10 @@ import Cart from "../models/cartModel.js";
 import StoreProduct from "../models/storeProductModel.js";
 import Safepay from "@sfpy/node-core";
 import sendEmail from "./nodemailer.js";
-import { 
-  getWelcomeMembershipEmail, 
-  getRenewalMembershipEmail, 
-  getStoreOrderEmail 
+import {
+  getWelcomeMembershipEmail,
+  getRenewalMembershipEmail,
+  getStoreOrderEmail,
 } from "../utils/emailTemplates.js";
 
 const safepay = Safepay(process.env.SAFEPAY_SECRET_KEY, {
@@ -28,28 +28,29 @@ const handleSuccessfulPayment = async (trackerToken) => {
     if (existingPayment && existingPayment.status === "successful") {
       return existingPayment;
     }
-    console.error(`Could not process payment for tracker ${trackerToken}. It may not exist or is not pending.`);
+    console.error(
+      `Could not process payment for tracker ${trackerToken}. It may not exist or is not pending.`,
+    );
     return null;
   }
 
   if (updatedPayment.type === "MembershipSubscription") {
     const existingActiveSub = await MembershipSubscription.findOne({
       memberId: updatedPayment.memberId._id,
-      status: "active"
+      status: "active",
     });
     const isFirstTime = !existingActiveSub;
 
     await MembershipSubscription.updateMany(
       {
         memberId: updatedPayment.memberId._id,
-        status: "active"
+        status: "active",
       },
       {
-        $set: { status: "cancelled" }
-      }
+        $set: { status: "cancelled" },
+      },
     );
 
-    // Activate the newly paid pending subscription
     await MembershipSubscription.findOneAndUpdate(
       {
         membershipPlanId: updatedPayment.paymentCauseId,
@@ -65,14 +66,20 @@ const handleSuccessfulPayment = async (trackerToken) => {
       { returnDocument: "after" },
     );
 
-    const emailContent = isFirstTime 
-      ? getWelcomeMembershipEmail(updatedPayment.memberId.fullName, updatedPayment.amount)
-      : getRenewalMembershipEmail(updatedPayment.memberId.fullName, updatedPayment.amount);
+    const emailContent = isFirstTime
+      ? getWelcomeMembershipEmail(
+          updatedPayment.memberId.fullName,
+          updatedPayment.amount,
+        )
+      : getRenewalMembershipEmail(
+          updatedPayment.memberId.fullName,
+          updatedPayment.amount,
+        );
 
     sendEmail({
       to: updatedPayment.memberId.email,
-      ...emailContent
-    }).catch(err => console.error("Failed to send membership email:", err));
+      ...emailContent,
+    }).catch((err) => console.error("Failed to send membership email:", err));
   }
 
   if (updatedPayment.type === "StoreOrder") {
@@ -150,14 +157,14 @@ const handleSuccessfulPayment = async (trackerToken) => {
     );
 
     const emailContent = getStoreOrderEmail(
-      updatedPayment.memberId.fullName, 
-      updatedPayment.amount, 
-      order.products
+      updatedPayment.memberId.fullName,
+      updatedPayment.amount,
+      order.products,
     );
     sendEmail({
       to: updatedPayment.memberId.email,
-      ...emailContent
-    }).catch(err => console.error("Failed to send store order email:", err));
+      ...emailContent,
+    }).catch((err) => console.error("Failed to send store order email:", err));
   }
 
   return updatedPayment;
@@ -172,8 +179,11 @@ const handleFailedPayment = async (trackerToken) => {
 
   if (!updatedPayment) {
     const existingPayment = await Payment.findOne({ trackerToken });
-    if (existingPayment && existingPayment.status === "failed") return existingPayment;
-    console.error(`Could not process failed payment for tracker ${trackerToken}.`);
+    if (existingPayment && existingPayment.status === "failed")
+      return existingPayment;
+    console.error(
+      `Could not process failed payment for tracker ${trackerToken}.`,
+    );
     return null;
   }
 

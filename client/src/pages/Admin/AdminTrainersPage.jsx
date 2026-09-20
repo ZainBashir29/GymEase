@@ -320,7 +320,7 @@ const AdminTrainersPage = () => {
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Full Name
+                  Full Name <span className="text-danger ml-1">*</span>
                 </label>
                 <input
                   type="text"
@@ -330,13 +330,13 @@ const AdminTrainersPage = () => {
                     setFormData({ ...formData, fullName: e.target.value })
                   }
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
-                  placeholder="Trainer's Name"
+                  placeholder="e.g. Jane Doe"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Email
+                  Email <span className="text-danger ml-1">*</span>
                 </label>
                 <input
                   type="email"
@@ -346,7 +346,7 @@ const AdminTrainersPage = () => {
                     setFormData({ ...formData, email: e.target.value })
                   }
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
-                  placeholder="Email Address"
+                  placeholder="e.g. jane@gymease.site"
                 />
               </div>
 
@@ -361,13 +361,13 @@ const AdminTrainersPage = () => {
                   onChange={(e) =>
                     setFormData({ ...formData, password: e.target.value })
                   }
-                  placeholder="Trainer's Password"
+                  placeholder="••••••••"
                 />
               )}
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Expertise
+                  Expertise <span className="text-danger ml-1">*</span>
                 </label>
                 <input
                   type="text"

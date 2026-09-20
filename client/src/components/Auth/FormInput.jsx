@@ -13,6 +13,7 @@ const FormInput = ({ label, error, ...inputProps }) => {
         className="mb-1.5 block text-sm font-medium text-slate-700"
       >
         {label}
+        {inputProps.required && <span className="text-danger ml-1">*</span>}
       </label>
       <div className="relative">
         <input

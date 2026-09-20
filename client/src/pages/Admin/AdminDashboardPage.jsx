@@ -6,7 +6,7 @@ import {
   CreditCard,
   Dumbbell,
   Activity,
-  DollarSign,
+  Wallet,
   TrendingUp,
   RefreshCcw,
   Package,
@@ -183,7 +183,7 @@ const AdminDashboardPage = () => {
         <StatCard
           title="Total Revenue"
           value={`Rs. ${revenue?.totalRevenue?.toLocaleString() || 0}`}
-          icon={DollarSign}
+          icon={Wallet}
           colorClass="bg-green-100 text-green-700"
         />
         <StatCard

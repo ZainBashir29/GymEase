@@ -60,10 +60,11 @@ const ChangePassword = () => {
             name="password"
             type="password"
             label="New Password"
-            placeholder="Your New Password"
+            placeholder="Minimum 8 characters"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            error={fieldErrors.password}
           />
 
           <FormInput
@@ -71,7 +72,7 @@ const ChangePassword = () => {
             name="confirmPassword"
             type="password"
             label="Confirm New Password"
-            placeholder="Re-enter New Password"
+            placeholder="••••••••"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required

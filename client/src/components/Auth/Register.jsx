@@ -145,49 +145,56 @@ const Register = () => {
         )}
 
         <FormInput
+          label="Full Name"
           id="fullName"
           name="fullName"
           type="text"
-          label="Full Name"
-          placeholder="Your Name"
           value={formData.fullName}
           onChange={handleChange}
+          placeholder="e.g. John Doe"
+          required
           error={fieldErrors.fullName}
         />
 
         <FormInput
+          label="Username"
           id="username"
           name="username"
           type="text"
-          label="Username"
-          placeholder="username"
           value={formData.username}
           onChange={handleChange}
+          placeholder="e.g. johndoe123"
+          required
           error={fieldErrors.username}
         />
 
         <FormInput
+          label="Email Address"
           id="email"
           name="email"
           type="email"
-          label="Email"
-          placeholder="Email Address"
           value={formData.email}
           onChange={handleChange}
+          placeholder="e.g. john@example.com"
+          required
           error={fieldErrors.email}
         />
 
         <FormInput
+          label="Age"
           id="age"
           name="age"
           type="number"
-          label="Age"
-          placeholder="20"
-          min={minimumAge}
+          min="16"
+          max="100"
           value={formData.age}
           onChange={handleChange}
+          placeholder="e.g. 24"
+          required
           error={fieldErrors.age}
         />
+
+
 
         <div>
           <label className="mb-1 block text-sm font-medium text-slate-700">
@@ -202,24 +209,26 @@ const Register = () => {
         </div>
 
         <FormInput
+          label="Password"
           id="password"
           name="password"
           type="password"
-          label="Password"
-          placeholder="At least 8 characters"
           value={formData.password}
           onChange={handleChange}
+          placeholder="Minimum 8 characters"
+          required
           error={fieldErrors.password}
         />
 
         <FormInput
+          label="Confirm Password"
           id="confirmPassword"
           name="confirmPassword"
           type="password"
-          label="Confirm password"
-          placeholder="Re-enter your password"
           value={formData.confirmPassword}
           onChange={handleChange}
+          placeholder="••••••••"
+          required
           error={fieldErrors.confirmPassword}
         />
 

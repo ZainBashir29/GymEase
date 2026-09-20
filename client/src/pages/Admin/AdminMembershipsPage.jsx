@@ -235,7 +235,7 @@ const AdminMembershipsPage = () => {
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Plan Name
+                  Plan Name <span className="text-danger ml-1">*</span>
                 </label>
                 <input
                   type="text"
@@ -252,7 +252,7 @@ const AdminMembershipsPage = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Price (Rs)
+                    Price (Rs) <span className="text-danger ml-1">*</span>
                   </label>
                   <input
                     type="number"
@@ -263,12 +263,12 @@ const AdminMembershipsPage = () => {
                       setFormData({ ...formData, price: e.target.value })
                     }
                     className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
-                    placeholder="0"
+                    placeholder="e.g. 5000"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Duration
+                    Duration (Days) <span className="text-danger ml-1">*</span>
                   </label>
                   <input
                     type="number"
@@ -279,14 +279,14 @@ const AdminMembershipsPage = () => {
                       setFormData({ ...formData, duration: e.target.value })
                     }
                     className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
-                    placeholder="30"
+                    placeholder="e.g. 30"
                   />
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Max Trainers Allowed
+                  Max Trainers Allowed <span className="text-danger ml-1">*</span>
                 </label>
                 <input
                   type="number"
@@ -297,22 +297,23 @@ const AdminMembershipsPage = () => {
                     setFormData({ ...formData, maxTrainers: e.target.value })
                   }
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
-                  placeholder="1"
+                  placeholder="e.g. 1"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
-                  Plan Perks
+                  Plan Perks <span className="text-danger ml-1">*</span>
                 </label>
                 <textarea
+                  required
                   rows="3"
                   value={formData.details}
                   onChange={(e) =>
                     setFormData({ ...formData, details: e.target.value })
                   }
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none text-sm"
-                  placeholder=""
+                  placeholder="e.g. Access to all equipment, 1 free consultation..."
                 />
                 <p className="text-xs text-slate-500 mt-1">
                   Separate each perk with a comma.

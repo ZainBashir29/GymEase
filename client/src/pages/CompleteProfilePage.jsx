@@ -105,7 +105,7 @@ const CompleteProfilePage = () => {
           name="username"
           type="text"
           label="Choose a Username"
-          placeholder="username"
+          placeholder="e.g. johndoe123"
           value={formData.username}
           onChange={handleChange}
           error={fieldErrors.username}
@@ -116,7 +116,7 @@ const CompleteProfilePage = () => {
           name="age"
           type="number"
           label="Your Age"
-          placeholder="20"
+          placeholder="e.g. 24"
           min={minimumAge}
           value={formData.age}
           onChange={handleChange}

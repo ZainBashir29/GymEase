@@ -1,4 +1,4 @@
-import { NavLink, Link, useNavigate } from "react-router-dom";
+import { NavLink, Link, useNavigate, useLocation } from "react-router-dom";
 import { Dumbbell, LogOut, ShoppingCart } from "lucide-react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useCart } from "../../context/CartContext.jsx";
@@ -7,6 +7,7 @@ const Sidebar = ({ navItems, setIsMobileMenuOpen }) => {
   const { user, logout } = useAuth();
   const { itemCount, toggleCart } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = async () => {
     await logout();
@@ -29,24 +30,37 @@ const Sidebar = ({ navItems, setIsMobileMenuOpen }) => {
       </div>
 
       <nav className="flex-1 space-y-1 px-3 py-4">
-        {navItems.map(({ label, to, icon: Icon, end }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={end}
-            onClick={handleNavClick}
-            className={({ isActive }) =>
-              `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                isActive
-                  ? "bg-brand-50 text-brand-700"
-                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-              }`
-            }
-          >
-            <Icon className="h-4.5 w-4.5" strokeWidth={2} />
-            {label}
-          </NavLink>
-        ))}
+        {navItems.map(({ label, to, icon: Icon, end }) => {
+          const isHighlightedOrder = label === "Orders" && location.state?.newOrder;
+
+          return (
+            <NavLink
+              key={to}
+              to={to}
+              end={end}
+              onClick={handleNavClick}
+              className={({ isActive }) =>
+                `flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                  isActive
+                    ? "bg-brand-50 text-brand-700"
+                    : isHighlightedOrder
+                      ? "bg-brand-50/60 text-brand-700 hover:bg-brand-50"
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                }`
+              }
+            >
+              <div className="flex items-center gap-3">
+                <Icon className="h-4.5 w-4.5" strokeWidth={2} />
+                {label}
+              </div>
+              {isHighlightedOrder && (
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand-600 text-[10px] font-bold text-white">
+                  1
+                </span>
+              )}
+            </NavLink>
+          );
+        })}
       </nav>
 
       {user?.role === "Member" && (

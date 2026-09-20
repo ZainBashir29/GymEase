@@ -241,7 +241,7 @@ const AdminStorePage = () => {
               >
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Product Name
+                    Product Name <span className="text-danger ml-1">*</span>
                   </label>
                   <input
                     type="text"
@@ -251,13 +251,13 @@ const AdminStorePage = () => {
                       setFormData({ ...formData, name: e.target.value })
                     }
                     className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
-                    placeholder="e.g. Whey Protein"
+                    placeholder="e.g. Whey Protein Isolate"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Description
+                    Description <span className="text-danger ml-1">*</span>
                   </label>
                   <textarea
                     required
@@ -267,14 +267,14 @@ const AdminStorePage = () => {
                       setFormData({ ...formData, description: e.target.value })
                     }
                     className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none"
-                    placeholder=""
+                    placeholder="e.g. High-quality protein powder for muscle recovery..."
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">
-                      Price (Rs.)
+                      Price (Rs.) <span className="text-danger ml-1">*</span>
                     </label>
                     <input
                       type="number"
@@ -285,12 +285,12 @@ const AdminStorePage = () => {
                         setFormData({ ...formData, price: e.target.value })
                       }
                       className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
-                      placeholder="0"
+                      placeholder="e.g. 2999"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">
-                      Stock
+                      Stock <span className="text-danger ml-1">*</span>
                     </label>
                     <input
                       type="number"
@@ -301,7 +301,7 @@ const AdminStorePage = () => {
                         setFormData({ ...formData, stock: e.target.value })
                       }
                       className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
-                      placeholder="100"
+                      placeholder="e.g. 50"
                     />
                   </div>
                 </div>

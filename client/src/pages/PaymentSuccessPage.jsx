@@ -102,6 +102,7 @@ const PaymentSuccessPage = () => {
                   </Link>
                   <Link
                     to="/member/dashboard"
+                    state={{ newOrder: true }}
                     className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-700"
                   >
                     Go to Dashboard
@@ -110,6 +111,7 @@ const PaymentSuccessPage = () => {
               ) : (
                 <Link
                   to="/member/dashboard"
+                  state={paymentType === "StoreOrder" ? { newOrder: true } : {}}
                   className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-700"
                 >
                   <Dumbbell className="h-4 w-4" />
