@@ -6,6 +6,8 @@ import MembershipPlan from "../models/membershipPlanModel.js";
 import MembershipSubscription from "../models/membershipSubscriptionModel.js";
 import Attendance from "../models/attendanceModel.js";
 import { createCheckoutUrl } from "./paymentController.js";
+import sendEmail from "../services/nodemailer.js";
+import { getCancellationEmail } from "../utils/emailTemplates.js";
 
 const getAllMembershipPlans = asyncHandler(async (req, res) => {
   const membershipPlans = await MembershipPlan.find({});
@@ -273,6 +275,12 @@ const cancelMembershipSubscription = asyncHandler(async (req, res) => {
   if (!cancelledSubscripton) {
     throw new ApiError(500, "Could not cancel membership subscription");
   }
+
+  const emailContent = getCancellationEmail(req.user.fullName);
+  sendEmail({
+    to: req.user.email,
+    ...emailContent
+  }).catch(err => console.error("Failed to send cancellation email:", err));
 
   res
     .status(200)

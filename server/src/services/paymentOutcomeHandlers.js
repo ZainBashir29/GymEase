@@ -4,6 +4,12 @@ import Order from "../models/orderModel.js";
 import Cart from "../models/cartModel.js";
 import StoreProduct from "../models/storeProductModel.js";
 import Safepay from "@sfpy/node-core";
+import sendEmail from "./nodemailer.js";
+import { 
+  getWelcomeMembershipEmail, 
+  getRenewalMembershipEmail, 
+  getStoreOrderEmail 
+} from "../utils/emailTemplates.js";
 
 const safepay = Safepay(process.env.SAFEPAY_SECRET_KEY, {
   authType: "secret",
@@ -15,7 +21,7 @@ const handleSuccessfulPayment = async (trackerToken) => {
     { trackerToken, status: "pending" },
     { $set: { status: "successful" } },
     { returnDocument: "after" },
-  );
+  ).populate("memberId");
 
   if (!updatedPayment) {
     const existingPayment = await Payment.findOne({ trackerToken });
@@ -27,10 +33,15 @@ const handleSuccessfulPayment = async (trackerToken) => {
   }
 
   if (updatedPayment.type === "MembershipSubscription") {
-    // Cancel any existing active subscriptions for this member
+    const existingActiveSub = await MembershipSubscription.findOne({
+      memberId: updatedPayment.memberId._id,
+      status: "active"
+    });
+    const isFirstTime = !existingActiveSub;
+
     await MembershipSubscription.updateMany(
       {
-        memberId: updatedPayment.memberId,
+        memberId: updatedPayment.memberId._id,
         status: "active"
       },
       {
@@ -42,7 +53,7 @@ const handleSuccessfulPayment = async (trackerToken) => {
     await MembershipSubscription.findOneAndUpdate(
       {
         membershipPlanId: updatedPayment.paymentCauseId,
-        memberId: updatedPayment.memberId,
+        memberId: updatedPayment.memberId._id,
         status: "pending",
       },
       {
@@ -53,6 +64,15 @@ const handleSuccessfulPayment = async (trackerToken) => {
       },
       { returnDocument: "after" },
     );
+
+    const emailContent = isFirstTime 
+      ? getWelcomeMembershipEmail(updatedPayment.memberId.fullName, updatedPayment.amount)
+      : getRenewalMembershipEmail(updatedPayment.memberId.fullName, updatedPayment.amount);
+
+    sendEmail({
+      to: updatedPayment.memberId.email,
+      ...emailContent
+    }).catch(err => console.error("Failed to send membership email:", err));
   }
 
   if (updatedPayment.type === "StoreOrder") {
@@ -128,6 +148,16 @@ const handleSuccessfulPayment = async (trackerToken) => {
       { memberId: order.memberId },
       { $set: { products: [] } },
     );
+
+    const emailContent = getStoreOrderEmail(
+      updatedPayment.memberId.fullName, 
+      updatedPayment.amount, 
+      order.products
+    );
+    sendEmail({
+      to: updatedPayment.memberId.email,
+      ...emailContent
+    }).catch(err => console.error("Failed to send store order email:", err));
   }
 
   return updatedPayment;
