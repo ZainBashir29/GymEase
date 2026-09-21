@@ -64,7 +64,6 @@ const ChangePassword = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            error={fieldErrors.password}
           />
 
           <FormInput

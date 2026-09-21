@@ -187,11 +187,11 @@ const Register = () => {
       <form onSubmit={handleSubmit} className="space-y-4">
         <GoogleAuthButton label="Sign up with Google" />
         <div className="relative flex items-center py-2">
-          <div className="flex-grow border-t border-slate-200"></div>
+          <div className="grow border-t border-slate-200"></div>
           <span className="mx-4 shrink-0 text-xs text-slate-400">
             OR CONTINUE WITH EMAIL
           </span>
-          <div className="flex-grow border-t border-slate-200"></div>
+          <div className="grow border-t border-slate-200"></div>
         </div>
 
         {serverError && (
