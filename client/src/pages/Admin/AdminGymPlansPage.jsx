@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import api from "../../lib/axios.js";
-import { Plus, Trash2, Edit2, X, CheckCircle2 } from "lucide-react";
+import { Plus, Trash2, Edit2, X, CheckCircle2, ChevronDown, ChevronUp } from "lucide-react";
+
+const emptyExercise = () => ({ name: "", sets: "", reps: "", duration: "" });
+const emptySession = () => ({ name: "", exercises: [emptyExercise()], open: true });
 
 const AdminGymPlansPage = () => {
   const [plans, setPlans] = useState([]);
@@ -15,7 +18,7 @@ const AdminGymPlansPage = () => {
     description: "",
     duration: 30,
     details: "",
-    sessionsJson: "",
+    sessions: [emptySession()],
   });
 
   const fetchPlans = async () => {
@@ -52,8 +55,7 @@ const AdminGymPlansPage = () => {
       description: "",
       duration: 30,
       details: "",
-      sessionsJson:
-        '[\n  {\n    "name": "Day 1: Full Body",\n    "exercises": [\n      { "name": "Pushups", "sets": 3, "reps": 10 }\n    ]\n  }\n]',
+      sessions: [emptySession()],
     });
     setIsModalOpen(true);
   };
@@ -65,41 +67,125 @@ const AdminGymPlansPage = () => {
       description: plan.description,
       duration: plan.duration,
       details: plan.details || "",
-      sessionsJson: JSON.stringify(plan.sessions || [], null, 2),
+      sessions: (plan.sessions || []).map((s) => ({
+        name: s.name || "",
+        open: false,
+        exercises: (s.exercises || []).map((ex) => ({
+          name: ex.name || "",
+          sets: ex.sets ?? "",
+          reps: ex.reps ?? "",
+          duration: ex.duration || "",
+        })),
+      })),
     });
     setIsModalOpen(true);
   };
 
+  // ── Session helpers ──────────────────────────────────────────────────────────
+  const addSession = () =>
+    setFormData((f) => ({ ...f, sessions: [...f.sessions, emptySession()] }));
+
+  const removeSession = (si) =>
+    setFormData((f) => ({
+      ...f,
+      sessions: f.sessions.filter((_, i) => i !== si),
+    }));
+
+  const toggleSession = (si) =>
+    setFormData((f) => ({
+      ...f,
+      sessions: f.sessions.map((s, i) =>
+        i === si ? { ...s, open: !s.open } : s,
+      ),
+    }));
+
+  const updateSession = (si, field, value) =>
+    setFormData((f) => ({
+      ...f,
+      sessions: f.sessions.map((s, i) =>
+        i === si ? { ...s, [field]: value } : s,
+      ),
+    }));
+
+  // ── Exercise helpers ─────────────────────────────────────────────────────────
+  const addExercise = (si) =>
+    setFormData((f) => ({
+      ...f,
+      sessions: f.sessions.map((s, i) =>
+        i === si ? { ...s, exercises: [...s.exercises, emptyExercise()] } : s,
+      ),
+    }));
+
+  const removeExercise = (si, ei) =>
+    setFormData((f) => ({
+      ...f,
+      sessions: f.sessions.map((s, i) =>
+        i === si
+          ? { ...s, exercises: s.exercises.filter((_, j) => j !== ei) }
+          : s,
+      ),
+    }));
+
+  const updateExercise = (si, ei, field, value) =>
+    setFormData((f) => ({
+      ...f,
+      sessions: f.sessions.map((s, i) =>
+        i === si
+          ? {
+              ...s,
+              exercises: s.exercises.map((ex, j) =>
+                j === ei ? { ...ex, [field]: value } : ex,
+              ),
+            }
+          : s,
+      ),
+    }));
+
+  // ── Submit ───────────────────────────────────────────────────────────────────
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
 
-    let parsedSessions = [];
-    try {
-      parsedSessions = JSON.parse(formData.sessionsJson);
-    } catch (err) {
-      alert(
-        "Invalid JSON format in the Sessions box! Please check your commas and brackets.",
-      );
-      setSubmitting(false);
-      return;
+    // Validate sessions
+    for (let i = 0; i < formData.sessions.length; i++) {
+      const s = formData.sessions[i];
+      if (!s.name.trim()) {
+        alert(`Session ${i + 1} needs a name.`);
+        setSubmitting(false);
+        return;
+      }
+      for (let j = 0; j < s.exercises.length; j++) {
+        const ex = s.exercises[j];
+        if (!ex.name.trim()) {
+          alert(`Session ${i + 1}, Exercise ${j + 1} needs a name.`);
+          setSubmitting(false);
+          return;
+        }
+      }
     }
 
-    try {
-      const payload = {
-        name: formData.name,
-        description: formData.description,
-        duration: Number(formData.duration),
-        details: formData.details,
-        sessions: parsedSessions,
-      };
+    const payload = {
+      name: formData.name,
+      description: formData.description,
+      duration: Number(formData.duration),
+      details: formData.details,
+      sessions: formData.sessions.map(({ name, exercises }) => ({
+        name,
+        exercises: exercises.map(({ name, sets, reps, duration }) => ({
+          name,
+          ...(sets !== "" && { sets: Number(sets) }),
+          ...(reps !== "" && { reps: Number(reps) }),
+          ...(duration.trim() !== "" && { duration }),
+        })),
+      })),
+    };
 
+    try {
       if (editingPlanId) {
         await api.patch(`/admin/update-gym-plan/${editingPlanId}`, payload);
       } else {
         await api.post("/admin/add-gym-plan", payload);
       }
-
       setIsModalOpen(false);
       fetchPlans();
     } catch (error) {
@@ -197,7 +283,8 @@ const AdminGymPlansPage = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-xl my-8 flex flex-col max-h-[90vh]">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl my-8 flex flex-col max-h-[90vh]">
+            {/* Header */}
             <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center shrink-0">
               <h3 className="text-lg font-bold text-slate-900">
                 {editingPlanId ? "Edit Gym Plan" : "Add New Gym Plan"}
@@ -210,98 +297,207 @@ const AdminGymPlansPage = () => {
               </button>
             </div>
 
-            <div className="p-6 overflow-y-auto">
-              <form
-                id="gymPlanForm"
-                onSubmit={handleSubmit}
-                className="space-y-4"
-              >
+            {/* Body */}
+            <div className="p-6 overflow-y-auto space-y-5">
+              <form id="gymPlanForm" onSubmit={handleSubmit} className="space-y-5">
+                {/* Plan name + duration */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">
-                      Plan Name
+                      Plan Name <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
                       required
                       value={formData.name}
-                      onChange={(e) =>
-                        setFormData({ ...formData, name: e.target.value })
-                      }
-                      className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"
                       placeholder="e.g. Muscle Builder"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1">
-                      Duration
+                      Duration (days) <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="number"
                       required
                       min="1"
                       value={formData.duration}
-                      onChange={(e) =>
-                        setFormData({ ...formData, duration: e.target.value })
-                      }
-                      className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
+                      onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
+                      className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"
                       placeholder="e.g. 30"
                     />
                   </div>
                 </div>
 
+                {/* Description */}
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Description
+                    Description <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     required
                     rows="2"
                     value={formData.description}
-                    onChange={(e) =>
-                      setFormData({ ...formData, description: e.target.value })
-                    }
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none text-sm"
                     placeholder="e.g. Build muscle mass and increase strength..."
                   />
                 </div>
 
+                {/* Details */}
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Details
+                    Details <span className="text-red-500">*</span>
                   </label>
                   <input
                     required
                     type="text"
                     value={formData.details}
-                    onChange={(e) =>
-                      setFormData({ ...formData, details: e.target.value })
-                    }
+                    onChange={(e) => setFormData({ ...formData, details: e.target.value })}
                     className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"
                     placeholder="e.g. Includes weightlifting and cardio..."
                   />
                 </div>
 
+                {/* Session Builder */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Workout Sessions
-                  </label>
-                  <textarea
-                    required
-                    rows="8"
-                    value={formData.sessionsJson}
-                    onChange={(e) =>
-                      setFormData({ ...formData, sessionsJson: e.target.value })
-                    }
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 font-mono text-xs bg-slate-50"
-                  />
-                  <p className="text-xs text-slate-500 mt-1">
-                    Must be a valid JSON array of session objects.
-                  </p>
+                  <div className="flex items-center justify-between mb-3">
+                    <label className="text-sm font-medium text-slate-700">
+                      Workout Sessions <span className="text-red-500">*</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={addSession}
+                      className="flex items-center gap-1 text-xs font-medium text-brand-600 hover:text-brand-700 cursor-pointer"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      Add Session
+                    </button>
+                  </div>
+
+                  <div className="space-y-3">
+                    {formData.sessions.map((session, si) => (
+                      <div
+                        key={si}
+                        className="border border-slate-200 rounded-xl overflow-hidden"
+                      >
+                        {/* Session header */}
+                        <div className="flex items-center gap-2 px-4 py-3 bg-slate-50 border-b border-slate-200">
+                          <button
+                            type="button"
+                            onClick={() => toggleSession(si)}
+                            className="text-slate-400 hover:text-slate-600 cursor-pointer shrink-0"
+                          >
+                            {session.open ? (
+                              <ChevronUp className="w-4 h-4" />
+                            ) : (
+                              <ChevronDown className="w-4 h-4" />
+                            )}
+                          </button>
+                          <input
+                            type="text"
+                            required
+                            value={session.name}
+                            onChange={(e) => updateSession(si, "name", e.target.value)}
+                            className="flex-1 bg-transparent text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none"
+                            placeholder={`Session ${si + 1} name, e.g. Day ${si + 1}: Upper Body`}
+                          />
+                          {formData.sessions.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => removeSession(si)}
+                              className="text-red-400 hover:text-red-600 cursor-pointer shrink-0"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Exercises */}
+                        {session.open && (
+                          <div className="p-4 space-y-2">
+                            {/* Column labels */}
+                            <div className="grid gap-2 text-[10px] text-slate-400 uppercase tracking-wide px-0.5"
+                              style={{ gridTemplateColumns: "1fr 56px 56px 80px 20px" }}
+                            >
+                              <span>Exercise</span>
+                              <span className="text-center">Sets</span>
+                              <span className="text-center">Reps</span>
+                              <span>Duration</span>
+                              <span />
+                            </div>
+
+                            {session.exercises.map((ex, ei) => (
+                              <div
+                                key={ei}
+                                className="grid gap-2 items-center"
+                                style={{ gridTemplateColumns: "1fr 56px 56px 80px 20px" }}
+                              >
+                                <input
+                                  type="text"
+                                  required
+                                  value={ex.name}
+                                  onChange={(e) => updateExercise(si, ei, "name", e.target.value)}
+                                  className="min-w-0 w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-brand-500"
+                                  placeholder="Exercise name"
+                                />
+                                <input
+                                  type="number"
+                                  min="1"
+                                  value={ex.sets}
+                                  onChange={(e) => updateExercise(si, ei, "sets", e.target.value)}
+                                  className="min-w-0 w-full px-2 py-1.5 border border-slate-200 rounded-lg text-sm text-center focus:outline-none focus:ring-1 focus:ring-brand-500"
+                                  placeholder="—"
+                                />
+                                <input
+                                  type="number"
+                                  min="1"
+                                  value={ex.reps}
+                                  onChange={(e) => updateExercise(si, ei, "reps", e.target.value)}
+                                  className="min-w-0 w-full px-2 py-1.5 border border-slate-200 rounded-lg text-sm text-center focus:outline-none focus:ring-1 focus:ring-brand-500"
+                                  placeholder="—"
+                                />
+                                <input
+                                  type="text"
+                                  value={ex.duration}
+                                  onChange={(e) => updateExercise(si, ei, "duration", e.target.value)}
+                                  className="min-w-0 w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-brand-500"
+                                  placeholder="e.g. 30s"
+                                />
+                                <div className="flex justify-center">
+                                  {session.exercises.length > 1 && (
+                                    <button
+                                      type="button"
+                                      onClick={() => removeExercise(si, ei)}
+                                      className="text-red-400 hover:text-red-600 cursor-pointer"
+                                    >
+                                      <X className="w-3.5 h-3.5" />
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+
+                            <button
+                              type="button"
+                              onClick={() => addExercise(si)}
+                              className="flex items-center gap-1 text-xs text-brand-600 hover:text-brand-700 font-medium cursor-pointer mt-1"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                              Add Exercise
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </form>
             </div>
 
+            {/* Footer */}
             <div className="px-6 py-4 border-t border-slate-100 flex justify-end gap-3 shrink-0 bg-slate-50 rounded-b-2xl">
               <button
                 type="button"
@@ -318,7 +514,7 @@ const AdminGymPlansPage = () => {
               >
                 {submitting ? (
                   <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>{" "}
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                     Saving...
                   </>
                 ) : editingPlanId ? (
