@@ -50,8 +50,10 @@ const findAvailableTrainer = async (allowedTrainers, targetDate, session) => {
 };
 
 const getAllPopularPlans = asyncHandler(async (req, res) => {
+  const includeInactive = req.query.includeInactive === "true";
   const popularPlans = await GymPlan.find({
     type: "popular",
+    ...(includeInactive ? {} : { isActive: { $ne: false } }),
   });
 
   if (!popularPlans) {

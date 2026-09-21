@@ -139,6 +139,29 @@ const deleteProduct = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, product, "Product deactivated successfully"));
 });
 
+const reactivateProduct = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id || !mongoose.isValidObjectId(id)) {
+    throw new ApiError(400, "No or invalid product id");
+  }
+
+  const product = await StoreProduct.findById(id);
+
+  if (!product) throw new ApiError(404, "Product not found");
+
+  if (product.isActive) {
+    throw new ApiError(400, "Product is already active");
+  }
+
+  product.isActive = true;
+  await product.save({ validateBeforeSave: false });
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, product, "Product reactivated successfully"));
+});
+
 const getProducts = asyncHandler(async (req, res) => {
   const filter = req.query.includeInactive === "true" ? {} : { isActive: true };
 
@@ -483,6 +506,7 @@ export {
   addProduct,
   updateProduct,
   deleteProduct,
+  reactivateProduct,
   getProducts,
   getSingleProduct,
   addToCart,

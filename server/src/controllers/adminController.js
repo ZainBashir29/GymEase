@@ -701,6 +701,35 @@ const deleteGymPlan = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, gymPlan, "Gym plan deactivated successfully"));
 });
 
+const reactivateGymPlan = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id || !mongoose.isValidObjectId(id)) {
+    throw new ApiError(400, "No or invalid gym plan id");
+  }
+
+  const gymPlan = await GymPlan.findById(id);
+
+  if (!gymPlan) {
+    throw new ApiError(404, "Gym plan not found");
+  }
+
+  if (gymPlan.type !== "popular") {
+    throw new ApiError(400, "Custom plans cannot be reactivated directly");
+  }
+
+  if (gymPlan.isActive) {
+    throw new ApiError(400, "Gym plan is already active");
+  }
+
+  gymPlan.isActive = true;
+  await gymPlan.save({ validateBeforeSave: false });
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, gymPlan, "Gym plan reactivated successfully"));
+});
+
 const updateMembershipPlan = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
@@ -792,6 +821,35 @@ const deleteMembershipPlan = asyncHandler(async (req, res) => {
     );
 });
 
+const reactivateMembershipPlan = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id || !mongoose.isValidObjectId(id)) {
+    throw new ApiError(400, "No or invalid membership plan id");
+  }
+
+  const membershipPlan = await MembershipPlan.findById(id);
+
+  if (!membershipPlan) {
+    throw new ApiError(404, "Membership plan not found");
+  }
+
+  if (membershipPlan.isActive) {
+    throw new ApiError(400, "Membership plan is already active");
+  }
+
+  membershipPlan.isActive = true;
+  await membershipPlan.save({ validateBeforeSave: false });
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      membershipPlan,
+      "Membership plan reactivated successfully",
+    ),
+  );
+});
+
 const addTrainer = asyncHandler(async (req, res) => {
   const { fullName, email, password, expertise } = req.body;
 
@@ -875,7 +933,9 @@ export {
   addGymPlan,
   updateGymPlan,
   deleteGymPlan,
+  reactivateGymPlan,
   addMembershipPlan,
   updateMembershipPlan,
   deleteMembershipPlan,
+  reactivateMembershipPlan,
 };

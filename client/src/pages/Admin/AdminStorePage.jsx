@@ -7,11 +7,13 @@ import {
   X,
   Image as ImageIcon,
   Edit2,
+  RotateCcw,
 } from "lucide-react";
 
 const AdminStorePage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [includeInactive, setIncludeInactive] = useState(true);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProductId, setEditingProductId] = useState(null);
@@ -28,7 +30,9 @@ const AdminStorePage = () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const { data } = await api.get("/store/products?includeInactive=true");
+      const { data } = await api.get(
+        `/store/products?includeInactive=${includeInactive}`,
+      );
       setProducts(data.data || []);
     } catch (error) {
       console.error("Failed to fetch products", error);
@@ -39,7 +43,7 @@ const AdminStorePage = () => {
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [includeInactive]);
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to deactivate this product?"))
@@ -49,6 +53,16 @@ const AdminStorePage = () => {
       fetchProducts();
     } catch (error) {
       alert("Failed to delete product");
+    }
+  };
+
+  const handleReactivate = async (id) => {
+    if (!window.confirm("Reactivate this product?")) return;
+    try {
+      await api.patch(`/store/products/reactivate/${id}`);
+      fetchProducts();
+    } catch (error) {
+      alert(error.response?.data?.message || "Failed to reactivate product");
     }
   };
 
@@ -135,13 +149,24 @@ const AdminStorePage = () => {
             Manage e-commerce products and inventory.
           </p>
         </div>
-        <button
-          onClick={openAddModal}
-          className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors shadow-sm font-medium cursor-pointer"
-        >
-          <Plus className="w-4 h-4" />
-          Add Product
-        </button>
+        <div className="flex items-center gap-4">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={includeInactive}
+              onChange={(e) => setIncludeInactive(e.target.checked)}
+              className="w-4 h-4 text-brand-600 border-slate-300 rounded focus:ring-brand-500"
+            />
+            <span className="text-sm font-medium text-slate-700">Show Inactive</span>
+          </label>
+          <button
+            onClick={openAddModal}
+            className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors shadow-sm font-medium cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            Add Product
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -209,6 +234,15 @@ const AdminStorePage = () => {
                     >
                       <Trash2 className="w-4 h-4" />
                       Deactivate
+                    </button>
+                  )}
+                  {!product.isActive && (
+                    <button
+                      onClick={() => handleReactivate(product._id)}
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors border border-emerald-200 cursor-pointer"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                      Reactivate
                     </button>
                   )}
                 </div>

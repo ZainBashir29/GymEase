@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import api from "../../lib/axios.js";
-import { Plus, Trash2, CreditCard, X, Edit2, CheckCircle2 } from "lucide-react";
+import { Plus, Trash2, CreditCard, X, Edit2, CheckCircle2, RotateCcw } from "lucide-react";
 
 const AdminMembershipsPage = () => {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [includeInactive, setIncludeInactive] = useState(true);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPlanId, setEditingPlanId] = useState(null);
@@ -20,7 +21,9 @@ const AdminMembershipsPage = () => {
   const fetchPlans = async () => {
     setLoading(true);
     try {
-      const { data } = await api.get("/memberships/plans?includeInactive=true");
+      const { data } = await api.get(
+        `/memberships/plans?includeInactive=${includeInactive}`,
+      );
       setPlans(data.data || []);
     } catch (error) {
       console.error("Failed to fetch membership plans", error);
@@ -31,7 +34,7 @@ const AdminMembershipsPage = () => {
 
   useEffect(() => {
     fetchPlans();
-  }, []);
+  }, [includeInactive]);
 
   const handleDelete = async (id) => {
     if (
@@ -45,6 +48,16 @@ const AdminMembershipsPage = () => {
       fetchPlans();
     } catch (error) {
       alert("Failed to delete plan");
+    }
+  };
+
+  const handleReactivate = async (id) => {
+    if (!window.confirm("Reactivate this membership plan?")) return;
+    try {
+      await api.patch(`/admin/reactivate-membership-plan/${id}`);
+      fetchPlans();
+    } catch (error) {
+      alert(error.response?.data?.message || "Failed to reactivate plan");
     }
   };
 
@@ -129,13 +142,24 @@ const AdminMembershipsPage = () => {
             Manage pricing and subscription plans.
           </p>
         </div>
-        <button
-          onClick={openAddModal}
-          className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors shadow-sm font-medium cursor-pointer"
-        >
-          <Plus className="w-4 h-4" />
-          Add Plan
-        </button>
+        <div className="flex items-center gap-4">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={includeInactive}
+              onChange={(e) => setIncludeInactive(e.target.checked)}
+              className="w-4 h-4 text-brand-600 border-slate-300 rounded focus:ring-brand-500"
+            />
+            <span className="text-sm font-medium text-slate-700">Show Inactive</span>
+          </label>
+          <button
+            onClick={openAddModal}
+            className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors shadow-sm font-medium cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            Add Plan
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -207,6 +231,15 @@ const AdminMembershipsPage = () => {
                   >
                     <Trash2 className="w-4 h-4" />
                     Deactivate
+                  </button>
+                )}
+                {!plan.isActive && (
+                  <button
+                    onClick={() => handleReactivate(plan._id)}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors border border-emerald-200 cursor-pointer"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                    Reactivate
                   </button>
                 )}
               </div>

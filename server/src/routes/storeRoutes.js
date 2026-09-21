@@ -6,6 +6,7 @@ import {
   addProduct,
   updateProduct,
   deleteProduct,
+  reactivateProduct,
   getProducts,
   getSingleProduct,
   addToCart,
@@ -35,6 +36,9 @@ router
 router
   .route("/products/delete/:id")
   .delete(verifyJwt, role("Admin"), deleteProduct);
+router
+  .route("/products/reactivate/:id")
+  .patch(verifyJwt, role("Admin"), reactivateProduct);
 
 router
   .route("/cart/add")

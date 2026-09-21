@@ -19,9 +19,11 @@ import {
   addGymPlan,
   updateGymPlan,
   deleteGymPlan,
+  reactivateGymPlan,
   addMembershipPlan,
   updateMembershipPlan,
   deleteMembershipPlan,
+  reactivateMembershipPlan,
 } from "../controllers/adminController.js";
 
 const router = Router();
@@ -59,11 +61,15 @@ router.route("/add-gym-plan").post(addGymPlan);
 router.route("/update-gym-plan/:id").patch(updateGymPlan);
 
 router.route("/delete-gym-plan/:id").delete(deleteGymPlan);
+router.route("/reactivate-gym-plan/:id").patch(reactivateGymPlan);
 
 router.route("/add-membership-plan").post(addMembershipPlan);
 
 router.route("/update-membership-plan/:id").patch(updateMembershipPlan);
 
 router.route("/delete-membership-plan/:id").delete(deleteMembershipPlan);
+router
+  .route("/reactivate-membership-plan/:id")
+  .patch(reactivateMembershipPlan);
 
 export default router;

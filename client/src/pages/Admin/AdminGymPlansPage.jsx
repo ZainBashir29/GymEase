@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api from "../../lib/axios.js";
-import { Plus, Trash2, Edit2, X, CheckCircle2, ChevronDown, ChevronUp } from "lucide-react";
+import { Plus, Trash2, Edit2, X, CheckCircle2, ChevronDown, ChevronUp, RotateCcw } from "lucide-react";
 
 const emptyExercise = () => ({ name: "", sets: "", reps: "", duration: "" });
 const emptySession = () => ({ name: "", exercises: [emptyExercise()], open: true });
@@ -8,6 +8,7 @@ const emptySession = () => ({ name: "", exercises: [emptyExercise()], open: true
 const AdminGymPlansPage = () => {
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [includeInactive, setIncludeInactive] = useState(true);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPlanId, setEditingPlanId] = useState(null);
@@ -24,7 +25,9 @@ const AdminGymPlansPage = () => {
   const fetchPlans = async () => {
     setLoading(true);
     try {
-      const { data } = await api.get("/gym-plans?includeInactive=true");
+      const { data } = await api.get(
+        `/gym-plans?includeInactive=${includeInactive}`,
+      );
       setPlans(data.data || []);
     } catch (error) {
       console.error("Failed to fetch gym plans", error);
@@ -35,7 +38,7 @@ const AdminGymPlansPage = () => {
 
   useEffect(() => {
     fetchPlans();
-  }, []);
+  }, [includeInactive]);
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to deactivate this gym plan?"))
@@ -45,6 +48,16 @@ const AdminGymPlansPage = () => {
       fetchPlans();
     } catch (error) {
       alert(error.response?.data?.message || "Failed to delete plan");
+    }
+  };
+
+  const handleReactivate = async (id) => {
+    if (!window.confirm("Reactivate this gym plan?")) return;
+    try {
+      await api.patch(`/admin/reactivate-gym-plan/${id}`);
+      fetchPlans();
+    } catch (error) {
+      alert(error.response?.data?.message || "Failed to reactivate plan");
     }
   };
 
@@ -208,13 +221,24 @@ const AdminGymPlansPage = () => {
             Manage popular workout plans available to members.
           </p>
         </div>
-        <button
-          onClick={openAddModal}
-          className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors shadow-sm font-medium cursor-pointer"
-        >
-          <Plus className="w-4 h-4" />
-          Add Plan
-        </button>
+        <div className="flex items-center gap-4">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={includeInactive}
+              onChange={(e) => setIncludeInactive(e.target.checked)}
+              className="w-4 h-4 text-brand-600 border-slate-300 rounded focus:ring-brand-500"
+            />
+            <span className="text-sm font-medium text-slate-700">Show Inactive</span>
+          </label>
+          <button
+            onClick={openAddModal}
+            className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors shadow-sm font-medium cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            Add Plan
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -273,6 +297,15 @@ const AdminGymPlansPage = () => {
                   >
                     <Trash2 className="w-4 h-4" />
                     Deactivate
+                  </button>
+                )}
+                {!plan.isActive && (
+                  <button
+                    onClick={() => handleReactivate(plan._id)}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors border border-emerald-200 cursor-pointer"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                    Reactivate
                   </button>
                 )}
               </div>
