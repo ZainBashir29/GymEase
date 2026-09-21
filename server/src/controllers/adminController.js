@@ -155,6 +155,31 @@ const deleteMember = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, member, "Member deactivated successfully"));
 });
 
+const reactivateMember = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id || !mongoose.isValidObjectId(id)) {
+    throw new ApiError(400, "No or invalid member id");
+  }
+
+  const member = await Member.findById(id);
+
+  if (!member) {
+    throw new ApiError(404, "Member not found");
+  }
+
+  if (member.isActive) {
+    throw new ApiError(400, "Member is already active");
+  }
+
+  member.isActive = true;
+  await member.save({ validateBeforeSave: false });
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, member, "Member reactivated successfully"));
+});
+
 const getAllTrainers = asyncHandler(async (req, res) => {
   const { includeInactive } = req.query;
 
@@ -300,6 +325,31 @@ const deleteTrainer = asyncHandler(async (req, res) => {
   res
     .status(200)
     .json(new ApiResponse(200, trainer, "Trainer deactivated successfully"));
+});
+
+const reactivateTrainer = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id || !mongoose.isValidObjectId(id)) {
+    throw new ApiError(400, "No or invalid trainer id");
+  }
+
+  const trainer = await Trainer.findById(id);
+
+  if (!trainer) {
+    throw new ApiError(404, "Trainer not found");
+  }
+
+  if (trainer.isActive) {
+    throw new ApiError(400, "Trainer is already active");
+  }
+
+  trainer.isActive = true;
+  await trainer.save({ validateBeforeSave: false });
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, trainer, "Trainer reactivated successfully"));
 });
 
 const getTrainerPerformance = asyncHandler(async (req, res) => {
@@ -811,11 +861,13 @@ export {
   getAllMembers,
   getMemberById,
   deleteMember,
+  reactivateMember,
   getAllTrainers,
   getTrainerById,
   addTrainer,
   updateTrainer,
   deleteTrainer,
+  reactivateTrainer,
   getTrainerPerformance,
   getSystemOverview,
   getRevenueSummary,

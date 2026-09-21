@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api from "../../lib/axios.js";
-import { Search, Trash2, CheckCircle2, XCircle, UserCheck } from "lucide-react";
+import { Search, Trash2, CheckCircle2, XCircle, UserCheck, RefreshCw } from "lucide-react";
 
 const AdminMembersPage = () => {
   const [members, setMembers] = useState([]);
@@ -36,6 +36,19 @@ const AdminMembersPage = () => {
     } catch (error) {
       console.error("Failed to delete member", error);
       alert(error.response?.data?.message || "Failed to deactivate member");
+    }
+  };
+
+  const handleReactivate = async (id) => {
+    if (!window.confirm("Are you sure you want to reactivate this member?"))
+      return;
+
+    try {
+      await api.patch(`/admin/members/reactivate/${id}`);
+      fetchMembers();
+    } catch (error) {
+      console.error("Failed to reactivate member", error);
+      alert(error.response?.data?.message || "Failed to reactivate member");
     }
   };
 
@@ -197,13 +210,21 @@ const AdminMembersPage = () => {
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      {member.isActive && (
+                      {member.isActive ? (
                         <button
                           onClick={() => handleDelete(member._id)}
                           className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors inline-flex items-center gap-2"
                           title="Deactivate Member"
                         >
                           <Trash2 className="w-4 h-4" />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleReactivate(member._id)}
+                          className="p-2 text-slate-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors inline-flex items-center gap-2"
+                          title="Reactivate Member"
+                        >
+                          <RefreshCw className="w-4 h-4" />
                         </button>
                       )}
                     </td>

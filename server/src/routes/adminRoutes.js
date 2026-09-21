@@ -6,11 +6,13 @@ import {
   getAllMembers,
   getMemberById,
   deleteMember,
+  reactivateMember,
   getAllTrainers,
   getTrainerById,
   addTrainer,
   updateTrainer,
   deleteTrainer,
+  reactivateTrainer,
   getTrainerPerformance,
   getSystemOverview,
   getRevenueSummary,
@@ -31,6 +33,7 @@ router.route("/members").get(getAllMembers);
 router.route("/members/:id").get(getMemberById);
 
 router.route("/members/delete/:id").delete(deleteMember);
+router.route("/members/reactivate/:id").patch(reactivateMember);
 
 router.route("/trainers").get(getAllTrainers);
 
@@ -43,6 +46,7 @@ router
   .patch(upload.single("profilePicture"), updateTrainer);
 
 router.route("/trainers/delete/:id").delete(deleteTrainer);
+router.route("/trainers/reactivate/:id").patch(reactivateTrainer);
 
 router.route("/trainers/performance/:id").get(getTrainerPerformance);
 
