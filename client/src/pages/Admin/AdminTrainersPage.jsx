@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import api from "../../lib/axios.js";
 import {
   Search,
@@ -6,10 +7,12 @@ import {
   CheckCircle2,
   XCircle,
   Plus,
+  RefreshCw,
   X,
   Edit2,
   Upload,
   User,
+  BarChart2,
 } from "lucide-react";
 import FormInput from "../../components/Auth/FormInput.jsx";
 
@@ -63,6 +66,19 @@ const AdminTrainersPage = () => {
     } catch (error) {
       console.error("Failed to delete trainer", error);
       alert(error.response?.data?.message || "Failed to deactivate trainer");
+    }
+  };
+
+  const handleReactivate = async (id) => {
+    if (!window.confirm("Are you sure you want to reactivate this trainer?"))
+      return;
+
+    try {
+      await api.patch(`/admin/trainers/reactivate/${id}`);
+      fetchTrainers();
+    } catch (error) {
+      console.error("Failed to reactivate trainer", error);
+      alert(error.response?.data?.message || "Failed to reactivate trainer");
     }
   };
 
@@ -270,6 +286,13 @@ const AdminTrainersPage = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right">
                       <div className="flex items-center justify-end gap-2">
+                        <Link
+                          to={`/admin/trainers/performance/${trainer._id}`}
+                          className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors cursor-pointer inline-flex items-center"
+                          title="View Performance"
+                        >
+                          <BarChart2 className="w-4 h-4" />
+                        </Link>
                         <button
                           onClick={() => openEditModal(trainer)}
                           className="p-2 text-slate-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors cursor-pointer"
@@ -277,13 +300,21 @@ const AdminTrainersPage = () => {
                         >
                           <Edit2 className="w-4 h-4" />
                         </button>
-                        {trainer.isActive && (
+                        {trainer.isActive ? (
                           <button
                             onClick={() => handleDelete(trainer._id)}
                             className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
                             title="Deactivate Trainer"
                           >
                             <Trash2 className="w-4 h-4" />
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleReactivate(trainer._id)}
+                            className="p-2 text-slate-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors cursor-pointer"
+                            title="Reactivate Trainer"
+                          >
+                            <RefreshCw className="w-4 h-4" />
                           </button>
                         )}
                       </div>

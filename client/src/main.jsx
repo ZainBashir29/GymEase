@@ -28,6 +28,7 @@ import AdminLayout from "./components/Layout/AdminLayout.jsx";
 import AdminDashboardPage from "./pages/Admin/AdminDashboardPage.jsx";
 import AdminMembersPage from "./pages/Admin/AdminMembersPage.jsx";
 import AdminTrainersPage from "./pages/Admin/AdminTrainersPage.jsx";
+import AdminTrainerPerformancePage from "./pages/Admin/AdminTrainerPerformancePage.jsx";
 import AdminGymPlansPage from "./pages/Admin/AdminGymPlansPage.jsx";
 import AdminMembershipsPage from "./pages/Admin/AdminMembershipsPage.jsx";
 import AdminStorePage from "./pages/Admin/AdminStorePage.jsx";
@@ -202,6 +203,10 @@ const router = createBrowserRouter([
       {
         path: "trainers",
         element: <AdminTrainersPage />,
+      },
+      {
+        path: "trainers/performance/:id",
+        element: <AdminTrainerPerformancePage />,
       },
       {
         path: "gym-plans",
