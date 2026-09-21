@@ -59,12 +59,37 @@ export const getMembershipReceiptEmail = ({
   planName,
   startDate,
   endDate,
-  isRenewal,
+  membershipEvent,
+  previousPlanName,
 }) => {
-  const action = isRenewal ? "renewed" : "activated";
-  const heading = isRenewal ? "Membership renewed" : "Membership activated";
+  const events = {
+    first_purchase: {
+      subject: `Welcome to GymEase: ${planName} membership active`,
+      heading: "Welcome to GymEase",
+      summary: `Your ${planName} membership is now active.`,
+    },
+    returning_member: {
+      subject: `Welcome back to GymEase: ${planName} membership active`,
+      heading: "Welcome back to GymEase",
+      summary: `Your ${planName} membership is active again.`,
+    },
+    plan_changed: {
+      subject: `GymEase membership plan changed to ${planName}`,
+      heading: "Membership plan changed",
+      summary: `Your membership has changed from ${previousPlanName} to ${planName}.`,
+    },
+    renewed: {
+      subject: `GymEase membership renewed: ${planName}`,
+      heading: "Membership renewed",
+      summary: `Your ${planName} membership has been renewed.`,
+    },
+  };
+  const event = events[membershipEvent] || events.first_purchase;
   const rows = [
     ["Plan", planName],
+    ...(membershipEvent === "plan_changed"
+      ? [["Previous plan", previousPlanName]]
+      : []),
     ["Amount paid", formatAmount(amount)],
     ["Payment status", "Paid"],
     ["Payment reference", paymentId],
@@ -73,13 +98,13 @@ export const getMembershipReceiptEmail = ({
   ];
 
   return {
-    subject: `GymEase membership ${action}: ${planName}`,
-    text: `Hi ${userName},\n\nYour ${planName} membership has been ${action}.\nAmount paid: ${formatAmount(amount)}\nPayment status: Paid\nPayment reference: ${paymentId}\nMembership starts: ${formatDate(startDate)}\nMembership expires: ${formatDate(endDate)}\n\nYou can manage your membership from your GymEase dashboard.\n\nGymEase Support: ${supportEmail}`,
+    subject: event.subject,
+    text: `Hi ${userName},\n\n${event.summary}\nAmount paid: ${formatAmount(amount)}\nPayment status: Paid\nPayment reference: ${paymentId}\nMembership starts: ${formatDate(startDate)}\nMembership expires: ${formatDate(endDate)}\n\nYou can manage your membership from your GymEase dashboard.\n\nGymEase Support: ${supportEmail}`,
     html: emailLayout({
-      title: heading,
+      title: event.heading,
       preview: `Your ${planName} membership is active until ${formatDate(endDate)}.`,
-      body: `<h1 style="margin:0 0 12px;color:#111827;font-size:24px;">${heading}</h1>
-        <p style="margin:0 0 20px;">Hi ${escapeHtml(userName)}, your <strong>${escapeHtml(planName)}</strong> membership has been ${action}.</p>
+      body: `<h1 style="margin:0 0 12px;color:#111827;font-size:24px;">${event.heading}</h1>
+        <p style="margin:0 0 20px;">Hi ${escapeHtml(userName)}, ${escapeHtml(event.summary)}</p>
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;margin:20px 0;">${receiptRows(rows)}</table>
         <p style="margin:0;">You can manage your membership from your GymEase dashboard.</p>`,
     }),

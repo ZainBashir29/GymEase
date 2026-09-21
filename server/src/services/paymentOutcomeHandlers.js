@@ -37,8 +37,14 @@ const handleSuccessfulPayment = async (trackerToken) => {
     const existingActiveSub = await MembershipSubscription.findOne({
       memberId: updatedPayment.memberId._id,
       status: "active",
-    });
-    const isFirstTime = !existingActiveSub;
+    }).populate("membershipPlanId", "name");
+
+    const hasPreviousMembership = !existingActiveSub
+      ? await MembershipSubscription.exists({
+          memberId: updatedPayment.memberId._id,
+          status: { $in: ["expired", "cancelled"] },
+        })
+      : false;
 
     await MembershipSubscription.updateMany(
       {
@@ -69,6 +75,16 @@ const handleSuccessfulPayment = async (trackerToken) => {
       throw new Error("Could not activate the paid membership subscription");
     }
 
+    const previousPlanName = existingActiveSub?.membershipPlanId?.name;
+    const membershipEvent = existingActiveSub
+      ? existingActiveSub.membershipPlanId?._id.toString() ===
+        activatedSubscription.membershipPlanId?._id.toString()
+        ? "renewed"
+        : "plan_changed"
+      : hasPreviousMembership
+        ? "returning_member"
+        : "first_purchase";
+
     const emailContent = getMembershipReceiptEmail({
       userName: updatedPayment.memberId.fullName,
       amount: updatedPayment.amount,
@@ -76,7 +92,8 @@ const handleSuccessfulPayment = async (trackerToken) => {
       planName: activatedSubscription.membershipPlanId?.name || "Membership",
       startDate: activatedSubscription.startDate,
       endDate: activatedSubscription.endDate,
-      isRenewal: !isFirstTime,
+      membershipEvent,
+      previousPlanName,
     });
 
     sendEmail({
