@@ -6,8 +6,7 @@ import StoreProduct from "../models/storeProductModel.js";
 import Safepay from "@sfpy/node-core";
 import sendEmail from "./nodemailer.js";
 import {
-  getWelcomeMembershipEmail,
-  getRenewalMembershipEmail,
+  getMembershipReceiptEmail,
   getStoreOrderEmail,
 } from "../utils/emailTemplates.js";
 
@@ -51,7 +50,7 @@ const handleSuccessfulPayment = async (trackerToken) => {
       },
     );
 
-    await MembershipSubscription.findOneAndUpdate(
+    const activatedSubscription = await MembershipSubscription.findOneAndUpdate(
       {
         membershipPlanId: updatedPayment.paymentCauseId,
         memberId: updatedPayment.memberId._id,
@@ -64,17 +63,21 @@ const handleSuccessfulPayment = async (trackerToken) => {
         },
       },
       { returnDocument: "after" },
-    );
+    ).populate("membershipPlanId", "name");
 
-    const emailContent = isFirstTime
-      ? getWelcomeMembershipEmail(
-          updatedPayment.memberId.fullName,
-          updatedPayment.amount,
-        )
-      : getRenewalMembershipEmail(
-          updatedPayment.memberId.fullName,
-          updatedPayment.amount,
-        );
+    if (!activatedSubscription) {
+      throw new Error("Could not activate the paid membership subscription");
+    }
+
+    const emailContent = getMembershipReceiptEmail({
+      userName: updatedPayment.memberId.fullName,
+      amount: updatedPayment.amount,
+      paymentId: updatedPayment._id.toString(),
+      planName: activatedSubscription.membershipPlanId?.name || "Membership",
+      startDate: activatedSubscription.startDate,
+      endDate: activatedSubscription.endDate,
+      isRenewal: !isFirstTime,
+    });
 
     sendEmail({
       to: updatedPayment.memberId.email,
@@ -156,11 +159,12 @@ const handleSuccessfulPayment = async (trackerToken) => {
       { $set: { products: [] } },
     );
 
-    const emailContent = getStoreOrderEmail(
-      updatedPayment.memberId.fullName,
-      updatedPayment.amount,
-      order.products,
-    );
+    const emailContent = getStoreOrderEmail({
+      userName: updatedPayment.memberId.fullName,
+      amount: updatedPayment.amount,
+      paymentId: updatedPayment._id.toString(),
+      order,
+    });
     sendEmail({
       to: updatedPayment.memberId.email,
       ...emailContent,

@@ -2,13 +2,14 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const sendEmail = async ({ to, subject, html }) => {
+const sendEmail = async ({ to, subject, html, text }) => {
   try {
     const { data, error } = await resend.emails.send({
       from: "GymEase Team <support@gymease.site>",
       to: typeof to === 'string' ? [to] : to,
       subject: subject,
       html: html,
+      text,
     });
 
     if (error) {

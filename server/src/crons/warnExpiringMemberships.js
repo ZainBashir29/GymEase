@@ -1,5 +1,6 @@
 import MembershipSubscription from "../models/membershipSubscriptionModel.js";
 import sendEmail from "../services/nodemailer.js";
+import { getExpiryReminderEmail } from "../utils/emailTemplates.js";
 
 const days = 3;
 
@@ -15,7 +16,9 @@ const warnExpiringMemberships = async () => {
   const expiringSubscriptions = await MembershipSubscription.find({
     endDate: { $gte: targetDate, $lte: endOfTargetDay },
     status: "active",
-  }).populate("memberId", "fullName email");
+  })
+    .populate("memberId", "fullName email")
+    .populate("membershipPlanId", "name");
 
   if (expiringSubscriptions.length === 0) {
     console.log("No memberships expiring in 3 days");
@@ -30,19 +33,15 @@ const warnExpiringMemberships = async () => {
       continue;
     }
 
-    const formattedDate = subscription.endDate.toDateString();
-
     try {
+      const emailContent = getExpiryReminderEmail({
+        userName: member.fullName || "there",
+        planName: subscription.membershipPlanId?.name || "Membership",
+        endDate: subscription.endDate,
+      });
       await sendEmail({
         to: member.email,
-        subject: "Your GymEase membership is expiring soon",
-        html: `
-          <p>Hi ${member.fullName || "there"},</p>
-          <p>Your GymEase membership is set to expire on <strong>${formattedDate}</strong>.</p>
-          <p>To avoid any interruption to your gym access, gym plans, and sessions, please renew your membership before it expires.</p>
-          <p>You can renew anytime from your dashboard.</p>
-          <p>- The GymEase Team</p>
-        `,
+        ...emailContent,
       });
 
       console.log(`Warning email sent to ${member.email}`);

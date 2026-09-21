@@ -270,13 +270,17 @@ const cancelMembershipSubscription = asyncHandler(async (req, res) => {
     {
       returnDocument: "after",
     },
-  );
+  ).populate("membershipPlanId", "name");
 
   if (!cancelledSubscripton) {
     throw new ApiError(500, "Could not cancel membership subscription");
   }
 
-  const emailContent = getCancellationEmail(req.user.fullName);
+  const emailContent = getCancellationEmail({
+    userName: req.user.fullName,
+    planName: cancelledSubscripton.membershipPlanId?.name || "Membership",
+    cancelledAt: cancelledSubscripton.updatedAt,
+  });
   sendEmail({
     to: req.user.email,
     ...emailContent

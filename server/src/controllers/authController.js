@@ -320,7 +320,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
                 </table>
 
                 <p style="margin: 0 0 16px 0; font-size: 13px; color: #6b7280;">
-                  This link is valid for a limited time. If you didn't request a password change, you can safely ignore this email; your account remains secure.
+                  This link expires in 1 hour. If you didn't request a password change, you can safely ignore this email; your account remains secure.
                 </p>
 
                 <!-- Fallback Plain URL -->
@@ -345,6 +345,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
   </body>
   </html>
   `,
+      text: `GymEase password reset request\n\nWe received a request to change the password for your account. Use the following link within 1 hour to choose a new password:\n${redirectUrl}\n\nIf you did not request this, you can safely ignore this email; your account remains secure.`,
     });
   } catch (error) {
     user.resetPasswordToken = undefined;
