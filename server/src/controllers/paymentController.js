@@ -22,6 +22,31 @@ const safepay = Safepay(process.env.SAFEPAY_SECRET_KEY, {
   host: "https://sandbox.api.getsafepay.com",
 });
 
+const determineMembershipPaymentType = async (memberId, planId) => {
+  const existingActiveMembership = await MembershipSubscription.findOne({
+    memberId,
+    status: "active",
+  }).populate("membershipPlanId", "_id");
+
+  if (existingActiveMembership) {
+    return existingActiveMembership.membershipPlanId?._id.toString() ===
+      String(planId)
+      ? "renewal"
+      : "plan_change";
+  }
+
+  const hasPreviousMembership = await MembershipSubscription.exists({
+    memberId,
+    status: { $in: ["expired", "cancelled"] },
+  });
+
+  if (hasPreviousMembership) {
+    return "returning_member";
+  }
+
+  return "new_membership";
+};
+
 const createCheckoutUrl = asyncHandler(async (req, res) => {
   const { type, paymentCauseId, amount } = req.body;
 
@@ -47,6 +72,8 @@ const createCheckoutUrl = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid payment amount");
   }
 
+  let membershipPaymentType = null;
+
   if (type === "MembershipSubscription") {
     const membershipPlan = await MembershipPlan.findById(paymentCauseId);
 
@@ -55,6 +82,10 @@ const createCheckoutUrl = asyncHandler(async (req, res) => {
     }
 
     chargeAmount = membershipPlan.price;
+    membershipPaymentType = await determineMembershipPaymentType(
+      req.user?._id,
+      paymentCauseId,
+    );
   }
 
   const session = await createPaymentSession(
@@ -88,6 +119,7 @@ const createCheckoutUrl = asyncHandler(async (req, res) => {
   const pendingPaymentRecord = await Payment.create({
     memberId: req.user?._id,
     type,
+    membershipPaymentType,
     paymentCauseId,
     amount: chargeAmount,
     status: "pending",
@@ -135,6 +167,34 @@ const verifyPaymentStatus = asyncHandler(async (req, res) => {
   const status = response.data?.state;
 
   if (status !== "TRACKER_ENDED") {
+    const terminalFailureStates = [
+      "FAILED",
+      "CANCELLED",
+      "CANCELED",
+      "DECLINED",
+      "EXPIRED",
+    ];
+
+    const isFailureState = terminalFailureStates.some((value) =>
+      String(status).toUpperCase().includes(value),
+    );
+
+    if (isFailureState) {
+      const failedPaymentStatus = await handleFailedPayment(tracker);
+
+      if (failedPaymentStatus) {
+        return res
+          .status(200)
+          .json(
+            new ApiResponse(
+              200,
+              failedPaymentStatus,
+              "Payment failed or was cancelled.",
+            ),
+          );
+      }
+    }
+
     return res
       .status(200)
       .json(

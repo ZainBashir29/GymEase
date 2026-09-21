@@ -12,6 +12,10 @@ const paymentSchema = new mongoose.Schema(
       required: true,
       enum: ["MembershipSubscription", "StoreOrder"],
     },
+    membershipPaymentType: {
+      type: String,
+      enum: ["new_membership", "renewal", "plan_change", "returning_member"],
+    },
     paymentCauseId: {
       type: mongoose.Schema.Types.ObjectId,
       refPath: "type",

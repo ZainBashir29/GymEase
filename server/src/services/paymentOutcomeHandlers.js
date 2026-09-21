@@ -15,6 +15,31 @@ const safepay = Safepay(process.env.SAFEPAY_SECRET_KEY, {
   host: "https://sandbox.api.getsafepay.com",
 });
 
+const getMembershipPaymentType = async (memberId, planId) => {
+  const existingActiveMembership = await MembershipSubscription.findOne({
+    memberId,
+    status: "active",
+  }).populate("membershipPlanId", "_id");
+
+  if (existingActiveMembership) {
+    return existingActiveMembership.membershipPlanId?._id.toString() ===
+      String(planId)
+      ? "renewal"
+      : "plan_change";
+  }
+
+  const hasPreviousMembership = await MembershipSubscription.exists({
+    memberId,
+    status: { $in: ["expired", "cancelled"] },
+  });
+
+  if (hasPreviousMembership) {
+    return "returning_member";
+  }
+
+  return "new_membership";
+};
+
 const handleSuccessfulPayment = async (trackerToken) => {
   const updatedPayment = await Payment.findOneAndUpdate(
     { trackerToken, status: "pending" },
@@ -76,14 +101,22 @@ const handleSuccessfulPayment = async (trackerToken) => {
     }
 
     const previousPlanName = existingActiveSub?.membershipPlanId?.name;
-    const membershipEvent = existingActiveSub
-      ? existingActiveSub.membershipPlanId?._id.toString() ===
-        activatedSubscription.membershipPlanId?._id.toString()
+    const membershipPaymentType =
+      updatedPayment.membershipPaymentType ||
+      (await getMembershipPaymentType(
+        updatedPayment.memberId._id,
+        updatedPayment.paymentCauseId,
+      ));
+    updatedPayment.membershipPaymentType = membershipPaymentType;
+
+    const membershipEvent =
+      membershipPaymentType === "renewal"
         ? "renewed"
-        : "plan_changed"
-      : hasPreviousMembership
-        ? "returning_member"
-        : "first_purchase";
+        : membershipPaymentType === "plan_change"
+          ? "plan_changed"
+          : membershipPaymentType === "returning_member"
+            ? "returning_member"
+            : "first_purchase";
 
     const emailContent = getMembershipReceiptEmail({
       userName: updatedPayment.memberId.fullName,
@@ -209,6 +242,13 @@ const handleFailedPayment = async (trackerToken) => {
   }
 
   if (updatedPayment.type === "MembershipSubscription") {
+    updatedPayment.membershipPaymentType =
+      updatedPayment.membershipPaymentType ||
+      (await getMembershipPaymentType(
+        updatedPayment.memberId,
+        updatedPayment.paymentCauseId,
+      ));
+
     await MembershipSubscription.findOneAndDelete({
       membershipPlanId: updatedPayment.paymentCauseId,
       memberId: updatedPayment.memberId,

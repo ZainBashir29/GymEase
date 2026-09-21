@@ -10,12 +10,41 @@ import {
 import api from "../lib/axios.js";
 import { useCart } from "../context/CartContext.jsx";
 
+const getMembershipSuccessMessage = (membershipPaymentType) => {
+  switch (membershipPaymentType) {
+    case "renewal":
+      return "Your membership renewal has been confirmed. Your access has been extended and your plan remains active.";
+    case "plan_change":
+      return "Your membership plan change has been confirmed. Your updated plan is now active.";
+    case "returning_member":
+      return "Welcome back! Your membership has been reactivated successfully, and your GymEase access is ready again.";
+    case "new_membership":
+    default:
+      return "Payment confirmed! Your membership is now active. Welcome to GymEase!";
+  }
+};
+
+const getMembershipSuccessTitle = (membershipPaymentType) => {
+  switch (membershipPaymentType) {
+    case "renewal":
+      return "Membership Renewal Successful!";
+    case "plan_change":
+      return "Plan Change Successful!";
+    case "returning_member":
+      return "Welcome Back!";
+    case "new_membership":
+    default:
+      return "Membership Activated!";
+  }
+};
+
 const PaymentSuccessPage = () => {
   const [searchParams] = useSearchParams();
   const trackerToken = searchParams.get("tracker");
   const [state, setState] = useState("verifying");
   const [message, setMessage] = useState("Confirming your payment...");
   const [paymentType, setPaymentType] = useState(null);
+  const [membershipPaymentType, setMembershipPaymentType] = useState(null);
   const { fetchCart } = useCart();
 
   useEffect(() => {
@@ -33,7 +62,12 @@ const PaymentSuccessPage = () => {
         setState("success");
 
         const paymentType = data.data?.type;
+        const resolvedMembershipType =
+          data.data?.membershipPaymentType ||
+          data.data?.paymentRecord?.membershipPaymentType;
+
         setPaymentType(paymentType);
+        setMembershipPaymentType(resolvedMembershipType);
 
         if (paymentType === "StoreOrder") {
           setMessage(
@@ -41,9 +75,7 @@ const PaymentSuccessPage = () => {
           );
           fetchCart?.();
         } else if (paymentType === "MembershipSubscription") {
-          setMessage(
-            "Payment confirmed! Your membership subscription is now active. Welcome to GymEase!",
-          );
+          setMessage(getMembershipSuccessMessage(resolvedMembershipType));
         } else {
           setMessage(data.message || "Payment processed successfully.");
         }
@@ -82,7 +114,7 @@ const PaymentSuccessPage = () => {
             : isSuccess
               ? paymentType === "StoreOrder"
                 ? "Order Placed Successfully!"
-                : "Membership Activated!"
+                : getMembershipSuccessTitle(membershipPaymentType)
               : "Payment Verification Failed"}
         </h1>
 
