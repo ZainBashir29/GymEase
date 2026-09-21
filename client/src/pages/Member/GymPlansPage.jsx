@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import ConfirmModal from "../../components/Dashboard/ConfirmModal.jsx";
 import DashboardLayout from "../../components/Dashboard/DashboardLayout.jsx";
+import { useChat } from "../../context/ChatContext.jsx";
 
 const memberSidebarItems = [
   { label: "Dashboard", to: "/member/dashboard", icon: LayoutDashboard },
@@ -32,6 +33,7 @@ const GymPlansPage = () => {
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
   const navigate = useNavigate();
+  const { fetchConversations } = useChat();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -213,6 +215,7 @@ const GymPlansPage = () => {
             await api.post(`/gym-plans/cancel/${activePlan?._id}`);
             setActivePlan(null);
             setIsCancelModalOpen(false);
+            fetchConversations();
           } catch (error) {
             alert(error.response?.data?.message || "Failed to cancel plan");
           } finally {

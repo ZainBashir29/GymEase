@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import api from "../../lib/axios.js";
+import { useChat } from "../../context/ChatContext.jsx";
 import {
   ArrowLeft,
   Dumbbell,
@@ -13,6 +14,7 @@ import ConfirmModal from "../../components/Dashboard/ConfirmModal.jsx";
 const GymPlanDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { fetchConversations } = useChat();
   const [plan, setPlan] = useState(null);
   const [activePlan, setActivePlan] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -51,6 +53,7 @@ const GymPlanDetailsPage = () => {
     setError("");
     try {
       await api.post(`/gym-plans/activate/${id}`);
+      fetchConversations();
       navigate("/member/dashboard", { replace: true });
     } catch (err) {
       setError(
@@ -228,6 +231,7 @@ const GymPlanDetailsPage = () => {
             await api.post(`/gym-plans/cancel/${activePlan?._id}`);
             setActivePlan(null);
             setIsCancelModalOpen(false);
+            fetchConversations();
           } catch (error) {
             alert(error.response?.data?.message || "Failed to cancel plan");
           } finally {

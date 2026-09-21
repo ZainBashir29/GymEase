@@ -560,24 +560,25 @@ const addGymPlan = asyncHandler(async (req, res) => {
     }
   }
 
-  if (!Array.isArray(trainerIds) || trainerIds.length === 0) {
-    throw new ApiError(400, "At least one trainerId is required");
-  }
+  let resolvedTrainerIds = [];
+  if (Array.isArray(trainerIds) && trainerIds.length > 0) {
+    if (trainerIds.some((id) => !mongoose.isValidObjectId(id))) {
+      throw new ApiError(400, "One or more trainerIds are invalid");
+    }
 
-  if (trainerIds.some((id) => !mongoose.isValidObjectId(id))) {
-    throw new ApiError(400, "One or more trainerIds are invalid");
-  }
+    const validTrainers = await Trainer.find({
+      _id: { $in: trainerIds },
+      isActive: true,
+    });
 
-  const validTrainers = await Trainer.find({
-    _id: { $in: trainerIds },
-    isActive: true,
-  });
+    if (validTrainers.length !== trainerIds.length) {
+      throw new ApiError(
+        400,
+        "One or more trainerIds do not match an active trainer",
+      );
+    }
 
-  if (validTrainers.length !== trainerIds.length) {
-    throw new ApiError(
-      400,
-      "One or more trainerIds do not match an active trainer",
-    );
+    resolvedTrainerIds = trainerIds;
   }
 
   const gymPlan = await GymPlan.create({
@@ -587,7 +588,7 @@ const addGymPlan = asyncHandler(async (req, res) => {
     details,
     sessions,
     duration,
-    trainerIds,
+    trainerIds: resolvedTrainerIds,
   });
 
   res

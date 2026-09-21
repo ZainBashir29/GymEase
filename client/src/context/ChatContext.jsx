@@ -155,6 +155,20 @@ export const ChatProvider = ({ children }) => {
       const convs = data.data || [];
       setConversations(convs);
 
+      // If the currently open conversation is no longer in the valid list, close it
+      setActiveConversation((currentActive) => {
+        if (currentActive) {
+          const stillValid = convs.some(
+            (c) => String(c._id) === String(currentActive._id),
+          );
+          if (!stillValid) {
+            setMessages([]);
+            return null;
+          }
+        }
+        return currentActive;
+      });
+
       const initialUnread = {};
       let totalUnread = 0;
       convs.forEach((c) => {
@@ -189,7 +203,16 @@ export const ChatProvider = ({ children }) => {
   };
 
   const toggleChatWindow = () => {
-    setIsChatOpen((prev) => !prev);
+    setIsChatOpen((prev) => {
+      const nextOpen = !prev;
+      if (nextOpen) {
+        fetchConversations();
+      } else {
+        setActiveConversation(null);
+        setMessages([]);
+      }
+      return nextOpen;
+    });
   };
 
   const openConversation = (conversation) => {

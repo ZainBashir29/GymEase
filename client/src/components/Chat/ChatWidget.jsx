@@ -43,6 +43,13 @@ const ChatWidget = () => {
     }
   }, [messages]);
 
+  // Reset to Messages view whenever the widget is closed
+  useEffect(() => {
+    if (!isChatOpen) {
+      setShowContacts(false);
+    }
+  }, [isChatOpen]);
+
   if (!user) return null;
 
   const handleSend = (e) => {
