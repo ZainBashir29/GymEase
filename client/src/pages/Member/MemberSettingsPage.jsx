@@ -11,6 +11,7 @@ import {
   LogOut,
   Settings,
   Camera,
+  Lock,
 } from "lucide-react";
 import DashboardLayout from "../../components/Dashboard/DashboardLayout.jsx";
 import {
@@ -66,11 +67,8 @@ const MemberSettingsPage = () => {
       if (username !== user?.username) {
         await api.patch("/auth/member/update/username", { username });
       }
-      if (email !== user?.email) {
-        await api.patch("/auth/member/update/email", { email });
-      }
 
-      login({ ...user, fullName, username, email });
+      login({ ...user, fullName, username });
       setMessage({ type: "success", text: "Profile updated successfully!" });
     } catch (error) {
       setMessage({
@@ -257,11 +255,15 @@ const MemberSettingsPage = () => {
                 </label>
                 <input
                   type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none"
-                  required
+                  value={user?.email || ""}
+                  readOnly
+                  disabled
+                  className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-500 cursor-not-allowed outline-none"
                 />
+                <p className="mt-1.5 text-xs text-slate-400 flex items-center gap-1">
+                  <Lock className="w-3 h-3 shrink-0" />
+                  <span>Email cannot be changed here. Please contact the admin via chat to request an email address change.</span>
+                </p>
               </div>
 
               <div className="pt-4 flex justify-end">

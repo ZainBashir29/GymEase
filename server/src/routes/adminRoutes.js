@@ -7,6 +7,7 @@ import {
   getMemberById,
   deleteMember,
   reactivateMember,
+  changeMemberEmail,
   getAllTrainers,
   getTrainerById,
   addTrainer,
@@ -36,6 +37,7 @@ router.route("/members/:id").get(getMemberById);
 
 router.route("/members/delete/:id").delete(deleteMember);
 router.route("/members/reactivate/:id").patch(reactivateMember);
+router.route("/members/change-email/:id").patch(changeMemberEmail);
 
 router.route("/trainers").get(getAllTrainers);
 

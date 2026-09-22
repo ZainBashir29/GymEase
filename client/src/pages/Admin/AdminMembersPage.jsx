@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from "react";
 import api from "../../lib/axios.js";
-import { Search, Trash2, CheckCircle2, XCircle, UserCheck, RefreshCw } from "lucide-react";
+import { Search, Trash2, CheckCircle2, XCircle, RefreshCw, Mail, X } from "lucide-react";
 
 const AdminMembersPage = () => {
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [includeInactive, setIncludeInactive] = useState(true);
+
+  const [emailModal, setEmailModal] = useState({ open: false, member: null });
+  const [newEmail, setNewEmail] = useState("");
+  const [emailChanging, setEmailChanging] = useState(false);
+  const [emailError, setEmailError] = useState("");
 
   const fetchMembers = async () => {
     setLoading(true);
@@ -32,7 +37,7 @@ const AdminMembersPage = () => {
 
     try {
       await api.delete(`/admin/members/delete/${id}`);
-      fetchMembers(); 
+      fetchMembers();
     } catch (error) {
       console.error("Failed to delete member", error);
       alert(error.response?.data?.message || "Failed to deactivate member");
@@ -49,6 +54,37 @@ const AdminMembersPage = () => {
     } catch (error) {
       console.error("Failed to reactivate member", error);
       alert(error.response?.data?.message || "Failed to reactivate member");
+    }
+  };
+
+  const openEmailModal = (member) => {
+    setEmailModal({ open: true, member });
+    setNewEmail("");
+    setEmailError("");
+  };
+
+  const closeEmailModal = () => {
+    setEmailModal({ open: false, member: null });
+    setNewEmail("");
+    setEmailError("");
+  };
+
+  const handleChangeEmail = async (e) => {
+    e.preventDefault();
+    setEmailError("");
+    setEmailChanging(true);
+    try {
+      await api.patch(`/admin/members/change-email/${emailModal.member._id}`, {
+        email: newEmail,
+      });
+      closeEmailModal();
+      fetchMembers();
+    } catch (error) {
+      setEmailError(
+        error.response?.data?.message || "Failed to change email address.",
+      );
+    } finally {
+      setEmailChanging(false);
     }
   };
 
@@ -210,23 +246,32 @@ const AdminMembersPage = () => {
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      {member.isActive ? (
+                      <div className="flex items-center justify-end gap-1">
                         <button
-                          onClick={() => handleDelete(member._id)}
-                          className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors inline-flex items-center gap-2"
-                          title="Deactivate Member"
+                          onClick={() => openEmailModal(member)}
+                          className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                          title="Change Email"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Mail className="w-4 h-4" />
                         </button>
-                      ) : (
-                        <button
-                          onClick={() => handleReactivate(member._id)}
-                          className="p-2 text-slate-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors inline-flex items-center gap-2"
-                          title="Reactivate Member"
-                        >
-                          <RefreshCw className="w-4 h-4" />
-                        </button>
-                      )}
+                        {member.isActive ? (
+                          <button
+                            onClick={() => handleDelete(member._id)}
+                            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Deactivate Member"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => handleReactivate(member._id)}
+                            className="p-2 text-slate-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                            title="Reactivate Member"
+                          >
+                            <RefreshCw className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -235,6 +280,91 @@ const AdminMembersPage = () => {
           </table>
         </div>
       </div>
+
+      {emailModal.open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
+            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">Change Email Address</h3>
+                <p className="text-sm text-slate-500 mt-0.5">
+                  For <span className="font-medium text-slate-700">{emailModal.member?.fullName}</span>
+                </p>
+              </div>
+              <button
+                onClick={closeEmailModal}
+                className="text-slate-400 hover:text-slate-600 transition-colors p-1 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleChangeEmail} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Current Email
+                </label>
+                <input
+                  type="email"
+                  value={emailModal.member?.email || ""}
+                  readOnly
+                  disabled
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-500 cursor-not-allowed text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  New Email Address <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="email"
+                  required
+                  value={newEmail}
+                  onChange={(e) => { setNewEmail(e.target.value); setEmailError(""); }}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"
+                  placeholder="Enter new email address"
+                  autoFocus
+                />
+              </div>
+
+              {emailError && (
+                <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                  {emailError}
+                </p>
+              )}
+
+              <p className="text-xs text-slate-400">
+                The member will receive a confirmation email at their new address notifying them of this change.
+              </p>
+
+              <div className="flex justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={closeEmailModal}
+                  className="px-4 py-2 font-medium text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={emailChanging}
+                  className="px-5 py-2 bg-brand-600 text-white font-medium rounded-lg hover:bg-brand-700 transition-colors disabled:opacity-50 flex items-center gap-2 cursor-pointer"
+                >
+                  {emailChanging ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Saving...
+                    </>
+                  ) : (
+                    "Update Email"
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

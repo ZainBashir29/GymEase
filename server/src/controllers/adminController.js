@@ -11,6 +11,7 @@ import MembershipPlan from "../models/membershipPlanModel.js";
 import GymPlan from "../models/gymPlans/gymPlanModel.js";
 import Payment from "../models/paymentModel.js";
 import Order from "../models/orderModel.js";
+import sendEmail from "../services/nodemailer.js";
 import {
   uploadOnCloudinary,
   deleteFromCloudinary,
@@ -178,6 +179,75 @@ const reactivateMember = asyncHandler(async (req, res) => {
   res
     .status(200)
     .json(new ApiResponse(200, member, "Member reactivated successfully"));
+});
+
+const changeMemberEmail = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { email } = req.body;
+
+  if (!id || !mongoose.isValidObjectId(id)) {
+    throw new ApiError(400, "No or invalid member id");
+  }
+
+  if (!email) {
+    throw new ApiError(400, "New email is required");
+  }
+
+  const normalizedEmail = email.toLowerCase().trim();
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+    throw new ApiError(400, "Invalid email format");
+  }
+
+  const member = await Member.findById(id);
+  if (!member) {
+    throw new ApiError(404, "Member not found");
+  }
+
+  const emailTaken = await Member.findOne({
+    email: normalizedEmail,
+    _id: { $ne: id },
+  });
+  if (emailTaken) {
+    throw new ApiError(409, "This email address is already in use");
+  }
+
+  const oldEmail = member.email;
+  member.email = normalizedEmail;
+  await member.save({ validateBeforeSave: false });
+
+  try {
+    await sendEmail({
+      to: normalizedEmail,
+      subject: "Your GymEase email address has been updated",
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 520px; margin: 0 auto; background: #f9fafb; padding: 32px; border-radius: 12px;">
+          <h2 style="color: #1e293b; margin-top: 0;">Email Address Changed</h2>
+          <p style="color: #475569;">Hello <strong>${member.fullName}</strong>,</p>
+          <p style="color: #475569;">
+            As per your request, your GymEase account email address has been successfully updated by our admin team.
+          </p>
+          <div style="background: #f1f5f9; border-radius: 8px; padding: 16px; margin: 24px 0;">
+            <p style="margin: 0 0 8px 0; color: #64748b; font-size: 13px;">Previous email</p>
+            <p style="margin: 0; font-weight: 600; color: #1e293b;">${oldEmail}</p>
+            <p style="margin: 16px 0 8px 0; color: #64748b; font-size: 13px;">New email</p>
+            <p style="margin: 0; font-weight: 600; color: #2563eb;">${normalizedEmail}</p>
+          </div>
+          <p style="color: #475569; font-size: 14px;">
+            If you did not request this change, please contact our support immediately by replying to this email.
+          </p>
+          <p style="color: #94a3b8; font-size: 12px; margin-top: 32px;">— The GymEase Team</p>
+        </div>
+      `,
+      text: `Hello ${member.fullName},\n\nYour GymEase account email has been changed from ${oldEmail} to ${normalizedEmail} as per your request.\n\nIf you did not request this change, please contact support immediately.\n\n— The GymEase Team`,
+    });
+  } catch (emailErr) {
+    console.error("Failed to send email change notification:", emailErr);
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, member, "Member email updated successfully"));
 });
 
 const getAllTrainers = asyncHandler(async (req, res) => {
@@ -921,6 +991,7 @@ export {
   getMemberById,
   deleteMember,
   reactivateMember,
+  changeMemberEmail,
   getAllTrainers,
   getTrainerById,
   addTrainer,
