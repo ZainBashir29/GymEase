@@ -1,15 +1,25 @@
 import User from "./userModel.js";
 import mongoose from "mongoose";
+import { adminPermissions } from "./adminInvitationModel.js";
 
-const adminSchema = new mongoose.Schema({});
+const adminSchema = new mongoose.Schema({
+  adminType: {
+    type: String,
+    enum: ["system_admin", "sub_admin"],
+    default: "system_admin",
+  },
 
-adminSchema.pre("save", async function () {
-  if (this.isNew) {
-    const adminCount = await this.constructor.countDocuments();
-    if (adminCount >= 1) {
-      throw new Error("Only one Admin is permitted in the system.");
-    }
-  }
+  permissions: {
+    type: [String],
+    enum: adminPermissions,
+    default: [],
+  },
+
+  originalRole: {
+    type: String,
+    enum: ["Member", "Trainer", null],
+    default: null,
+  },
 });
 
 const Admin = User.discriminator("Admin", adminSchema);
