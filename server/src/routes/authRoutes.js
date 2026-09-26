@@ -16,6 +16,8 @@ import {
   changeProfilePicture,
   deleteAccount,
   getCurrentUser,
+  verifyInvitation,
+  acceptInvitation,
 } from "../controllers/authController.js";
 import passport from "passport";
 import verifyJwt from "../middlewares/authMiddleware.js";
@@ -42,7 +44,7 @@ router.route("/google").get(
 
 router.route("/google/callback").get(
   passport.authenticate("google", {
-    failureRedirect: "/login",
+    failureRedirect: `${process.env.CLIENT_URL}/login`,
     session: false,
   }),
   googleCallback,
@@ -90,5 +92,8 @@ router.route("/member/delete").delete(verifyJwt, role("Member"), deleteAccount);
 router
   .route("/current-user")
   .get(verifyJwt, role("Member", "Trainer", "Admin"), getCurrentUser);
+
+router.route("/verify-invitation/:token").get(verifyInvitation);
+router.route("/accept-invitation").post(acceptInvitation);
 
 export default router;
