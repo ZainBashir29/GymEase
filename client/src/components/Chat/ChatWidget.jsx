@@ -49,7 +49,13 @@ const ChatWidget = () => {
     }
   }, [isChatOpen]);
 
-  if (!user || (user.role === "Admin" && !isSystemAdmin && !hasPermission("manage_messages"))) return null;
+  if (
+    !user ||
+    (user.role === "Admin" &&
+      !isSystemAdmin &&
+      !hasPermission("manage_messages"))
+  )
+    return null;
 
   const handleSend = (e) => {
     e.preventDefault();
@@ -246,7 +252,7 @@ const ChatWidget = () => {
                           onClick={() => openConversation(conv)}
                           className={`flex cursor-pointer items-center p-4 transition-colors ${convUnread > 0 ? "bg-brand-50 hover:bg-brand-100" : "hover:bg-slate-100"}`}
                         >
-                          <div className="relative flex-shrink-0">
+                          <div className="relative shrink-0">
                             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-100 text-brand-700 font-bold overflow-hidden">
                               {other?.profilePicture ? (
                                 <img

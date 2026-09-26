@@ -43,6 +43,8 @@ import CustomPlanQuestionnairePage from "./pages/Member/CustomPlanQuestionnaireP
 import MyMembershipPage from "./pages/Member/MyMembershipPage.jsx";
 import MemberPricingPage from "./pages/Member/MemberPricingPage.jsx";
 import MemberSettingsPage from "./pages/Member/MemberSettingsPage.jsx";
+import AcceptInvitationPage from "./pages/AcceptInvitationPage.jsx";
+import AdminSubAdminsPage from "./pages/Admin/AdminSubAdminsPage.jsx";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
 import ChangePasswordPage from "./pages/ChangePasswordPage.jsx";
 import CompleteProfilePage from "./pages/CompleteProfilePage.jsx";
@@ -94,6 +96,11 @@ const router = createBrowserRouter([
             <CompleteProfilePage />{" "}
           </ProtectedRoute>
         ),
+      },
+      
+      {
+        path: "/accept-invitation/:token",
+        element: <AcceptInvitationPage />,
       },
       {
         path: "/forgot-password",
@@ -223,6 +230,10 @@ const router = createBrowserRouter([
       {
         path: "orders",
         element: <AdminOrdersPage />,
+      },
+      {
+        path: "sub-admins",
+        element: <AdminSubAdminsPage />,
       },
     ],
   },
