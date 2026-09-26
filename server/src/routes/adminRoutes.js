@@ -1,3 +1,13 @@
+import {
+  requirePermission,
+  requireSystemAdmin,
+} from "../middlewares/permissionMiddleware.js";
+import {
+  inviteSubAdmin,
+  listSubAdmins,
+  updateSubAdminPermissions,
+  revokeSubAdmin,
+} from "../controllers/subAdminController.js";
 import { Router } from "express";
 import verifyJwt from "../middlewares/authMiddleware.js";
 import role from "../middlewares/roleMiddleware.js";
@@ -31,47 +41,99 @@ const router = Router();
 
 router.use(verifyJwt, role("Admin"));
 
-router.route("/members").get(getAllMembers);
+router
+  .route("/members")
+  .get(requirePermission("manage_members"), getAllMembers);
 
-router.route("/members/:id").get(getMemberById);
+router
+  .route("/members/:id")
+  .get(requirePermission("manage_members"), getMemberById);
 
-router.route("/members/delete/:id").delete(deleteMember);
-router.route("/members/reactivate/:id").patch(reactivateMember);
-router.route("/members/change-email/:id").patch(changeMemberEmail);
+router
+  .route("/members/delete/:id")
+  .delete(requirePermission("manage_members"), deleteMember);
+router
+  .route("/members/reactivate/:id")
+  .patch(requirePermission("manage_members"), reactivateMember);
+router
+  .route("/members/change-email/:id")
+  .patch(requirePermission("manage_members"), changeMemberEmail);
 
-router.route("/trainers").get(getAllTrainers);
+router
+  .route("/trainers")
+  .get(requirePermission("manage_trainers"), getAllTrainers);
 
-router.route("/trainers/:id").get(getTrainerById);
+router
+  .route("/trainers/:id")
+  .get(requirePermission("manage_trainers"), getTrainerById);
 
-router.route("/trainers/add").post(addTrainer);
+router
+  .route("/trainers/add")
+  .post(requirePermission("manage_trainers"), addTrainer);
 
 router
   .route("/trainers/update/:id")
-  .patch(upload.single("profilePicture"), updateTrainer);
+  .patch(
+    requirePermission("manage_trainers"),
+    upload.single("profilePicture"),
+    updateTrainer,
+  );
 
-router.route("/trainers/delete/:id").delete(deleteTrainer);
-router.route("/trainers/reactivate/:id").patch(reactivateTrainer);
+router
+  .route("/trainers/delete/:id")
+  .delete(requirePermission("manage_trainers"), deleteTrainer);
+router
+  .route("/trainers/reactivate/:id")
+  .patch(requirePermission("manage_trainers"), reactivateTrainer);
 
-router.route("/trainers/performance/:id").get(getTrainerPerformance);
+router
+  .route("/trainers/performance/:id")
+  .get(requirePermission("manage_trainers"), getTrainerPerformance);
 
-router.route("/analytics/overview").get(getSystemOverview);
+router.route("/analytics/overview").get(requireSystemAdmin, getSystemOverview);
 
-router.route("/analytics/revenue").get(getRevenueSummary);
+router.route("/analytics/revenue").get(requireSystemAdmin, getRevenueSummary);
 
-router.route("/add-gym-plan").post(addGymPlan);
+router
+  .route("/add-gym-plan")
+  .post(requirePermission("manage_gym_plans"), addGymPlan);
 
-router.route("/update-gym-plan/:id").patch(updateGymPlan);
+router
+  .route("/update-gym-plan/:id")
+  .patch(requirePermission("manage_gym_plans"), updateGymPlan);
 
-router.route("/delete-gym-plan/:id").delete(deleteGymPlan);
-router.route("/reactivate-gym-plan/:id").patch(reactivateGymPlan);
+router
+  .route("/delete-gym-plan/:id")
+  .delete(requirePermission("manage_gym_plans"), deleteGymPlan);
+router
+  .route("/reactivate-gym-plan/:id")
+  .patch(requirePermission("manage_gym_plans"), reactivateGymPlan);
 
-router.route("/add-membership-plan").post(addMembershipPlan);
+router
+  .route("/add-membership-plan")
+  .post(requirePermission("manage_membership_plans"), addMembershipPlan);
 
-router.route("/update-membership-plan/:id").patch(updateMembershipPlan);
+router
+  .route("/update-membership-plan/:id")
+  .patch(requirePermission("manage_membership_plans"), updateMembershipPlan);
 
-router.route("/delete-membership-plan/:id").delete(deleteMembershipPlan);
+router
+  .route("/delete-membership-plan/:id")
+  .delete(requirePermission("manage_membership_plans"), deleteMembershipPlan);
 router
   .route("/reactivate-membership-plan/:id")
-  .patch(reactivateMembershipPlan);
+  .patch(
+    requirePermission("manage_membership_plans"),
+    reactivateMembershipPlan,
+  );
+
+router.route("/sub-admins").get(requireSystemAdmin, listSubAdmins);
+router.route("/sub-admins/invite").post(requireSystemAdmin, inviteSubAdmin);
+router
+  .route("/sub-admins/:id/permissions")
+  .patch(requireSystemAdmin, updateSubAdminPermissions);
+router
+  .route("/sub-admins/revoke/:id")
+  .delete(requireSystemAdmin, revokeSubAdmin);
 
 export default router;
