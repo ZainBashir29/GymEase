@@ -262,7 +262,10 @@ const MemberSettingsPage = () => {
                 />
                 <p className="mt-1.5 text-xs text-slate-400 flex items-center gap-1">
                   <Lock className="w-3 h-3 shrink-0" />
-                  <span>Email cannot be changed here. Please contact the admin via chat to request an email address change.</span>
+                  <span>
+                    Email cannot be changed here. Please contact the admin via
+                    chat to request an email address change.
+                  </span>
                 </p>
               </div>
 
