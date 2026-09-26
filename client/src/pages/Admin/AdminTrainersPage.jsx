@@ -1,3 +1,4 @@
+import { useAuth } from "../../context/AuthContext.jsx";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api from "../../lib/axios.js";
@@ -13,10 +14,25 @@ import {
   Upload,
   User,
   BarChart2,
+  ShieldAlert,
 } from "lucide-react";
 import FormInput from "../../components/Auth/FormInput.jsx";
 
 const AdminTrainersPage = () => {
+  const { hasPermission } = useAuth();
+  if (!hasPermission("manage_trainers")) {
+    return (
+      <div className="flex h-[calc(100vh-200px)] items-center justify-center p-8">
+        <div className="text-center">
+          <ShieldAlert className="mx-auto mb-4 h-12 w-12 text-red-500" />
+          <h2 className="text-xl font-bold text-slate-800">Access Denied</h2>
+          <p className="text-slate-600">
+            You do not have permission to view this page.
+          </p>
+        </div>
+      </div>
+    );
+  }
   const [trainers, setTrainers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");

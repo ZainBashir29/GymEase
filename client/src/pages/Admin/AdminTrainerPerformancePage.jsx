@@ -1,17 +1,29 @@
+import { useAuth } from "../../context/AuthContext.jsx";
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../../lib/axios.js";
-import {
-  ArrowLeft,
+import { ArrowLeft,
   CheckCircle2,
   XCircle,
   Clock,
   Users,
-  Activity
-} from "lucide-react";
+  Activity, ShieldAlert } from "lucide-react";
 
 const AdminTrainerPerformancePage = () => {
-  const { id } = useParams();
+  
+  const { hasPermission } = useAuth();
+  if (!hasPermission("manage_trainers")) {
+    return (
+      <div className="flex h-[calc(100vh-200px)] items-center justify-center p-8">
+        <div className="text-center">
+          <ShieldAlert className="mx-auto mb-4 h-12 w-12 text-red-500" />
+          <h2 className="text-xl font-bold text-slate-800">Access Denied</h2>
+          <p className="text-slate-600">You do not have permission to view this page.</p>
+        </div>
+      </div>
+    );
+  }
+const { id } = useParams();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

@@ -1,16 +1,28 @@
+import { useAuth } from "../../context/AuthContext.jsx";
 import React, { useState, useEffect } from "react";
 import api from "../../lib/axios.js";
-import {
-  Package,
+import { Package,
   Search,
   ChevronDown,
   Eye,
   X,
-  ShoppingBag,
-} from "lucide-react";
+  ShoppingBag, ShieldAlert } from "lucide-react";
 
 const AdminOrdersPage = () => {
-  const [orders, setOrders] = useState([]);
+  
+  const { hasPermission } = useAuth();
+  if (!hasPermission("manage_orders")) {
+    return (
+      <div className="flex h-[calc(100vh-200px)] items-center justify-center p-8">
+        <div className="text-center">
+          <ShieldAlert className="mx-auto mb-4 h-12 w-12 text-red-500" />
+          <h2 className="text-xl font-bold text-slate-800">Access Denied</h2>
+          <p className="text-slate-600">You do not have permission to view this page.</p>
+        </div>
+      </div>
+    );
+  }
+const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [updatingId, setUpdatingId] = useState(null);

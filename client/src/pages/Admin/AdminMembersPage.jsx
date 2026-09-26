@@ -1,8 +1,11 @@
+import { useAuth } from "../../context/AuthContext.jsx";
 import React, { useState, useEffect } from "react";
 import api from "../../lib/axios.js";
-import { Search, Trash2, CheckCircle2, XCircle, RefreshCw, Mail, X } from "lucide-react";
+import { Search, Trash2, CheckCircle2, XCircle, RefreshCw, Mail, X, ShieldAlert } from "lucide-react";
 
 const AdminMembersPage = () => {
+  const { hasPermission } = useAuth();
+
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -28,7 +31,9 @@ const AdminMembersPage = () => {
   };
 
   useEffect(() => {
-    fetchMembers();
+    if (hasPermission("manage_members")) {
+      fetchMembers();
+    }
   }, [includeInactive]);
 
   const handleDelete = async (id) => {
@@ -88,6 +93,19 @@ const AdminMembersPage = () => {
     }
   };
 
+  // Permission guard — placed after all hooks
+  if (!hasPermission("manage_members")) {
+    return (
+      <div className="flex h-[calc(100vh-200px)] items-center justify-center p-8">
+        <div className="text-center">
+          <ShieldAlert className="mx-auto mb-4 h-12 w-12 text-red-500" />
+          <h2 className="text-xl font-bold text-slate-800">Access Denied</h2>
+          <p className="text-slate-600">You do not have permission to view this page.</p>
+        </div>
+      </div>
+    );
+  }
+
   const filteredMembers = members.filter(
     (m) =>
       m.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -133,7 +151,7 @@ const AdminMembersPage = () => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[800px]">
+          <table className="w-full text-left border-collapse min-w-200">
             <thead>
               <tr className="bg-white border-b border-slate-100">
                 <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">

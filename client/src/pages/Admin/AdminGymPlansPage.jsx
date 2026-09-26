@@ -1,12 +1,26 @@
+import { useAuth } from "../../context/AuthContext.jsx";
 import React, { useState, useEffect } from "react";
 import api from "../../lib/axios.js";
-import { Plus, Trash2, Edit2, X, CheckCircle2, ChevronDown, ChevronUp, RotateCcw } from "lucide-react";
+import { Plus, Trash2, Edit2, X, CheckCircle2, ChevronDown, ChevronUp, RotateCcw, ShieldAlert } from "lucide-react";
 
 const emptyExercise = () => ({ name: "", sets: "", reps: "", duration: "" });
 const emptySession = () => ({ name: "", exercises: [emptyExercise()], open: true });
 
 const AdminGymPlansPage = () => {
-  const [plans, setPlans] = useState([]);
+  
+  const { hasPermission } = useAuth();
+  if (!hasPermission("manage_gym_plans")) {
+    return (
+      <div className="flex h-[calc(100vh-200px)] items-center justify-center p-8">
+        <div className="text-center">
+          <ShieldAlert className="mx-auto mb-4 h-12 w-12 text-red-500" />
+          <h2 className="text-xl font-bold text-slate-800">Access Denied</h2>
+          <p className="text-slate-600">You do not have permission to view this page.</p>
+        </div>
+      </div>
+    );
+  }
+const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [includeInactive, setIncludeInactive] = useState(true);
 
