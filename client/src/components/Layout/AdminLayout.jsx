@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link, useLocation, Outlet } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate, Outlet } from "react-router-dom";
 import {
   Menu,
   LayoutDashboard,
@@ -12,6 +12,7 @@ import {
   LogOut,
   ChevronLeft,
   MessageSquare,
+  ShieldCheck,
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useChat } from "../../context/ChatContext.jsx";
@@ -19,19 +20,80 @@ import ChatWidget from "../Chat/ChatWidget.jsx";
 
 const AdminLayout = () => {
   const { pathname } = useLocation();
-  const { logout } = useAuth();
+  const navigate = useNavigate();
+  const { logout, hasPermission, isSystemAdmin } = useAuth();
   const { toggleChatWindow, unreadCount } = useChat();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { name: "Overview", path: "/admin/dashboard", icon: LayoutDashboard },
-    { name: "Members", path: "/admin/members", icon: Users },
-    { name: "Trainers", path: "/admin/trainers", icon: UserCheck },
-    { name: "Gym Plans", path: "/admin/gym-plans", icon: Dumbbell },
-    { name: "Memberships", path: "/admin/memberships", icon: CreditCard },
-    { name: "Store Products", path: "/admin/store", icon: ShoppingBag },
-    { name: "Orders", path: "/admin/orders", icon: ShoppingCart },
+    {
+      name: "Overview",
+      path: "/admin/dashboard",
+      icon: LayoutDashboard,
+      systemAdminOnly: true,
+    },
+    {
+      name: "Members",
+      path: "/admin/members",
+      icon: Users,
+      perm: "manage_members",
+    },
+    {
+      name: "Trainers",
+      path: "/admin/trainers",
+      icon: UserCheck,
+      perm: "manage_trainers",
+    },
+    {
+      name: "Gym Plans",
+      path: "/admin/gym-plans",
+      icon: Dumbbell,
+      perm: "manage_gym_plans",
+    },
+    {
+      name: "Memberships",
+      path: "/admin/memberships",
+      icon: CreditCard,
+      perm: "manage_membership_plans",
+    },
+    {
+      name: "Store Products",
+      path: "/admin/store",
+      icon: ShoppingBag,
+      perm: "manage_products",
+    },
+    {
+      name: "Orders",
+      path: "/admin/orders",
+      icon: ShoppingCart,
+      perm: "manage_orders",
+    },
   ];
+
+  if (isSystemAdmin) {
+    navItems.push({
+      name: "Sub-Admins",
+      path: "/admin/sub-admins",
+      icon: ShieldCheck,
+    });
+  }
+
+  const filteredNavItems = navItems.filter((item) => {
+    if (item.systemAdminOnly && !isSystemAdmin) return false;
+    return !item.perm || hasPermission(item.perm);
+  });
+
+  useEffect(() => {
+    if (
+      pathname === "/admin/dashboard" ||
+      pathname === "/admin" ||
+      pathname === "/admin/"
+    ) {
+      if (!isSystemAdmin && filteredNavItems.length > 0) {
+        navigate(filteredNavItems[0].path, { replace: true });
+      }
+    }
+  }, [pathname, isSystemAdmin, navigate]);
 
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden font-sans relative">
@@ -64,14 +126,14 @@ const AdminLayout = () => {
           </Link>
         </div>
 
-        <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          {navItems.map((item) => {
+        <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] scrollbar-none">
+          {filteredNavItems.map((item) => {
             const Icon = item.icon;
             const isActive =
               pathname === item.path || pathname.startsWith(`${item.path}/`);
             return (
               <Link
-                key={item.path}b
+                key={item.path}
                 to={item.path}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
@@ -88,21 +150,23 @@ const AdminLayout = () => {
             );
           })}
 
-          <button
-            type="button"
-            onClick={toggleChatWindow}
-            className="flex w-full items-center justify-between px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors cursor-pointer"
-          >
-            <div className="flex items-center gap-3">
-              <MessageSquare className="w-5 h-5 text-slate-400" />
-              <span>Messages</span>
-            </div>
-            {unreadCount > 0 && (
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand-500 text-[10px] font-bold text-white">
-                {unreadCount > 9 ? "9+" : unreadCount}
-              </span>
-            )}
-          </button>
+          {(isSystemAdmin || hasPermission("manage_messages")) && (
+            <button
+              type="button"
+              onClick={toggleChatWindow}
+              className="flex w-full items-center justify-between px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <MessageSquare className="w-5 h-5 text-slate-400" />
+                <span>Messages</span>
+              </div>
+              {unreadCount > 0 && (
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-brand-500 text-[10px] font-bold text-white">
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
+            </button>
+          )}
         </nav>
 
         <div className="p-4 border-t border-slate-800">
@@ -134,19 +198,22 @@ const AdminLayout = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <button
-              type="button"
-              onClick={toggleChatWindow}
-              className="relative p-1 text-slate-600 hover:text-brand-600 transition-colors cursor-pointer"
-              title="Messages"
-            >
-              <MessageSquare className="w-5 h-5" />
-              {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-brand-600 text-[9px] font-bold text-white">
-                  {unreadCount > 9 ? "9+" : unreadCount}
-                </span>
-              )}
-            </button>
+            {(isSystemAdmin || hasPermission("manage_messages")) && (
+              <button
+                type="button"
+                onClick={toggleChatWindow}
+                className="relative p-1 text-slate-600 hover:text-brand-600 transition-colors cursor-pointer"
+                title="Messages"
+              >
+                <MessageSquare className="w-5 h-5" />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-brand-600 text-[9px] font-bold text-white">
+                    {unreadCount > 9 ? "9+" : unreadCount}
+                  </span>
+                )}
+              </button>
+            )}
+
             <Link to="/" className="text-sm font-medium text-brand-600">
               Exit
             </Link>
