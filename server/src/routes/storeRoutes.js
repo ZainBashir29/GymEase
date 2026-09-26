@@ -1,4 +1,6 @@
 import express from "express";
+import { requirePermission } from "../middlewares/permissionMiddleware.js";
+
 import verifyJwt from "../middlewares/authMiddleware.js";
 import role from "../middlewares/roleMiddleware.js";
 import upload from "../middlewares/multerMiddleware.js";
@@ -29,16 +31,16 @@ router.route("/products/:id").get(getSingleProduct);
 
 router
   .route("/products/add")
-  .post(verifyJwt, role("Admin"), upload.single("image"), addProduct);
+  .post(verifyJwt, role("Admin"), requirePermission("manage_products"), upload.single("image"), addProduct);
 router
   .route("/products/update/:id")
-  .patch(verifyJwt, role("Admin"), upload.single("image"), updateProduct);
+  .patch(verifyJwt, role("Admin"), requirePermission("manage_products"), upload.single("image"), updateProduct);
 router
   .route("/products/delete/:id")
-  .delete(verifyJwt, role("Admin"), deleteProduct);
+  .delete(verifyJwt, role("Admin"), requirePermission("manage_products"), deleteProduct);
 router
   .route("/products/reactivate/:id")
-  .patch(verifyJwt, role("Admin"), reactivateProduct);
+  .patch(verifyJwt, role("Admin"), requirePermission("manage_products"), reactivateProduct);
 
 router
   .route("/cart/add")
@@ -60,9 +62,9 @@ router
   .post(verifyJwt, role("Member"), requireActiveMembership, createOrder);
 router.route("/orders/me").get(verifyJwt, role("Member"), getMemberOrders);
 
-router.route("/orders").get(verifyJwt, role("Admin"), getAllOrders);
+router.route("/orders").get(verifyJwt, role("Admin"), requirePermission("manage_orders"), getAllOrders);
 router
   .route("/orders/update-status/:orderId")
-  .patch(verifyJwt, role("Admin"), updateOrderStatus);
+  .patch(verifyJwt, role("Admin"), requirePermission("manage_orders"), updateOrderStatus);
 
 export default router;

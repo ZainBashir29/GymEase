@@ -7,19 +7,20 @@ import {
   getConversationMessages,
   markMessagesAsRead,
 } from "../controllers/messageController.js";
+import { requirePermissionIfAdmin } from "../middlewares/permissionMiddleware.js";
 
 const router = Router();
 
 router
   .route("/send")
-  .post(verifyJwt, role("Member", "Trainer", "Admin"), sendMessage);
+  .post(verifyJwt, role("Member", "Trainer", "Admin"), requirePermissionIfAdmin("manage_messages"), sendMessage);
 
 router
   .route("/:conversationId")
-  .get(verifyJwt, role("Member", "Trainer", "Admin"), getConversationMessages);
+  .get(verifyJwt, role("Member", "Trainer", "Admin"), requirePermissionIfAdmin("manage_messages"), getConversationMessages);
 
 router
   .route("/read/:conversationId")
-  .patch(verifyJwt, role("Member", "Trainer", "Admin"), markMessagesAsRead);
+  .patch(verifyJwt, role("Member", "Trainer", "Admin"), requirePermissionIfAdmin("manage_messages"), markMessagesAsRead);
 
 export default router;

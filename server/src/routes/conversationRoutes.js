@@ -7,6 +7,7 @@ import {
   getMyConversations,
   getPotentialContacts,
 } from "../controllers/conversationController.js";
+import { requirePermissionIfAdmin } from "../middlewares/permissionMiddleware.js";
 
 const router = Router();
 
@@ -15,6 +16,7 @@ router
   .post(
     verifyJwt,
     role("Member", "Trainer", "Admin"),
+    requirePermissionIfAdmin("manage_messages"),
     createConversation,
   );
 
@@ -23,11 +25,17 @@ router
   .get(
     verifyJwt,
     role("Member", "Trainer", "Admin"),
+    requirePermissionIfAdmin("manage_messages"),
     getMyConversations,
   );
 
 router
   .route("/contacts")
-  .get(verifyJwt, role("Member", "Trainer", "Admin"), getPotentialContacts);
+  .get(
+    verifyJwt,
+    role("Member", "Trainer", "Admin"),
+    requirePermissionIfAdmin("manage_messages"),
+    getPotentialContacts
+  );
 
 export default router;
