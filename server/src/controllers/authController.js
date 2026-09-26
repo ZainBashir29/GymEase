@@ -10,6 +10,9 @@ import {
 import sendEmail from "../services/nodemailer.js";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
+import mongoose from "mongoose";
+import AdminInvitation from "../models/adminInvitationModel.js";
+import Admin from "../models/adminModel.js";
 
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
@@ -640,6 +643,129 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, req.user, "User fetched successfully"));
 });
 
+
+const verifyInvitation = asyncHandler(async (req, res) => {
+  const { token } = req.params;
+
+  if (!token) {
+    throw new ApiError(400, "Invitation token is required");
+  }
+
+  const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+
+  const invitation = await AdminInvitation.findOne({
+    invitationTokenHash: tokenHash,
+    status: "pending",
+    invitationExpiry: { $gt: Date.now() },
+  });
+
+  if (!invitation) {
+    throw new ApiError(400, "Invalid or expired invitation");
+  }
+
+  let inviteeName = null;
+  if (!invitation.isNewUser) {
+    const targetUser = await User.findById(invitation.targetUserId).select("fullName");
+    inviteeName = targetUser?.fullName;
+  } else {
+    const targetUser = await Admin.findById(invitation.targetUserId).select("fullName");
+    inviteeName = targetUser?.fullName;
+  }
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        isNewUser: invitation.isNewUser,
+        email: invitation.email,
+        fullName: inviteeName,
+      },
+      "Invitation verified successfully"
+    )
+  );
+});
+
+const acceptInvitation = asyncHandler(async (req, res) => {
+  const { token, password } = req.body;
+
+  if (!token) {
+    throw new ApiError(400, "Invitation token is required");
+  }
+
+  const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+
+  const invitation = await AdminInvitation.findOne({
+    invitationTokenHash: tokenHash,
+    status: "pending",
+    invitationExpiry: { $gt: Date.now() },
+  });
+
+  if (!invitation) {
+    throw new ApiError(400, "Invalid or expired invitation");
+  }
+
+  if (invitation.isNewUser && !password) {
+    throw new ApiError(400, "Password is required for new accounts");
+  }
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    if (invitation.isNewUser) {
+      const adminUser = await Admin.findById(invitation.targetUserId).session(session);
+      if (!adminUser) {
+        throw new ApiError(404, "Pre-created admin account not found");
+      }
+      
+      adminUser.password = password; 
+      adminUser.permissions = invitation.permissions;
+      adminUser.isActive = true;
+      await adminUser.save({ session });
+
+      invitation.status = "accepted";
+      invitation.subAdminUserId = adminUser._id;
+      await invitation.save({ session });
+    } else {
+      const targetUser = await User.findById(invitation.targetUserId).session(session);
+      if (!targetUser) {
+        throw new ApiError(404, "Target user not found");
+      }
+
+      await mongoose.connection.collection("users").updateOne(
+        { _id: targetUser._id },
+        {
+          $set: {
+            role: "Admin",
+            adminType: "sub_admin",
+            permissions: invitation.permissions,
+            originalRole: invitation.originalRole,
+            isActive: true,
+          },
+          $unset: { refreshToken: "" } 
+        },
+        { session }
+      );
+
+      invitation.status = "accepted";
+      invitation.subAdminUserId = targetUser._id;
+      await invitation.save({ session });
+    }
+
+    await session.commitTransaction();
+    
+    res.status(200).json(
+      new ApiResponse(200, {}, "Invitation accepted successfully")
+    );
+  } catch (error) {
+    await session.abortTransaction();
+    if (error instanceof ApiError) throw error;
+    throw new ApiError(500, "Could not accept invitation: " + error.message);
+  } finally {
+    session.endSession();
+  }
+});
+
 export {
   registerMember,
   login,
@@ -656,4 +782,6 @@ export {
   changeProfilePicture,
   deleteAccount,
   getCurrentUser,
+  verifyInvitation,
+  acceptInvitation,
 };

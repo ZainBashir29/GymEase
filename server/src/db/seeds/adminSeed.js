@@ -8,22 +8,22 @@ const adminData = {
   email: process.env.ADMIN_EMAIL || "zainbashir@gmail.com",
   password: process.env.ADMIN_PASSWORD || "mightyZai123",
   role: "Admin",
+  adminType: "system_admin",
 };
 
 connectDB()
   .then(async () => {
-    const adminCount = await Admin.countDocuments();
-    if (adminCount > 0) {
-      const existing = await Admin.findOne();
+    const existing = await Admin.findOne({ email: adminData.email });
+    if (existing) {
       console.log(
-        `An admin already exists in the system (${existing.email}). Only one admin is permitted.`,
+        `System admin already exists (${existing.email}). Skipping seed.`,
       );
       process.exit(0);
     }
 
     await Admin.create(adminData);
-    console.log(`${adminData.fullName} (${adminData.email}) created successfully`);
-    console.log("Admin seeded in database successfully");
+    console.log(`${adminData.fullName} (${adminData.email}) created as system_admin`);
+    console.log("System admin seeded in database successfully");
     process.exit(0);
   })
   .catch((error) => {
