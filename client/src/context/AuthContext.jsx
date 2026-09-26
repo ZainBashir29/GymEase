@@ -42,8 +42,17 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const isSystemAdmin = user?.adminType === "system_admin";
+  
+  const hasPermission = (perm) => {
+    if (isSystemAdmin) return true;
+    if (user?.permissions?.includes(perm)) return true;
+    if ((perm === "manage_products" || perm === "manage_orders") && user?.permissions?.includes("manage_store")) return true;
+    return false;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, login, logout, isSystemAdmin, hasPermission }}>
       {children}
     </AuthContext.Provider>
   );

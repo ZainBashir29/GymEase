@@ -15,7 +15,7 @@ import { useAuth } from "../../context/AuthContext.jsx";
 import { useState, useRef, useEffect } from "react";
 
 const ChatWidget = () => {
-  const { user } = useAuth();
+  const { user, hasPermission, isSystemAdmin } = useAuth();
   const {
     isChatOpen,
     toggleChatWindow,
@@ -43,14 +43,13 @@ const ChatWidget = () => {
     }
   }, [messages]);
 
-  // Reset to Messages view whenever the widget is closed
   useEffect(() => {
     if (!isChatOpen) {
       setShowContacts(false);
     }
   }, [isChatOpen]);
 
-  if (!user) return null;
+  if (!user || (user.role === "Admin" && !isSystemAdmin && !hasPermission("manage_messages"))) return null;
 
   const handleSend = (e) => {
     e.preventDefault();
@@ -88,7 +87,7 @@ const ChatWidget = () => {
       </button>
 
       {isChatOpen && (
-        <div className="fixed bottom-24 right-6 z-50 flex h-[500px] w-80 sm:w-96 flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-slate-200 transition-all">
+        <div className="fixed bottom-24 right-6 z-50 flex h-125 w-80 sm:w-96 flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-slate-200 transition-all">
           <div className="flex items-center bg-brand-600 px-4 py-3 text-white">
             {activeConversation || showContacts ? (
               <button
@@ -105,7 +104,7 @@ const ChatWidget = () => {
             <div className="flex-1 font-semibold">
               {activeConversation ? (
                 <div className="flex items-center gap-2">
-                  <div className="relative flex-shrink-0">
+                  <div className="relative shrink-0">
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 text-brand-700 font-bold overflow-hidden">
                       {getOtherParticipant(activeConversation.participants)
                         ?.profilePicture ? (
@@ -195,7 +194,7 @@ const ChatWidget = () => {
                         }}
                         className="flex cursor-pointer items-center p-4 hover:bg-slate-100 transition-colors"
                       >
-                        <div className="relative flex-shrink-0">
+                        <div className="relative shrink-0">
                           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-100 text-brand-700 font-bold overflow-hidden">
                             {contact.profilePicture ? (
                               <img
