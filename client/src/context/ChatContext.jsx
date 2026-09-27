@@ -155,7 +155,6 @@ export const ChatProvider = ({ children }) => {
       const convs = data.data || [];
       setConversations(convs);
 
-      // If the currently open conversation is no longer in the valid list, close it
       setActiveConversation((currentActive) => {
         if (currentActive) {
           const stillValid = convs.some(

@@ -49,13 +49,7 @@ const ChatWidget = () => {
     }
   }, [isChatOpen]);
 
-  if (
-    !user ||
-    (user.role === "Admin" &&
-      !isSystemAdmin &&
-      !hasPermission("manage_messages"))
-  )
-    return null;
+  if (!user) return null;
 
   const handleSend = (e) => {
     e.preventDefault();

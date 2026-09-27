@@ -107,59 +107,83 @@ const createConversation = asyncHandler(async (req, res) => {
 const getValidContactsHelper = async (user) => {
   let validContacts = [];
 
-  const admins = await User.find({
+  const fullUser = await User.findById(user._id);
+
+  if (fullUser.role === "Admin") {
+    const isSystemAdmin = fullUser.adminType === "system_admin";
+    const hasManageMessages =
+      fullUser.permissions && fullUser.permissions.includes("manage_messages");
+
+    if (isSystemAdmin || hasManageMessages) {
+      const everyoneElse = await User.find({
+        _id: { $ne: fullUser._id },
+        isActive: true,
+      }).select("fullName email role profilePicture");
+      return [...everyoneElse];
+    } else {
+      const systemAdmins = await User.find({
+        role: "Admin",
+        adminType: "system_admin",
+        isActive: true,
+        _id: { $ne: fullUser._id },
+      }).select("fullName email role profilePicture");
+      return [...systemAdmins];
+    }
+  }
+
+  const superAdmins = await User.find({
     role: "Admin",
     isActive: true,
-    _id: { $ne: user?._id },
+    _id: { $ne: fullUser._id },
+    $or: [
+      { adminType: "system_admin" },
+      { adminType: "sub_admin", permissions: "manage_messages" },
+    ],
   }).select("fullName email role profilePicture");
 
-  validContacts = [...admins];
+  validContacts = [...superAdmins];
 
-  if (user.role === "Member") {
-    const activePlans = await MemberPlan.find({ memberId: user._id, status: "active" }).select("_id");
-    const activePlanIds = activePlans.map(p => p._id);
+  if (fullUser.role === "Member") {
+    const activePlans = await MemberPlan.find({
+      memberId: fullUser._id,
+      status: "active",
+    }).select("_id");
+    const activePlanIds = activePlans.map((p) => p._id);
 
-    const sessions = await Session.find({ 
-      memberId: user._id,
-      memberPlanId: { $in: activePlanIds }
-    }).populate(
-      "trainerId",
-      "fullName email role profilePicture",
-    );
+    const sessions = await Session.find({
+      memberId: fullUser._id,
+      memberPlanId: { $in: activePlanIds },
+    }).populate("trainerId", "fullName email role profilePicture");
 
-    const trainers = sessions.map((s) => s.trainerId).filter((t) => t && t.isActive !== false);
+    const trainers = sessions
+      .map((s) => s.trainerId)
+      .filter((t) => t && t.isActive !== false);
 
     const uniqueTrainers = Array.from(
       new Map(trainers.map((t) => [t._id.toString(), t])).values(),
     );
 
     validContacts = [...validContacts, ...uniqueTrainers];
-  } else if (user.role === "Trainer") {
-    const activePlans = await MemberPlan.find({ status: "active" }).select("_id");
-    const activePlanIds = activePlans.map(p => p._id);
-
-    const sessions = await Session.find({ 
-      trainerId: user._id,
-      memberPlanId: { $in: activePlanIds }
-    }).populate(
-      "memberId",
-      "fullName email role profilePicture",
+  } else if (fullUser.role === "Trainer") {
+    const activePlans = await MemberPlan.find({ status: "active" }).select(
+      "_id",
     );
+    const activePlanIds = activePlans.map((p) => p._id);
 
-    const members = sessions.map((s) => s.memberId).filter((m) => m && m.isActive !== false);
+    const sessions = await Session.find({
+      trainerId: fullUser._id,
+      memberPlanId: { $in: activePlanIds },
+    }).populate("memberId", "fullName email role profilePicture");
+
+    const members = sessions
+      .map((s) => s.memberId)
+      .filter((m) => m && m.isActive !== false);
 
     const uniqueMembers = Array.from(
       new Map(members.map((m) => [m._id.toString(), m])).values(),
     );
 
     validContacts = [...validContacts, ...uniqueMembers];
-  } else if (user.role === "Admin") {
-    const everyoneElse = await User.find({
-      _id: { $ne: user?._id },
-      isActive: true,
-    }).select("fullName email role profilePicture");
-
-    validContacts = [...everyoneElse];
   }
 
   return validContacts;
@@ -177,13 +201,16 @@ const getMyConversations = asyncHandler(async (req, res) => {
     .lean();
 
   const validContacts = await getValidContactsHelper(req.user);
-  const validContactIds = validContacts.map(c => c._id.toString());
+  const validContactIds = validContacts.map((c) => c._id.toString());
 
-  conversations = conversations.filter(conv => {
+  conversations = conversations.filter((conv) => {
     const otherParticipant = conv.participants.find(
-      p => p._id.toString() !== req.user._id.toString()
+      (p) => p._id.toString() !== req.user._id.toString(),
     );
-    return otherParticipant && validContactIds.includes(otherParticipant._id.toString());
+    return (
+      otherParticipant &&
+      validContactIds.includes(otherParticipant._id.toString())
+    );
   });
 
   conversations = await Promise.all(

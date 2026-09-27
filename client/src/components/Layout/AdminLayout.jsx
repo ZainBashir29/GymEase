@@ -150,8 +150,8 @@ const AdminLayout = () => {
             );
           })}
 
-          {(isSystemAdmin || hasPermission("manage_messages")) && (
-            <button
+          {true && (
+              <button
               type="button"
               onClick={toggleChatWindow}
               className="flex w-full items-center justify-between px-3 py-2.5 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors cursor-pointer"
@@ -198,7 +198,7 @@ const AdminLayout = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            {(isSystemAdmin || hasPermission("manage_messages")) && (
+            {true && (
               <button
                 type="button"
                 onClick={toggleChatWindow}

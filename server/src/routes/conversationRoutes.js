@@ -35,7 +35,7 @@ router
     verifyJwt,
     role("Member", "Trainer", "Admin"),
     requirePermissionIfAdmin("manage_messages"),
-    getPotentialContacts
+    getPotentialContacts,
   );
 
 export default router;
