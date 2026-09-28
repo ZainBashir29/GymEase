@@ -20,6 +20,7 @@ const TrainerDashboardPage = lazy(() => import("./pages/Trainer/TrainerDashboard
 const PaymentSuccessPage = lazy(() => import("./pages/PaymentSuccessPage.jsx"));
 const PaymentFailurePage = lazy(() => import("./pages/PaymentFailurePage.jsx"));
 const AboutPage = lazy(() => import("./pages/AboutPage.jsx"));
+const PrivacyPage = lazy(() => import("./pages/PrivacyPage.jsx"));
 const StorePage = lazy(() => import("./pages/Store/StorePage.jsx"));
 const ProductDetailsPage = lazy(() => import("./pages/Store/ProductDetailsPage.jsx"));
 const MemberOrdersPage = lazy(() => import("./pages/Store/MemberOrdersPage.jsx"));
@@ -64,6 +65,10 @@ const router = createBrowserRouter([
       {
         path: "/about",
         element: <AboutPage />,
+      },
+      {
+        path: "/privacy",
+        element: <PrivacyPage />,
       },
       {
         path: "/pricing",
