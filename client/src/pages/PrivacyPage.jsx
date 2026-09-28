@@ -112,8 +112,8 @@ const PrivacyPage = () => {
               <h2 className="text-2xl font-semibold text-slate-900">Contact Us</h2>
               <p className="mt-3">
                 If you have any questions about this Privacy Policy or how your data is handled, please contact us at
-                <a href="mailto:hello@gym-ease.com" className="ml-1 font-medium text-brand-700 underline underline-offset-4">
-                  hello@gym-ease.com
+                <a href="mailto:gymease1@gmail.com" className="ml-1 font-medium text-brand-700 underline underline-offset-4">
+                  gymease1@gmail.com
                 </a>
                 .
               </p>
