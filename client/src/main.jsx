@@ -1,5 +1,6 @@
 import { StrictMode, lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
+import { Loader2 } from "lucide-react";
 import "./index.css";
 import App from "./App.jsx";
 import { RouterProvider, createBrowserRouter, Navigate, Outlet } from "react-router-dom";
@@ -244,7 +245,16 @@ createRoot(document.getElementById("root")).render(
     <AuthProvider>
       <CartProvider>
         <ChatProvider>
-          <Suspense fallback={<div className="flex h-screen w-full items-center justify-center">Loading...</div>}>
+          <Suspense
+            fallback={
+              <div className="flex min-h-screen w-full items-center justify-center bg-slate-50 px-4">
+                <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white/90 px-5 py-3.5 shadow-sm ring-1 ring-slate-100 backdrop-blur-sm">
+                  <Loader2 className="h-5 w-5 animate-spin text-brand-600" />
+                  <span className="text-sm font-semibold tracking-wide text-slate-700">Loading...</span>
+                </div>
+              </div>
+            }
+          >
             <RouterProvider router={router} />
           </Suspense>
         </ChatProvider>

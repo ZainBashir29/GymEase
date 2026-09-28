@@ -25,6 +25,16 @@ const memberSidebarItems = [
   { label: "Settings", to: "/member/settings", icon: Settings },
 ];
 
+const getProductImageSrc = (product) => {
+  const imageUrl = product?.imageUrl?.trim();
+
+  if (!imageUrl) return "/images/placeholder-product.svg";
+  if (imageUrl.startsWith("http")) return imageUrl;
+  if (imageUrl.toLowerCase().endsWith(".webp")) return imageUrl;
+
+  return imageUrl.replace(/\.(jpe?g|png|gif|bmp|svg)$/i, ".webp");
+};
+
 const StorePage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -94,11 +104,16 @@ const StorePage = () => {
                 <div className="relative group cursor-pointer h-full flex flex-col bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg transition-all hover:border-brand-300">
                   <div className="relative h-64 w-full overflow-hidden bg-slate-100">
                     <img
-                      src={product.imageUrl}
+                      src={getProductImageSrc(product)}
                       alt={product.name}
                       loading="lazy"
                       className="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-500 ease-out opacity-0 transition-opacity duration-300"
                       onLoad={(e) => e.target.classList.remove("opacity-0")}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "/images/placeholder-product.svg";
+                        e.target.classList.remove("opacity-0");
+                      }}
                     />
                     {product.stock <= 5 && product.stock > 0 && (
                       <div className="absolute top-3 left-3 bg-red-500/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">
