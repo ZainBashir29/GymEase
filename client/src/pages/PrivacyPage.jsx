@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { ArrowLeft, Database, Lock, ShieldCheck, UserCog } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -29,6 +30,10 @@ const privacySections = [
 ];
 
 const PrivacyPage = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, []);
+
   return (
     <div className="bg-slate-50">
       <section className="relative overflow-hidden bg-slate-900 py-20 sm:py-28">
