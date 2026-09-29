@@ -1,10 +1,8 @@
 import {
   MessageCircle,
   X,
-  ChevronLeft,
   Send,
   Users,
-  UserRound,
   ArrowLeft,
   Plus,
   Check,
