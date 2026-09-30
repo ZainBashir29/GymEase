@@ -11,7 +11,7 @@ const products = [
     price: 18500,
     stock: 50,
     imageUrl:
-      "/images/products/whey_protein.jpg",
+      "/images/products/whey_protein.webp",
     imagePublicId: "",
     category: "Supplement",
     isActive: true,
@@ -23,7 +23,7 @@ const products = [
     price: 6500,
     stock: 80,
     imageUrl:
-      "/images/products/creatine.jpg",
+      "/images/products/creatine.webp",
     imagePublicId: "",
     category: "Supplement",
     isActive: true,
@@ -35,7 +35,7 @@ const products = [
     price: 8900,
     stock: 40,
     imageUrl:
-      "/images/products/pre_workout.jpg",
+      "/images/products/pre_workout.webp",
     imagePublicId: "",
     category: "Supplement",
     isActive: true,
@@ -47,7 +47,7 @@ const products = [
     price: 9500,
     stock: 35,
     imageUrl:
-      "/images/products/plant_protein.jpg",
+      "/images/products/plant_protein.webp",
     imagePublicId: "",
     category: "Supplement",
     isActive: true,
@@ -59,7 +59,7 @@ const products = [
     price: 5800,
     stock: 60,
     imageUrl:
-      "/images/products/bcaa.jpg",
+      "/images/products/bcaa.webp",
     imagePublicId: "",
     category: "Supplement",
     isActive: true,
@@ -71,7 +71,7 @@ const products = [
     price: 4200,
     stock: 25,
     imageUrl:
-      "/images/products/lifting_belt.jpg",
+      "/images/products/lifting_belt.webp",
     imagePublicId: "",
     category: "Gym Gear",
     isActive: true,
@@ -83,7 +83,7 @@ const products = [
     price: 1200,
     stock: 100,
     imageUrl:
-      "/images/products/wrist_straps.jpg",
+      "/images/products/wrist_straps.webp",
     imagePublicId: "",
     category: "Gym Gear",
     isActive: true,
@@ -95,7 +95,7 @@ const products = [
     price: 2800,
     stock: 75,
     imageUrl:
-      "/images/products/shaker_bottle.jpg",
+      "/images/products/shaker_bottle.webp",
     imagePublicId: "",
     category: "Gym Gear",
     isActive: true,
@@ -107,7 +107,7 @@ const products = [
     price: 2500,
     stock: 45,
     imageUrl:
-      "/images/products/resistance_bands.jpg",
+      "/images/products/resistance_bands.webp",
     imagePublicId: "",
     category: "Gym Gear",
     isActive: true,
@@ -119,7 +119,7 @@ const products = [
     price: 1800,
     stock: 65,
     imageUrl:
-      "/images/products/gym_gloves.jpg",
+      "/images/products/gym_gloves.webp",
     imagePublicId: "",
     category: "Gym Gear",
     isActive: true,

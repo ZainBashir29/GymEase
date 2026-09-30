@@ -13,9 +13,12 @@ const Footer = () => {
             <span className="text-base font-bold text-slate-900">GymEase</span>
           </Link>
 
-          <p className="text-sm text-slate-500">
-            &copy; {new Date().getFullYear()} GymEase. All rights reserved.
-          </p>
+          <div className="flex items-center gap-4 text-sm text-slate-500">
+            <Link to="/privacy" className="transition hover:text-brand-700">
+              Privacy Policy
+            </Link>
+            <span>&copy; {new Date().getFullYear()} GymEase. All rights reserved.</span>
+          </div>
         </div>
       </div>
     </footer>

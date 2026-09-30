@@ -1,5 +1,6 @@
-import { StrictMode } from "react";
+import { StrictMode, lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
+import { Loader2 } from "lucide-react";
 import "./index.css";
 import App from "./App.jsx";
 import { RouterProvider, createBrowserRouter, Navigate, Outlet } from "react-router-dom";
@@ -8,48 +9,49 @@ import { AuthProvider } from "./context/AuthContext.jsx";
 import { CartProvider } from "./context/CartContext.jsx";
 import { ChatProvider } from "./context/ChatContext.jsx";
 
-import HomePage from "./pages/HomePage.jsx";
-import MembershipPlansPage from "./pages/MembershipPlansPage.jsx";
-import MemberRegistrationPage from "./pages/MemberRegistrationPage.jsx";
-import LoginPage from "./pages/LoginPage.jsx";
-import MemberDashboardPage from "./pages/Member/MemberDashboardPage.jsx";
+const HomePage = lazy(() => import("./pages/HomePage.jsx"));
+const MembershipPlansPage = lazy(() => import("./pages/MembershipPlansPage.jsx"));
+const MemberRegistrationPage = lazy(() => import("./pages/MemberRegistrationPage.jsx"));
+const LoginPage = lazy(() => import("./pages/LoginPage.jsx"));
+const MemberDashboardPage = lazy(() => import("./pages/Member/MemberDashboardPage.jsx"));
 import ProtectedRoute from "./components/Layout/ProtectedRoute.jsx";
 import RequireMembership from "./components/Layout/RequireMembership.jsx";
-import TrainerDashboardPage from "./pages/Trainer/TrainerDashboardPage.jsx";
-import PaymentSuccessPage from "./pages/PaymentSuccessPage.jsx";
-import PaymentFailurePage from "./pages/PaymentFailurePage.jsx";
-import AboutPage from "./pages/AboutPage.jsx";
-import StorePage from "./pages/Store/StorePage.jsx";
-import ProductDetailsPage from "./pages/Store/ProductDetailsPage.jsx";
-import MemberOrdersPage from "./pages/Store/MemberOrdersPage.jsx";
-import VerifyMembershipPage from "./pages/VerifyMembershipPage.jsx";
+const TrainerDashboardPage = lazy(() => import("./pages/Trainer/TrainerDashboardPage.jsx"));
+const PaymentSuccessPage = lazy(() => import("./pages/PaymentSuccessPage.jsx"));
+const PaymentFailurePage = lazy(() => import("./pages/PaymentFailurePage.jsx"));
+const AboutPage = lazy(() => import("./pages/AboutPage.jsx"));
+const PrivacyPage = lazy(() => import("./pages/PrivacyPage.jsx"));
+const StorePage = lazy(() => import("./pages/Store/StorePage.jsx"));
+const ProductDetailsPage = lazy(() => import("./pages/Store/ProductDetailsPage.jsx"));
+const MemberOrdersPage = lazy(() => import("./pages/Store/MemberOrdersPage.jsx"));
+const VerifyMembershipPage = lazy(() => import("./pages/VerifyMembershipPage.jsx"));
 
-import AdminLayout from "./components/Layout/AdminLayout.jsx";
-import AdminDashboardPage from "./pages/Admin/AdminDashboardPage.jsx";
-import AdminMembersPage from "./pages/Admin/AdminMembersPage.jsx";
-import AdminTrainersPage from "./pages/Admin/AdminTrainersPage.jsx";
-import AdminTrainerPerformancePage from "./pages/Admin/AdminTrainerPerformancePage.jsx";
-import AdminGymPlansPage from "./pages/Admin/AdminGymPlansPage.jsx";
-import AdminMembershipsPage from "./pages/Admin/AdminMembershipsPage.jsx";
-import AdminStorePage from "./pages/Admin/AdminStorePage.jsx";
-import AdminOrdersPage from "./pages/Admin/AdminOrdersPage.jsx";
+const AdminLayout = lazy(() => import("./components/Layout/AdminLayout.jsx"));
+const AdminDashboardPage = lazy(() => import("./pages/Admin/AdminDashboardPage.jsx"));
+const AdminMembersPage = lazy(() => import("./pages/Admin/AdminMembersPage.jsx"));
+const AdminTrainersPage = lazy(() => import("./pages/Admin/AdminTrainersPage.jsx"));
+const AdminTrainerPerformancePage = lazy(() => import("./pages/Admin/AdminTrainerPerformancePage.jsx"));
+const AdminGymPlansPage = lazy(() => import("./pages/Admin/AdminGymPlansPage.jsx"));
+const AdminMembershipsPage = lazy(() => import("./pages/Admin/AdminMembershipsPage.jsx"));
+const AdminStorePage = lazy(() => import("./pages/Admin/AdminStorePage.jsx"));
+const AdminOrdersPage = lazy(() => import("./pages/Admin/AdminOrdersPage.jsx"));
 
-import MemberLayout from "./components/Layout/MemberLayout.jsx";
+const MemberLayout = lazy(() => import("./components/Layout/MemberLayout.jsx"));
 
-import GymPlansPage from "./pages/Member/GymPlansPage.jsx";
-import GymPlanDetailsPage from "./pages/Member/GymPlanDetailsPage.jsx";
-import CustomPlanQuestionnairePage from "./pages/Member/CustomPlanQuestionnairePage.jsx";
+const GymPlansPage = lazy(() => import("./pages/Member/GymPlansPage.jsx"));
+const GymPlanDetailsPage = lazy(() => import("./pages/Member/GymPlanDetailsPage.jsx"));
+const CustomPlanQuestionnairePage = lazy(() => import("./pages/Member/CustomPlanQuestionnairePage.jsx"));
 
-import MyMembershipPage from "./pages/Member/MyMembershipPage.jsx";
-import MemberPricingPage from "./pages/Member/MemberPricingPage.jsx";
-import MemberSettingsPage from "./pages/Member/MemberSettingsPage.jsx";
-import AcceptInvitationPage from "./pages/AcceptInvitationPage.jsx";
-import AdminSubAdminsPage from "./pages/Admin/AdminSubAdminsPage.jsx";
-import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
-import ChangePasswordPage from "./pages/ChangePasswordPage.jsx";
-import CompleteProfilePage from "./pages/CompleteProfilePage.jsx";
+const MyMembershipPage = lazy(() => import("./pages/Member/MyMembershipPage.jsx"));
+const MemberPricingPage = lazy(() => import("./pages/Member/MemberPricingPage.jsx"));
+const MemberSettingsPage = lazy(() => import("./pages/Member/MemberSettingsPage.jsx"));
+const AcceptInvitationPage = lazy(() => import("./pages/AcceptInvitationPage.jsx"));
+const AdminSubAdminsPage = lazy(() => import("./pages/Admin/AdminSubAdminsPage.jsx"));
+const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage.jsx"));
+const ChangePasswordPage = lazy(() => import("./pages/ChangePasswordPage.jsx"));
+const CompleteProfilePage = lazy(() => import("./pages/CompleteProfilePage.jsx"));
 
-import MyMembersPage from "./pages/Trainer/MyMembersPage.jsx";
+const MyMembersPage = lazy(() => import("./pages/Trainer/MyMembersPage.jsx"));
 
 const router = createBrowserRouter([
   {
@@ -63,6 +65,10 @@ const router = createBrowserRouter([
       {
         path: "/about",
         element: <AboutPage />,
+      },
+      {
+        path: "/privacy",
+        element: <PrivacyPage />,
       },
       {
         path: "/pricing",
@@ -244,7 +250,18 @@ createRoot(document.getElementById("root")).render(
     <AuthProvider>
       <CartProvider>
         <ChatProvider>
-          <RouterProvider router={router} />
+          <Suspense
+            fallback={
+              <div className="flex min-h-screen w-full items-center justify-center bg-slate-50 px-4">
+                <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white/90 px-5 py-3.5 shadow-sm ring-1 ring-slate-100 backdrop-blur-sm">
+                  <Loader2 className="h-5 w-5 animate-spin text-brand-600" />
+                  <span className="text-sm font-semibold tracking-wide text-slate-700">Loading...</span>
+                </div>
+              </div>
+            }
+          >
+            <RouterProvider router={router} />
+          </Suspense>
         </ChatProvider>
       </CartProvider>
     </AuthProvider>

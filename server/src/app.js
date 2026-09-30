@@ -4,7 +4,6 @@ import cookieParser from "cookie-parser";
 import { LIMIT } from "./constants.js";
 import passport from "passport";
 import "./services/passport.js";
-import verifyJwt from "./middlewares/authMiddleware.js";
 import { verifyWebhookSignature } from "./controllers/paymentController.js";
 import ApiResponse from "./utils/ApiResponse.js";
 
@@ -44,7 +43,39 @@ app.post(
 
 app.use(express.json({ limit: LIMIT }));
 
-app.use(express.static("public"));
+app.use(
+  express.static("public", {
+    maxAge: "7d",
+    etag: true,
+    immutable: true,
+    index: false,
+  }),
+);
+
+const publicCacheRoutes = [
+  "/api/v1/store/products",
+  "/api/v1/memberships",
+  "/api/v1/gym-plans",
+];
+
+app.use((req, res, next) => {
+  if (req.method !== "GET") {
+    return next();
+  }
+
+  const shouldCachePublicResponse = publicCacheRoutes.some(
+    (route) => req.path === route || req.path.startsWith(`${route}/`),
+  );
+
+  if (shouldCachePublicResponse) {
+    res.setHeader(
+      "Cache-Control",
+      "public, max-age=300, stale-while-revalidate=600",
+    );
+  }
+
+  next();
+});
 
 app.use(cookieParser());
 

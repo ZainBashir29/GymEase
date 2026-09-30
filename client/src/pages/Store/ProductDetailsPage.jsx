@@ -15,6 +15,16 @@ const memberSidebarItems = [
   { label: "Settings", to: "/member/settings", icon: Settings },
 ];
 
+const getProductImageSrc = (product) => {
+  const imageUrl = product?.imageUrl?.trim();
+
+  if (!imageUrl) return "/images/placeholder-product.svg";
+  if (imageUrl.startsWith("http")) return imageUrl;
+  if (imageUrl.toLowerCase().endsWith(".webp")) return imageUrl;
+
+  return imageUrl.replace(/\.(jpe?g|png|gif|bmp|svg)$/i, ".webp");
+};
+
 const ProductDetailsPage = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
@@ -107,11 +117,16 @@ const ProductDetailsPage = () => {
           <div className="flex flex-col-reverse">
             <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-slate-100">
               <img
-                src={product.imageUrl}
+                src={getProductImageSrc(product)}
                 alt={product.name}
                 loading="lazy"
                 className="h-full w-full object-cover object-center opacity-0 transition-opacity duration-300"
                 onLoad={(e) => e.target.classList.remove('opacity-0')}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "/images/placeholder-product.svg";
+                  e.target.classList.remove('opacity-0');
+                }}
               />
             </div>
           </div>
