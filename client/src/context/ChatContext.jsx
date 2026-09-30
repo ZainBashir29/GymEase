@@ -147,7 +147,6 @@ export const ChatProvider = ({ children }) => {
     };
   }, [socket, activeConversation, isChatOpen, user]);
 
-  
   const fetchConversations = async () => {
     if (!user) return;
     try {

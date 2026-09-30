@@ -104,18 +104,25 @@ const Memberships = ({ isDashboardMode = false }) => {
             }`}>
               {plans.map((plan, planIdx) => {
                 const isCurrent = currentPlanId === plan._id;
+                const isFeatured = planIdx === 1;
+                const showBanner = isCurrent || isFeatured;
                 return (
                 <div
                   key={plan._id}
                   className={`relative rounded-3xl p-8 ring-1 sm:p-10 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col ${
-                    planIdx === 1
+                    isFeatured
                       ? "bg-brand-900 ring-brand-900 text-white shadow-2xl scale-105 z-10"
                       : "bg-white ring-slate-200 shadow-md hover:ring-brand-200"
-                  } ${isCurrent ? "pt-12 sm:pt-14" : ""}`}
+                  } ${showBanner ? "pt-12 sm:pt-14" : ""}`}
                 >
                   {isCurrent && (
                     <div className="absolute top-0 left-0 right-0 bg-brand-500 text-white text-xs font-bold py-2 text-center rounded-t-3xl uppercase tracking-widest shadow-sm z-20">
                       Current Plan
+                    </div>
+                  )}
+                  {!isCurrent && isFeatured && (
+                    <div className="absolute top-0 left-0 right-0 bg-white/20 text-white text-xs font-bold py-2 text-center rounded-t-3xl uppercase tracking-widest z-20">
+                      Most Popular
                     </div>
                   )}
                   <h3
