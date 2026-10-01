@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { Dumbbell, ShoppingCart, Menu, X } from "lucide-react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useCart } from "../../context/CartContext.jsx";
@@ -15,7 +15,15 @@ const Navbar = () => {
   const { user, logout } = useAuth();
   const { itemCount, toggleCart } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [hasNavigatedAway, setHasNavigatedAway] = useState(false);
+
+  useEffect(() => {
+    if (location.pathname !== "/") {
+      setHasNavigatedAway(true);
+    }
+  }, [location.pathname]);
 
   const handleLogout = async () => {
     await logout();
@@ -36,13 +44,21 @@ const Navbar = () => {
 
         <div className="hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center gap-8 md:flex">
           {navbarLinks.map((link) => (
-            <Link
+            <NavLink
               key={link.to}
               to={link.to}
-              className="text-sm font-medium text-slate-600 transition-colors hover:text-brand-600"
+              end={link.to === "/"}
+              className={({ isActive }) => {
+                const showActive =
+                  isActive && (link.to !== "/" || hasNavigatedAway);
+                return `text-sm font-medium transition-colors ${showActive
+                    ? "text-brand-600 font-semibold"
+                    : "text-slate-600 hover:text-brand-600"
+                  }`;
+              }}
             >
               {link.label}
-            </Link>
+            </NavLink>
           ))}
         </div>
 
@@ -127,14 +143,20 @@ const Navbar = () => {
         <div className="md:hidden border-t border-slate-200 bg-white absolute w-full left-0 right-0 shadow-lg">
           <div className="flex flex-col">
             {navbarLinks.map((link) => (
-              <Link
+              <NavLink
                 key={link.to}
                 to={link.to}
+                end={link.to === "/"}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-brand-600 px-6 py-4 border-b border-slate-100"
+                className={({ isActive }) =>
+                  `text-base font-medium px-6 py-4 border-b border-slate-100 transition-colors ${isActive && link.to !== "/"
+                    ? "text-brand-600 font-semibold bg-brand-50 border-l-2 border-l-brand-600"
+                    : "text-slate-700 hover:bg-slate-50 hover:text-brand-600"
+                  }`
+                }
               >
                 {link.label}
-              </Link>
+              </NavLink>
             ))}
 
             {user ? (

@@ -12,13 +12,13 @@ const servicesPoints = [
     icon: Dumbbell,
     title: "Personalized Plans",
     description:
-      "Pick a proven training plan or answer a few questions and get one built around your goals.",
+      "Pick a proven gym plan or answer a few questions and get one built around your goals.",
   },
   {
     icon: CreditCard,
     title: "Simple Memberships",
     description:
-      "Choose a plan, pay securely, and get a digital membership card with a scannable QR code.",
+      "Choose a membership plan, pay securely, and get a digital membership card with a scannable QR code.",
   },
   {
     icon: LineChart,
@@ -48,7 +48,7 @@ const servicesPoints = [
 
 const Services = () => {
   return (
-    <section className="bg-slate-50 py-24">
+    <section className="bg-slate-50 py-24 pb-10">
       <div className="mx-auto max-w-7xl px-6">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
