@@ -19,7 +19,7 @@ if (process.env.GOOGLE_CLIENT_ID) {
             let user = await User.findOne({ email: profile.emails[0].value.toLowerCase() });
 
             if (user) {
-              if (user.role !== "Member" && user.originalRole !== "Member") {
+              if (user.role !== "Member") {
                 return done(null, false, { message: "Admins and Trainers must use email and password to log in." });
               }
               

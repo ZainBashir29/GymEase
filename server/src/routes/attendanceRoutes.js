@@ -10,12 +10,10 @@ import {
 
 const router = express.Router();
 
-router.use(verifyJwt, role("Member", "Trainer"), requireActiveMembership);
+router.use(verifyJwt, role("Member", "Trainer"));
 
-router.route("/mark").post(markAttendance);
-
+router.route("/mark").post(requireActiveMembership, markAttendance);
 router.route("/me").get(getMyAttendance);
-
 router.route("/today-status").get(getTodayAttendanceStatus);
 
 export default router;

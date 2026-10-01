@@ -10,6 +10,7 @@ const requireActiveMembership = asyncHandler(async (req, res, next) => {
   const activeSubscription = await MembershipSubscription.findOne({
     memberId: req.user?._id,
     status: "active",
+    endDate: { $gt: new Date() },
   });
 
   if (!activeSubscription) {
