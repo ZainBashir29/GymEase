@@ -267,7 +267,7 @@ const activatePopularPlan = asyncHandler(async (req, res) => {
     throw new ApiError(
       500,
       transactionError?.message ||
-        "Gym plan activation failed. Please try again",
+      "Gym plan activation failed. Please try again",
     );
   } finally {
     session.endSession();
@@ -560,7 +560,7 @@ const activateCustomPlan = asyncHandler(async (req, res) => {
     throw new ApiError(
       500,
       transactionError?.message ||
-        "Custom gym plan creation and activation failed. Please try again",
+      "Custom gym plan creation and activation failed. Please try again",
     );
   } finally {
     session.endSession();
@@ -930,15 +930,8 @@ const resumePausedMemberPlan = async (memberId) => {
     let dayCounter = lastSession ? lastSession.day + 1 : 1;
     const daysPassed = Math.floor((now - memberPlan.startDate) / (1000 * 60 * 60 * 24));
     let remainingCalendarDays = gymPlan.duration - daysPassed;
-    
+
     if (remainingCalendarDays < 1) remainingCalendarDays = gymPlan.duration;
-
-    const activeMembership = await MembershipSubscription.findOne({
-      memberId,
-      status: "active"
-    }).populate("membershipPlanId").session(session);
-
-    const maxTrainers = activeMembership?.membershipPlanId?.maxTrainers || 1;
 
     const validTrainers = await Trainer.find({
       isActive: true,
@@ -946,12 +939,11 @@ const resumePausedMemberPlan = async (memberId) => {
     }).session(session);
 
     let allowedTrainers = validTrainers.map((t) => t._id);
+
     if (allowedTrainers.length === 0) {
       const allActiveTrainers = await Trainer.find({ isActive: true }).session(session);
       allowedTrainers = allActiveTrainers.map((t) => t._id);
     }
-    
-    allowedTrainers = allowedTrainers.slice(0, maxTrainers);
 
     const workouts = gymPlan.sessions;
     const getValidDaysOfWeek = (frequency) => {
@@ -975,7 +967,7 @@ const resumePausedMemberPlan = async (memberId) => {
           ...allowedTrainers.slice(workoutIndex % allowedTrainers.length),
           ...allowedTrainers.slice(0, workoutIndex % allowedTrainers.length),
         ];
-        
+
         const trainerId = await findAvailableTrainer(rotatedTrainers, targetDate, session);
         if (trainerId) {
           const workout = workouts[workoutIndex % workouts.length];
