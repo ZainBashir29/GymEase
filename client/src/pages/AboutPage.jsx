@@ -1,5 +1,12 @@
-import React from "react";
-import { Users, Dumbbell, Target } from "lucide-react";
+import { Users, Dumbbell, Target, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import aboutGymImage from "../assets/about-gym.jpg";
+
+const stats = [
+  { value: "3", label: "User Roles", sub: "Member, Trainer, Admin" },
+  { value: "19", label: "Database Models", sub: "Mongoose schemas and relationships" },
+  { value: "30+", label: "Screens", sub: "Across all three role portals" },
+];
 
 const values = [
   {
@@ -30,10 +37,9 @@ const AboutPage = () => {
           aria-hidden="true"
           className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20 mix-blend-overlay"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop')`,
+            backgroundImage: `url(${aboutGymImage})`,
           }}
         />
-
         <div className="relative mx-auto max-w-7xl px-6 text-center lg:px-8">
           <div className="mx-auto max-w-2xl">
             <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-6xl">
@@ -41,10 +47,26 @@ const AboutPage = () => {
             </h1>
             <p className="mt-6 text-lg leading-8 text-slate-300">
               We're redefining gym management by mixing technology with the
-              passion of fitness. Empowering owners, trainers, and members to
+              passion of fitness - empowering owners, trainers, and members to
               achieve more together.
             </p>
           </div>
+        </div>
+      </section>
+
+      <section className="border-b border-slate-100 bg-slate-50 py-12">
+        <div className="mx-auto max-w-5xl px-6">
+          <dl className="grid grid-cols-1 gap-8 sm:grid-cols-3 text-center">
+            {stats.map(({ value, label, sub }) => (
+              <div key={label} className="flex flex-col items-center gap-1">
+                <dt className="text-5xl font-extrabold tracking-tight text-brand-600">
+                  {value}
+                </dt>
+                <dd className="text-base font-semibold text-slate-800">{label}</dd>
+                <dd className="text-sm text-slate-500">{sub}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </section>
 
@@ -56,7 +78,7 @@ const AboutPage = () => {
             </h2>
             <p className="mt-4 text-lg text-slate-600">
               Our core values shape everything we build, ensuring that GymEase
-              remains the most reliable partner for your fitness business.
+              remains the most reliable partner for your fitness journey.
             </p>
           </div>
 
@@ -68,10 +90,7 @@ const AboutPage = () => {
                   <div key={item.title} className="flex flex-col">
                     <dt className="flex items-center gap-x-3 text-base font-semibold leading-7 text-slate-900">
                       <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-600">
-                        <Icon
-                          className="h-6 w-6 text-white"
-                          aria-hidden="true"
-                        />
+                        <Icon className="h-6 w-6 text-white" aria-hidden="true" />
                       </div>
                       {item.title}
                     </dt>
@@ -83,6 +102,29 @@ const AboutPage = () => {
               })}
             </dl>
           </div>
+        </div>
+      </section>
+
+      <section className="border-t border-slate-100 bg-slate-50 py-20">
+        <div className="mx-auto max-w-3xl px-6 text-center">
+          <p className="text-sm font-semibold uppercase tracking-widest text-brand-600">
+            Final Year Project
+          </p>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+            Built from the ground up
+          </h2>
+          <p className="mx-auto mt-5 max-w-xl text-lg text-slate-600">
+            GymEase is a full-stack capstone project covering role-based access
+            control, real-time chat, integrated payments, QR-based attendance,
+            and a full gym store, all in one platform.
+          </p>
+          <Link
+            to="/register"
+            className="mt-8 inline-flex items-center gap-2 rounded-lg bg-brand-600 px-6 py-3.5 text-base font-semibold text-white shadow-md shadow-brand-600/20 transition-all hover:bg-brand-700 hover:shadow-lg hover:shadow-brand-600/30"
+          >
+            Start your membership
+            <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
       </section>
     </div>
