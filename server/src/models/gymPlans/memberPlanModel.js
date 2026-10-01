@@ -24,7 +24,7 @@ const memberPlanSchema = new mongoose.Schema(
     status: {
       type: String,
       required: true,
-      enum: ["active", "completed", "cancelled"],
+      enum: ["active", "completed", "cancelled", "paused"],
     },
   },
   {

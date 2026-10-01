@@ -9,6 +9,7 @@ import {
   getMembershipReceiptEmail,
   getStoreOrderEmail,
 } from "../utils/emailTemplates.js";
+import { resumePausedMemberPlan } from "../controllers/gymPlanController.js";
 
 const safepay = Safepay(process.env.SAFEPAY_SECRET_KEY, {
   authType: "secret",
@@ -66,9 +67,9 @@ const handleSuccessfulPayment = async (trackerToken) => {
 
     const hasPreviousMembership = !existingActiveSub
       ? await MembershipSubscription.exists({
-          memberId: updatedPayment.memberId._id,
-          status: { $in: ["expired", "cancelled"] },
-        })
+        memberId: updatedPayment.memberId._id,
+        status: { $in: ["expired", "cancelled"] },
+      })
       : false;
 
     await MembershipSubscription.updateMany(
@@ -133,6 +134,12 @@ const handleSuccessfulPayment = async (trackerToken) => {
       to: updatedPayment.memberId.email,
       ...emailContent,
     }).catch((err) => console.error("Failed to send membership email:", err));
+
+    if (membershipPaymentType === "renewal" || membershipPaymentType === "returning_member") {
+      resumePausedMemberPlan(updatedPayment.memberId._id).catch(err =>
+        console.error("Failed to auto-resume member gym plan after payment:", err)
+      );
+    }
   }
 
   if (updatedPayment.type === "StoreOrder") {

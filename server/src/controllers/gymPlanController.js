@@ -904,7 +904,113 @@ const markSessionConductedByTrainer = asyncHandler(async (req, res) => {
     );
 });
 
+const resumePausedMemberPlan = async (memberId) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const memberPlan = await MemberPlan.findOne({ memberId, status: "paused" }).session(session);
+    if (!memberPlan) {
+      await session.abortTransaction();
+      session.endSession();
+      return;
+    }
+
+    const gymPlan = await GymPlan.findById(memberPlan.gymPlanId).session(session);
+    if (!gymPlan) {
+      await session.abortTransaction();
+      session.endSession();
+      return;
+    }
+
+    const now = new Date();
+    const lastSession = await Session.findOne({ memberPlanId: memberPlan._id })
+      .sort({ day: -1 })
+      .session(session);
+
+    let dayCounter = lastSession ? lastSession.day + 1 : 1;
+    const daysPassed = Math.floor((now - memberPlan.startDate) / (1000 * 60 * 60 * 24));
+    let remainingCalendarDays = gymPlan.duration - daysPassed;
+    
+    if (remainingCalendarDays < 1) remainingCalendarDays = gymPlan.duration;
+
+    const activeMembership = await MembershipSubscription.findOne({
+      memberId,
+      status: "active"
+    }).populate("membershipPlanId").session(session);
+
+    const maxTrainers = activeMembership?.membershipPlanId?.maxTrainers || 1;
+
+    const validTrainers = await Trainer.find({
+      isActive: true,
+      _id: { $in: gymPlan.trainerIds },
+    }).session(session);
+
+    let allowedTrainers = validTrainers.map((t) => t._id);
+    if (allowedTrainers.length === 0) {
+      const allActiveTrainers = await Trainer.find({ isActive: true }).session(session);
+      allowedTrainers = allActiveTrainers.map((t) => t._id);
+    }
+    
+    allowedTrainers = allowedTrainers.slice(0, maxTrainers);
+
+    const workouts = gymPlan.sessions;
+    const getValidDaysOfWeek = (frequency) => {
+      if (frequency <= 2) return [1, 4];
+      if (frequency === 3) return [1, 3, 5];
+      if (frequency === 4) return [1, 2, 4, 5];
+      if (frequency === 5) return [1, 2, 3, 4, 5];
+      return [1, 2, 3, 4, 5, 6];
+    };
+
+    const validDays = getValidDaysOfWeek(workouts.length);
+    let workoutIndex = (dayCounter - 1) % workouts.length;
+    const sessionDocuments = [];
+
+    for (let i = 0; i < remainingCalendarDays; i++) {
+      const targetDate = new Date(now);
+      targetDate.setDate(now.getDate() + i);
+
+      if (validDays.includes(targetDate.getDay())) {
+        const rotatedTrainers = [
+          ...allowedTrainers.slice(workoutIndex % allowedTrainers.length),
+          ...allowedTrainers.slice(0, workoutIndex % allowedTrainers.length),
+        ];
+        
+        const trainerId = await findAvailableTrainer(rotatedTrainers, targetDate, session);
+        if (trainerId) {
+          const workout = workouts[workoutIndex % workouts.length];
+          sessionDocuments.push({
+            memberPlanId: memberPlan._id,
+            memberId,
+            trainerId,
+            workoutName: workout.name,
+            exercises: workout.exercises,
+            day: dayCounter++,
+            date: targetDate,
+            status: "upcoming",
+          });
+          workoutIndex++;
+        }
+      }
+    }
+
+    if (sessionDocuments.length > 0) {
+      await Session.insertMany(sessionDocuments, { session });
+    }
+
+    memberPlan.status = "active";
+    await memberPlan.save({ session });
+    await session.commitTransaction();
+  } catch (error) {
+    await session.abortTransaction();
+    console.error("Failed to resume paused member plan:", error);
+  } finally {
+    session.endSession();
+  }
+};
+
 export {
+  resumePausedMemberPlan,
   getAllPopularPlans,
   getPlanById,
   activatePopularPlan,
