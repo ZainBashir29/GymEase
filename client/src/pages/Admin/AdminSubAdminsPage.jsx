@@ -59,8 +59,11 @@ export default function AdminSubAdminsPage() {
 
   const handleInvite = async (e) => {
     e.preventDefault();
+    if (!inviteForm.email || !inviteForm.email.includes("@")) {
+      return toast.error("Please enter a valid email address.");
+    }
     if (inviteForm.permissions.length === 0) {
-      return toast.error("Select at least one permission");
+      return toast.error("Select at least one permission.");
     }
 
     try {
@@ -335,7 +338,6 @@ export default function AdminSubAdminsPage() {
               </label>
               <input
                 type="email"
-                required
                 value={inviteForm.email}
                 onChange={(e) =>
                   setInviteForm({ ...inviteForm, email: e.target.value })
@@ -402,7 +404,8 @@ export default function AdminSubAdminsPage() {
                 Cancel
               </button>
               <button
-                type="submit"
+                type="button"
+                onClick={handleInvite}
                 disabled={isSubmitting}
                 className="flex items-center gap-2 rounded-xl bg-brand-600 px-6 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-70 cursor-pointer"
               >
@@ -458,7 +461,8 @@ export default function AdminSubAdminsPage() {
                 Cancel
               </button>
               <button
-                type="submit"
+                type="button"
+                onClick={handleEditPermissions}
                 disabled={isSubmitting}
                 className="flex items-center gap-2 rounded-xl bg-brand-600 px-6 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-70 cursor-pointer"
               >
