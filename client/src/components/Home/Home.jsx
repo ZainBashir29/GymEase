@@ -1,6 +1,5 @@
 import Hero from "./Hero.jsx";
 import Services from "./Services.jsx";
-import HowItWorks from "./HowItWorks.jsx";
 import CtaBanner from "./CtaBanner.jsx";
 
 const Home = () => {
@@ -8,7 +7,6 @@ const Home = () => {
     <div className="bg-white">
       <Hero />
       <Services />
-      <HowItWorks />
       <CtaBanner />
     </div>
   );
