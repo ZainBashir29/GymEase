@@ -17,7 +17,6 @@ import {
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useChat } from "../../context/ChatContext.jsx";
 import ChatWidget from "../Chat/ChatWidget.jsx";
-import { ThemeToggle } from "../ThemeToggle.jsx";
 
 const AdminLayout = () => {
   const { pathname } = useLocation();
@@ -125,7 +124,6 @@ const AdminLayout = () => {
             <ChevronLeft className="w-4 h-4" />
             Back to Website
           </Link>
-          <ThemeToggle />
         </div>
 
         <nav className="flex-1 px-4 py-4 space-y-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] scrollbar-none">
@@ -199,7 +197,6 @@ const AdminLayout = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <ThemeToggle />
             {true && (
               <button
                 type="button"

@@ -3,7 +3,6 @@ import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { Dumbbell, ShoppingCart, Menu, X } from "lucide-react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useCart } from "../../context/CartContext.jsx";
-import { ThemeToggle } from "../ThemeToggle.jsx";
 
 const navbarLinks = [
   { label: "Home", to: "/" },
@@ -64,7 +63,6 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <ThemeToggle />
           {user ? (
             <>
               {user.role === "Member" && (

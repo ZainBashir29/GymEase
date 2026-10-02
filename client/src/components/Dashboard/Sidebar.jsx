@@ -3,7 +3,6 @@ import { Dumbbell, LogOut, ShoppingCart } from "lucide-react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useCart } from "../../context/CartContext.jsx";
 
-import { ThemeToggle } from "../ThemeToggle.jsx";
 
 const Sidebar = ({ navItems, setIsMobileMenuOpen }) => {
   const { user, logout } = useAuth();
@@ -31,7 +30,6 @@ const Sidebar = ({ navItems, setIsMobileMenuOpen }) => {
           </div>
           <span className="text-base font-bold text-slate-900 dark:text-white">GymEase</span>
         </div>
-        <ThemeToggle />
       </div>
 
       <nav className="flex-1 space-y-1 px-3 py-4">
