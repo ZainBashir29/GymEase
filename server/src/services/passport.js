@@ -13,37 +13,37 @@ if (process.env.GOOGLE_CLIENT_ID) {
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
-          let member = await Member.findOne({ googleId: profile.id });
+          let user = await User.findOne({ googleId: profile.id });
 
-          if (!member) {
-            let user = await User.findOne({ email: profile.emails[0].value.toLowerCase() });
-
-            if (user) {
-              if (user.role !== "Member") {
-                return done(null, false, { message: "Admins and Trainers must use email and password to log in." });
-              }
-              
-              user.googleId = profile.id;
-              await user.save({ validateBeforeSave: false });
-              
-              return done(null, user);
-            } else {
-              member = await Member.create({
-                fullName: profile.displayName,
-                email: profile.emails[0].value.toLowerCase(),
-                googleId: profile.id,
-                profilePicture: profile.photos[0].value,
-                isProfileCompleted: false,
-                authMethod: "google",
-                password: Math.random().toString(36).slice(-8) + "Aa1!",
-                username: `google_${profile.id}`,
-                age: 18,
-              });
-              return done(null, member);
-            }
+          if (user) {
+            return done(null, user);
           }
 
-          return done(null, member);
+          user = await User.findOne({ email: profile.emails[0].value.toLowerCase() });
+
+          if (user) {
+            if (user.role !== "Member") {
+              return done(null, false, { message: "Admins and Trainers must use email and password to log in." });
+            }
+            
+            user.googleId = profile.id;
+            await user.save({ validateBeforeSave: false });
+            
+            return done(null, user);
+          } else {
+            let member = await Member.create({
+              fullName: profile.displayName,
+              email: profile.emails[0].value.toLowerCase(),
+              googleId: profile.id,
+              profilePicture: profile.photos[0].value,
+              isProfileCompleted: false,
+              authMethod: "google",
+              password: Math.random().toString(36).slice(-8) + "Aa1!",
+              username: `google_${profile.id}`,
+              age: 18,
+            });
+            return done(null, member);
+          }
         } catch (err) {
           return done(err, null);
         }
