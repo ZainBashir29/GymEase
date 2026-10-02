@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import api from "../../lib/axios.js";
-import { useTheme } from "../../context/ThemeContext.jsx";
 import {
   Users,
   UserCheck,
@@ -54,7 +53,6 @@ const StatCard = ({ title, value, icon: Icon, colorClass }) => (
 );
 
 const AdminDashboardPage = () => {
-  const { theme } = useTheme();
   const [overview, setOverview] = useState(null);
   const [revenue, setRevenue] = useState(null);
   const [loading, setLoading] = useState(true);
