@@ -13,8 +13,6 @@ import {
   Settings,
 } from "lucide-react";
 import ConfirmModal from "../../components/Dashboard/ConfirmModal.jsx";
-import DashboardLayout from "../../components/Dashboard/DashboardLayout.jsx";
-import TrainerTierUpgradeBanner from "../../components/Dashboard/TrainerTierUpgradeBanner.jsx";
 import { useChat } from "../../context/ChatContext.jsx";
 
 const memberSidebarItems = [
@@ -75,15 +73,6 @@ const GymPlansPage = () => {
           a custom plan just for you.
         </p>
       </div>
-
-      {activePlan?.trainerTierStatus && (
-        <div className="mb-8">
-          <TrainerTierUpgradeBanner
-            trainerTierStatus={activePlan.trainerTierStatus}
-            onRebalanceComplete={fetchData}
-          />
-        </div>
-      )}
 
       {activePlan && (
         <div className="mb-12 rounded-2xl bg-brand-50 p-6 border border-brand-200 flex flex-col sm:flex-row items-center justify-between gap-4 dark:bg-brand-900/20 dark:border-brand-900/30">

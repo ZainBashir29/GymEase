@@ -18,7 +18,6 @@ import ProgressCard from "../../components/Dashboard/ProgressCard.jsx";
 import QuickLinks from "../../components/Dashboard/QuickLinks.jsx";
 import MembershipCard from "../../components/Dashboard/MembershipCard.jsx";
 import UpcomingScheduleCard from "../../components/Dashboard/UpcomingScheduleCard.jsx";
-import TrainerTierUpgradeBanner from "../../components/Dashboard/TrainerTierUpgradeBanner.jsx";
 
 const memberSidebarItems = [
   {
@@ -70,13 +69,6 @@ const MemberDashboard = () => {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
-          {activePlan?.trainerTierStatus && (
-            <TrainerTierUpgradeBanner
-              trainerTierStatus={activePlan.trainerTierStatus}
-              onRebalanceComplete={() => setRefreshKey((k) => k + 1)}
-            />
-          )}
-
           {!isLoadingPlan && !hasActivePlan ? (
             <div className="bg-linear-to-br from-brand-600 to-brand-800 rounded-3xl p-8 md:p-12 text-white shadow-xl relative overflow-hidden">
               <div className="absolute -right-12 -top-12 rounded-full bg-white/10 blur-3xl h-64 w-64"></div>

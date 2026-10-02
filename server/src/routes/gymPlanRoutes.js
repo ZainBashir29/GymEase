@@ -15,7 +15,6 @@ import {
   getTrainerTodaySessions,
   markSessionComplete,
   markSessionConductedByTrainer,
-  rebalancePlanTrainers,
 } from "../controllers/gymPlanController.js";
 import verifyJwt from "../middlewares/authMiddleware.js";
 import role from "../middlewares/roleMiddleware.js";
@@ -26,10 +25,6 @@ const router = Router();
 router.route("/").get(getAllPopularPlans);
 
 router.route("/active").get(verifyJwt, role("Member"), getActiveMemberPlan);
-
-router
-  .route("/rebalance-trainers")
-  .post(verifyJwt, role("Member"), requireActiveMembership, rebalancePlanTrainers);
 
 router
   .route("/member-history")
