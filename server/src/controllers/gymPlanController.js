@@ -129,15 +129,24 @@ const activatePopularPlan = asyncHandler(async (req, res) => {
 
   const maxTrainers = activeMember.membershipPlanId?.maxTrainers || 1;
 
-  const validTrainers = await Trainer.find({
-    _id: { $in: gymPlan.trainerIds },
+  let validTrainers = await Trainer.find({
+    _id: { $in: gymPlan.trainerIds || [] },
     isActive: true,
   });
+
+  if (validTrainers.length < maxTrainers) {
+    const existingIds = validTrainers.map((t) => t._id);
+    const additionalTrainers = await Trainer.find({
+      isActive: true,
+      _id: { $nin: existingIds },
+    }).limit(maxTrainers - validTrainers.length);
+    validTrainers = [...validTrainers, ...additionalTrainers];
+  }
 
   if (!validTrainers || validTrainers.length === 0) {
     throw new ApiError(
       400,
-      "No active trainers are currently assigned to this gym plan",
+      "No active trainers are currently available in the system",
     );
   }
 
@@ -304,7 +313,9 @@ const getActiveMemberPlan = asyncHandler(async (req, res) => {
   const activeMembership = await MembershipSubscription.findOne({
     memberId: req.user?._id,
     status: "active",
-  }).populate("membershipPlanId");
+  })
+    .sort({ createdAt: -1 })
+    .populate("membershipPlanId");
 
   const maxAllowedTrainers =
     activeMembership?.membershipPlanId?.maxTrainers || 1;
@@ -982,26 +993,40 @@ const resumePausedMemberPlan = async (memberId) => {
       memberId,
       status: "active",
     })
+      .sort({ createdAt: -1 })
       .populate("membershipPlanId")
       .session(session);
 
     const maxTrainers =
       activeMembership?.membershipPlanId?.maxTrainers || 1;
 
-    const validTrainers = await Trainer.find({
+    let validTrainers = await Trainer.find({
       isActive: true,
-      _id: { $in: gymPlan.trainerIds },
+      _id: { $in: gymPlan.trainerIds || [] },
     }).session(session);
 
-    let allowedTrainers = validTrainers
+    if (validTrainers.length < maxTrainers) {
+      const existingIds = validTrainers.map((t) => t._id);
+      const additionalTrainers = await Trainer.find({
+        isActive: true,
+        _id: { $nin: existingIds },
+      })
+        .limit(maxTrainers - validTrainers.length)
+        .session(session);
+      validTrainers = [...validTrainers, ...additionalTrainers];
+    }
+
+    if (validTrainers.length === 0) {
+      validTrainers = await Trainer.find({ isActive: true }).session(session);
+    }
+
+    const allowedTrainers = validTrainers
       .slice(0, maxTrainers)
       .map((t) => t._id);
 
-    if (allowedTrainers.length === 0) {
-      const allActiveTrainers = await Trainer.find({ isActive: true }).session(session);
-      allowedTrainers = allActiveTrainers
-        .slice(0, maxTrainers)
-        .map((t) => t._id);
+    if (gymPlan.type === "custom") {
+      gymPlan.trainerIds = allowedTrainers;
+      await gymPlan.save({ session });
     }
 
     const workouts = gymPlan.sessions;
@@ -1073,7 +1098,9 @@ const rebalancePlanTrainers = asyncHandler(async (req, res) => {
   const activeMembership = await MembershipSubscription.findOne({
     memberId: req.user?._id,
     status: "active",
-  }).populate("membershipPlanId");
+  })
+    .sort({ createdAt: -1 })
+    .populate("membershipPlanId");
 
   if (!activeMembership) {
     throw new ApiError(403, "Active membership is required to update trainers");
@@ -1087,9 +1114,18 @@ const rebalancePlanTrainers = asyncHandler(async (req, res) => {
   }
 
   let validTrainers = await Trainer.find({
-    _id: { $in: gymPlan.trainerIds },
+    _id: { $in: gymPlan.trainerIds || [] },
     isActive: true,
   });
+
+  if (validTrainers.length < maxTrainers) {
+    const existingIds = validTrainers.map((t) => t._id);
+    const additionalTrainers = await Trainer.find({
+      isActive: true,
+      _id: { $nin: existingIds },
+    }).limit(maxTrainers - validTrainers.length);
+    validTrainers = [...validTrainers, ...additionalTrainers];
+  }
 
   if (validTrainers.length === 0) {
     validTrainers = await Trainer.find({ isActive: true });
@@ -1102,6 +1138,11 @@ const rebalancePlanTrainers = asyncHandler(async (req, res) => {
   const allowedTrainers = validTrainers
     .slice(0, maxTrainers)
     .map((t) => t._id);
+
+  if (gymPlan.type === "custom") {
+    gymPlan.trainerIds = allowedTrainers;
+    await gymPlan.save();
+  }
 
   const startOfToday = new Date();
   startOfToday.setHours(0, 0, 0, 0);

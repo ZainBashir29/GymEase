@@ -36,32 +36,33 @@ const GymPlansPage = () => {
   const navigate = useNavigate();
   const { fetchConversations } = useChat();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const [plansRes, activePlanRes, membershipRes] = await Promise.all([
-          api.get("/gym-plans"),
-          api
-            .get(`/gym-plans/active?_t=${Date.now()}`)
-            .catch(() => ({ data: { data: null } })),
-          api
-            .get(`/memberships/current?_t=${Date.now()}`)
-            .catch(() => ({ data: { data: null } })),
-        ]);
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const [plansRes, activePlanRes, membershipRes] = await Promise.all([
+        api.get("/gym-plans").catch(() => ({ data: { data: [] } })),
+        api
+          .get(`/gym-plans/active?_t=${Date.now()}`)
+          .catch(() => ({ data: { data: null } })),
+        api
+          .get(`/memberships/current?_t=${Date.now()}`)
+          .catch(() => ({ data: { data: null } })),
+      ]);
 
-        const activePlansOnly = (plansRes.data.data || []).filter(
-          (p) => p.isActive !== false,
-        );
-        setPlans(activePlansOnly);
-        setActivePlan(activePlanRes.data.data);
-        setMembership(membershipRes.data.data);
-      } catch (error) {
-        console.error("Failed to fetch gym plans:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+      const activePlansOnly = (plansRes.data?.data || []).filter(
+        (p) => p.isActive !== false,
+      );
+      setPlans(activePlansOnly);
+      setActivePlan(activePlanRes.data?.data || null);
+      setMembership(membershipRes.data?.data || null);
+    } catch (error) {
+      console.error("Failed to fetch gym plans:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
   }, []);
 
