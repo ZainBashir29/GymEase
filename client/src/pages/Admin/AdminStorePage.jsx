@@ -366,9 +366,7 @@ const AdminStorePage = () => {
                     className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                   >
                     <option value="Supplement">Supplement</option>
-                    <option value="Equipment">Equipment</option>
-                    <option value="Apparel">Apparel</option>
-                    <option value="Accessory">Accessory</option>
+                    <option value="Gear">Gear</option>
                   </select>
                 </div>
 
@@ -404,7 +402,7 @@ const AdminStorePage = () => {
                             <p className="pl-1">or drag and drop</p>
                           </div>
                           <p className="text-xs text-slate-500 dark:text-slate-400">
-                            PNG, JPG, GIF up to 5MB
+                            PNG, JPG, GIF up to 5 MB
                           </p>
                         </>
                       )}
