@@ -18,13 +18,13 @@ const servicesPoints = [
     icon: CreditCard,
     title: "Simple Memberships",
     description:
-      "Choose a membership plan, pay securely, and get a digital membership card with a scannable QR code.",
+      "Choose a membership plan, pay securely and get a digital membership card with a scannable QR code.",
   },
   {
     icon: LineChart,
     title: "Progress Tracking",
     description:
-      "See your sessions, attendance, and progress at a glance, no spreadsheets required.",
+      "See your sessions, attendance and progress at a glance.",
   },
   {
     icon: MessageCircle,

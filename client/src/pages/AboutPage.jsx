@@ -19,7 +19,7 @@ const values = [
     icon: Users,
     title: "Community Driven",
     description:
-      "Fitness is about people. We build tools that foster stronger relationships between gym owners, trainers, and their members.",
+      "Fitness is about people. We build tools that foster stronger relationships between gym admins, trainers, and their members.",
   },
   {
     icon: Dumbbell,
@@ -46,8 +46,8 @@ const AboutPage = () => {
               Our Mission at GymEase
             </h1>
             <p className="mt-6 text-lg leading-8 text-slate-300">
-              We're redefining gym management by mixing technology with the
-              passion of fitness - empowering owners, trainers, and members to
+              We are redefining gym management by mixing technology with the
+              passion of fitness: empowering admins, trainers, and members to
               achieve more together.
             </p>
           </div>
@@ -116,7 +116,7 @@ const AboutPage = () => {
           <p className="mx-auto mt-5 max-w-xl text-lg text-slate-600 dark:text-slate-400">
             GymEase is a full-stack capstone project covering role-based access
             control, real-time chat, integrated payments, QR-based attendance,
-            and a full gym store, all in one platform.
+            and a full gym store all in one platform.
           </p>
           <Link
             to="/register"

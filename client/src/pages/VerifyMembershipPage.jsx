@@ -21,15 +21,6 @@ const VerifyMembershipPage = () => {
   const [isCheckingIn, setIsCheckingIn] = useState(false);
   const [checkInSuccessMsg, setCheckInSuccessMsg] = useState("");
   const [checkInErrorMsg, setCheckInErrorMsg] = useState("");
-  const [autoCheckIn, setAutoCheckIn] = useState(() => {
-    return localStorage.getItem("gymease_auto_checkin") === "true";
-  });
-
-  const handleToggleAutoCheckIn = (e) => {
-    const enabled = e.target.checked;
-    setAutoCheckIn(enabled);
-    localStorage.setItem("gymease_auto_checkin", enabled ? "true" : "false");
-  };
 
   const handleCheckIn = useCallback(async () => {
     setIsCheckingIn(true);
@@ -60,28 +51,6 @@ const VerifyMembershipPage = () => {
       try {
         const { data } = await api.get(`/memberships/verify/${id}`);
         setResult(data.data);
-
-        if (
-          localStorage.getItem("gymease_auto_checkin") === "true" &&
-          data.data?.isValid &&
-          !data.data?.isCheckedInToday
-        ) {
-          try {
-            const checkInRes = await api.post(
-              `/memberships/verify/check-in/${id}`,
-            );
-            setResult((prev) => ({
-              ...prev,
-              isCheckedInToday: true,
-              checkedInAt:
-                checkInRes.data?.data?.attendance?.date ||
-                new Date().toISOString(),
-            }));
-            setCheckInSuccessMsg("Auto checked in successfully!");
-          } catch (autoErr) {
-            console.error("Auto check-in failed:", autoErr);
-          }
-        }
       } catch (err) {
         setError(
           err.response?.data?.message ||
@@ -291,16 +260,6 @@ const VerifyMembershipPage = () => {
                   Attendance Recorded for Today
                 </div>
               )}
-
-              <label className="flex cursor-pointer items-center justify-center gap-2 text-xs font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300">
-                <input
-                  type="checkbox"
-                  checked={autoCheckIn}
-                  onChange={handleToggleAutoCheckIn}
-                  className="rounded border-slate-300 text-brand-600 focus:ring-brand-500 dark:border-slate-700"
-                />
-                <span>Auto check-in on scan (kiosk mode)</span>
-              </label>
             </div>
           )}
         </div>

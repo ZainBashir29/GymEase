@@ -7,25 +7,25 @@ const privacySections = [
     icon: UserCog,
     title: "Information We Collect",
     description:
-      "We collect the information required to provide a smooth gym management experience, including account details, membership information, contact information, workout progress, payment status, and communication history within the app.",
+      "We collect the fundamental data required to demonstrate the application's core features. This includes your basic account details, gym plan selections, and internal chat communications.",
   },
   {
     icon: Database,
     title: "How We Use Your Data",
     description:
-      "Your data is used to create and manage your account, process bookings and memberships, personalize workouts and trainer communication, support customer service, and maintain a secure and efficient platform experience.",
+      "Your data is used strictly to operate the platform and fulfill the project's functional requirements, such as managing role-based dashboards, rendering workout plans, and tracking test memberships.",
   },
   {
     icon: Lock,
-    title: "Data Protection",
+    title: "Security Measures",
     description:
-      "We use reasonable technical and organizational safeguards to help protect your personal information against loss, misuse, unauthorized access, and disclosure.",
+      "Although this is an academic project, we adhere to standard software engineering security practices. Passwords are cryptographically hashed before storage, and sessions are secured using JWTs.",
   },
   {
     icon: ShieldCheck,
-    title: "Sharing & Third Parties",
+    title: "Third-Party Services",
     description:
-      "We do not sell personal data. We may share limited information with trusted service providers who assist with hosting, payment processing, analytics, or customer support, only as needed to operate the service.",
+      "We do not sell or distribute personal data. We only utilize standard third-party infrastructure required to host the application, manage the database, and process simulated payments.",
   },
 ];
 
@@ -46,7 +46,7 @@ const PrivacyPage = () => {
             Privacy Policy
           </h1>
           <p className="mt-4 text-base leading-7 text-slate-300 sm:text-lg">
-            This policy explains how we collect, use, protect, and handle your personal information when you use our application.
+            This document outlines how data is handled within the GymEase platform, developed as an academic software engineering project.
           </p>
         </div>
       </section>
@@ -69,7 +69,7 @@ const PrivacyPage = () => {
 
           <div className="mt-6 space-y-6 text-slate-700 dark:text-slate-300">
             <p>
-              GymEase respects your privacy and is committed to protecting personal information in a transparent, secure, and responsible way. This Privacy Policy applies to data collected through our mobile application and related services.
+              Welcome to GymEase. Please note that this platform is a university project developed for academic evaluation. We take software engineering standards seriously and have outlined how we collect, store, and manage your test data below.
             </p>
 
             <div className="grid gap-5 md:grid-cols-2">
@@ -88,30 +88,23 @@ const PrivacyPage = () => {
             </div>
 
             <section>
-              <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">Your Rights</h2>
+              <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">Data Control</h2>
               <p className="mt-3">
-                You may have rights to access, correct, or delete your personal information, depending on your location and applicable law. You may also choose to opt out of certain non-essential communications or manage notification preferences within the app.
+                You retain full control over any information you submit to the platform. If you wish to have your test account or associated data removed from our database, please contact the system administrator.
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">Cookies and Analytics</h2>
+              <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">Cookies</h2>
               <p className="mt-3">
-                We may use cookies, device identifiers, and analytics tools to understand usage patterns, improve app performance, and maintain service quality. These tools help us monitor errors, improve user experience, and understand important app trends.
+                GymEase uses essential, HTTP-only cookies strictly for managing secure user sessions and maintaining your logged-in state across the application. We do not implement tracking or advertising cookies.
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">Children’s Privacy</h2>
+              <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">Contact Information</h2>
               <p className="mt-3">
-                Our services are intended for adults and users with appropriate legal consent. We do not knowingly collect personal information from children under the age of 13 without verified parental consent where required by applicable law.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">Contact Us</h2>
-              <p className="mt-3">
-                If you have any questions about this Privacy Policy or how your data is handled, please contact us at
+                If you are evaluating this project or have any technical questions regarding the system's architecture and data handling, please reach out to the developer at
                 <a href="mailto:gymease1@gmail.com" className="ml-1 font-medium text-brand-700 underline underline-offset-4 dark:text-brand-400">
                   gymease1@gmail.com
                 </a>

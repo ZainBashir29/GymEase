@@ -160,6 +160,12 @@ const StorePage = () => {
           )})}
         </div>
       )}
+
+      <div className="mt-12 text-center max-w-2xl mx-auto px-4">
+        <p className="text-sm text-slate-500 dark:text-slate-400">
+          <strong>Note:</strong> The system has a no-refund policy at the moment. You can contact your gym for further inquiries.
+        </p>
+      </div>
     </div>
   );
 

@@ -69,7 +69,7 @@ const GymPlansPage = () => {
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Gym Plans</h1>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-          Choose from our expertly crafted popular plans or let our AI generate
+          Choose from our expertly crafted popular plans or let our system generate
           a custom plan just for you.
         </p>
       </div>
@@ -116,7 +116,7 @@ const GymPlansPage = () => {
             </h2>
             <p className="text-slate-300 text-lg max-w-2xl mb-8">
               Answer a few quick questions about your fitness goals, experience
-              level, and availability, and we'll instantly generate a
+              level, and availability, and we will instantly generate a
               personalized multi-week workout plan tailored entirely to you.
             </p>
             {membership?.membershipPlanId?.name === "Basic" ? (
@@ -154,7 +154,7 @@ const GymPlansPage = () => {
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Popular Plans</h2>
         <p className="text-slate-500 mt-1 dark:text-slate-400">
-          Ready-to-go routines crafted by our elite trainers.
+          Ready-to-go plans crafted by our elite trainers.
         </p>
       </div>
 

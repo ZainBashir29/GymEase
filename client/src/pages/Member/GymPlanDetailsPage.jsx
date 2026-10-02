@@ -189,11 +189,11 @@ const GymPlanDetailsPage = () => {
                           <span className="font-medium text-slate-700 dark:text-slate-300">
                             {ex.name}
                           </span>
-                          <span className="text-slate-400">&mdash;</span>
+                          <span className="text-slate-400">-</span>
                           <span>
                             {ex.duration
                               ? ex.duration
-                              : `${ex.sets} sets Ã— ${ex.reps} reps`}
+                              : `${ex.sets} sets x ${ex.reps} reps`}
                           </span>
                         </li>
                       ))}
