@@ -130,6 +130,11 @@ const createMembershipSubscription = asyncHandler(async (req, res) => {
 });
 
 const getCurrentMembershipSubscription = asyncHandler(async (req, res) => {
+  res.setHeader(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate",
+  );
+
   const membershipSubscription = await MembershipSubscription.aggregate([
     {
       $match: {
@@ -138,8 +143,13 @@ const getCurrentMembershipSubscription = asyncHandler(async (req, res) => {
       },
     },
     {
+      $sort: {
+        createdAt: -1,
+      },
+    },
+    {
       $lookup: {
-        from: "members",
+        from: "users",
         localField: "memberId",
         foreignField: "_id",
         as: "member",
@@ -191,6 +201,11 @@ const getCurrentMembershipSubscription = asyncHandler(async (req, res) => {
 });
 
 const getSubscriptionHistory = asyncHandler(async (req, res) => {
+  res.setHeader(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate",
+  );
+
   const subscriptions = await MembershipSubscription.aggregate([
     {
       $match: {
@@ -205,7 +220,7 @@ const getSubscriptionHistory = asyncHandler(async (req, res) => {
     },
     {
       $lookup: {
-        from: "members",
+        from: "users",
         localField: "memberId",
         foreignField: "_id",
         as: "member",

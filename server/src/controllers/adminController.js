@@ -39,7 +39,7 @@ const getAllMembers = asyncHandler(async (req, res) => {
 
       const activeGymPlan = await MemberPlan.findOne({
         memberId: member._id,
-        status: "active",
+        status: { $in: ["active", "paused"] },
       })
         .populate("gymPlanId", "name")
         .lean();
@@ -56,6 +56,7 @@ const getAllMembers = asyncHandler(async (req, res) => {
         gymPlan: activeGymPlan
           ? {
               planName: activeGymPlan.gymPlanId?.name || "Unknown Plan",
+              status: activeGymPlan.status,
             }
           : null,
       };

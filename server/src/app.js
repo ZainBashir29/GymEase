@@ -52,25 +52,56 @@ app.use(
   }),
 );
 
-const publicCacheRoutes = [
-  "/api/v1/store/products",
-  "/api/v1/memberships",
-  "/api/v1/gym-plans",
-];
+const isPublicCacheableRoute = (req) => {
+  if (req.method !== "GET") return false;
 
-app.use((req, res, next) => {
-  if (req.method !== "GET") {
-    return next();
+  const path = req.path;
+
+  if (
+    path === "/api/v1/store/products" ||
+    path.startsWith("/api/v1/store/products/")
+  ) {
+    return true;
   }
 
-  const shouldCachePublicResponse = publicCacheRoutes.some(
-    (route) => req.path === route || req.path.startsWith(`${route}/`),
-  );
+  if (
+    path === "/api/v1/memberships/plans" ||
+    path.startsWith("/api/v1/memberships/plan/")
+  ) {
+    return true;
+  }
 
-  if (shouldCachePublicResponse) {
+  if (path === "/api/v1/gym-plans") {
+    return true;
+  }
+
+  const privateGymPlanPrefixes = [
+    "/api/v1/gym-plans/active",
+    "/api/v1/gym-plans/member-history",
+    "/api/v1/gym-plans/questionnaire",
+    "/api/v1/gym-plans/sessions",
+    "/api/v1/gym-plans/custom",
+  ];
+  if (
+    path.startsWith("/api/v1/gym-plans/") &&
+    !privateGymPlanPrefixes.some((prefix) => path.startsWith(prefix))
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
+app.use((req, res, next) => {
+  if (isPublicCacheableRoute(req)) {
     res.setHeader(
       "Cache-Control",
       "public, max-age=300, stale-while-revalidate=600",
+    );
+  } else {
+    res.setHeader(
+      "Cache-Control",
+      "no-store, no-cache, must-revalidate, proxy-revalidate",
     );
   }
 
@@ -113,6 +144,11 @@ app.get("/health-check", (req, res) => {
 app.use((err, req, res, next) => {
   let statusCode = err.statusCode || 500;
   let message = err.message || "Internal server error";
+
+  res.setHeader(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate",
+  );
 
   if (err.name === "MulterError" && err.code === "LIMIT_FILE_SIZE") {
     statusCode = 400;

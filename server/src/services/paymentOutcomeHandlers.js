@@ -1,5 +1,6 @@
 import Payment from "../models/paymentModel.js";
 import MembershipSubscription from "../models/membershipSubscriptionModel.js";
+import MembershipPlan from "../models/membershipPlanModel.js";
 import Order from "../models/orderModel.js";
 import Cart from "../models/cartModel.js";
 import StoreProduct from "../models/storeProductModel.js";
@@ -49,8 +50,31 @@ const handleSuccessfulPayment = async (trackerToken) => {
   ).populate("memberId");
 
   if (!updatedPayment) {
-    const existingPayment = await Payment.findOne({ trackerToken });
+    const existingPayment = await Payment.findOne({ trackerToken }).populate("memberId");
     if (existingPayment && existingPayment.status === "successful") {
+      if (existingPayment.type === "MembershipSubscription") {
+        const memberId = existingPayment.memberId?._id || existingPayment.memberId;
+        const activeSub = await MembershipSubscription.findOne({
+          memberId,
+          status: "active",
+        });
+        if (!activeSub) {
+          const plan = await MembershipPlan.findById(existingPayment.paymentCauseId);
+          const durationDays = plan?.duration || 30;
+          const startDate = new Date();
+          const endDate = new Date(
+            startDate.getTime() + durationDays * 24 * 60 * 60 * 1000,
+          );
+          await MembershipSubscription.create({
+            membershipPlanId: existingPayment.paymentCauseId,
+            memberId,
+            startDate,
+            endDate,
+            status: "active",
+            paymentId: existingPayment._id,
+          });
+        }
+      }
       return existingPayment;
     }
     console.error(
@@ -82,7 +106,7 @@ const handleSuccessfulPayment = async (trackerToken) => {
       },
     );
 
-    const activatedSubscription = await MembershipSubscription.findOneAndUpdate(
+    let activatedSubscription = await MembershipSubscription.findOneAndUpdate(
       {
         membershipPlanId: updatedPayment.paymentCauseId,
         memberId: updatedPayment.memberId._id,
@@ -98,7 +122,45 @@ const handleSuccessfulPayment = async (trackerToken) => {
     ).populate("membershipPlanId", "name");
 
     if (!activatedSubscription) {
-      throw new Error("Could not activate the paid membership subscription");
+      activatedSubscription = await MembershipSubscription.findOne({
+        paymentId: updatedPayment._id,
+        status: "active",
+      }).populate("membershipPlanId", "name");
+    }
+
+    if (!activatedSubscription) {
+      activatedSubscription = await MembershipSubscription.findOneAndUpdate(
+        {
+          memberId: updatedPayment.memberId._id,
+          status: "pending",
+        },
+        {
+          $set: {
+            membershipPlanId: updatedPayment.paymentCauseId,
+            status: "active",
+            paymentId: updatedPayment._id,
+          },
+        },
+        { returnDocument: "after" },
+      ).populate("membershipPlanId", "name");
+    }
+
+    if (!activatedSubscription) {
+      const plan = await MembershipPlan.findById(updatedPayment.paymentCauseId);
+      const durationDays = plan?.duration || 30;
+      const startDate = new Date();
+      const endDate = new Date(
+        startDate.getTime() + durationDays * 24 * 60 * 60 * 1000,
+      );
+      activatedSubscription = await MembershipSubscription.create({
+        membershipPlanId: updatedPayment.paymentCauseId,
+        memberId: updatedPayment.memberId._id,
+        startDate,
+        endDate,
+        status: "active",
+        paymentId: updatedPayment._id,
+      });
+      await activatedSubscription.populate("membershipPlanId", "name");
     }
 
     const previousPlanName = existingActiveSub?.membershipPlanId?.name;
