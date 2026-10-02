@@ -35,7 +35,7 @@ const ChangePassword = () => {
     } catch (err) {
       setError(
         err.response?.data?.message ||
-          "Failed to reset password. The link might be invalid or expired.",
+        "Failed to reset password. The link might be invalid or expired.",
       );
     } finally {
       setIsSubmitting(false);
@@ -81,15 +81,15 @@ const ChangePassword = () => {
             type="submit"
             disabled={isSubmitting}
             className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60 mt-4 cursor-pointer"
-          > 
+          >
             {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
             {isSubmitting ? "Resetting..." : "Reset password"}
           </button>
         </form>
       ) : (
-        <div className="rounded-lg border border-success/20 bg-success/5 p-6 text-center">
+        <div className="rounded-lg border border-success/20 bg-success/5 p-6 text-center dark:border-success/30 dark:bg-success/10">
           <CheckCircle2 className="mx-auto h-12 w-12 text-success mb-3" />
-          <p className="text-success-800 font-medium mb-4">
+          <p className="text-success-800 font-medium mb-4 dark:text-success">
             Password reset successfully!
           </p>
           <Link
@@ -105,7 +105,7 @@ const ChangePassword = () => {
         <div className="mt-6 flex justify-center">
           <Link
             to="/login"
-            className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-700"
+            className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to login

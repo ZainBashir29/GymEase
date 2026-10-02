@@ -76,12 +76,12 @@ const GymPlanDetailsPage = () => {
   if (!plan) {
     return (
       <div className="mx-auto max-w-3xl px-6 py-12 text-center">
-        <h2 className="text-2xl font-bold text-slate-900 mb-4">
+        <h2 className="text-2xl font-bold text-slate-900 mb-4 dark:text-white">
           Plan Not Found
         </h2>
         <Link
           to="/member/plans"
-          className="text-brand-600 font-medium hover:underline"
+          className="text-brand-600 font-medium hover:underline dark:text-brand-400"
         >
           &larr; Back to Plans
         </Link>
@@ -93,7 +93,7 @@ const GymPlanDetailsPage = () => {
     <div className="mx-auto max-w-4xl px-6 py-12">
       <Link
         to="/member/plans"
-        className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-900 mb-8 transition-colors"
+        className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-900 mb-8 transition-colors dark:text-slate-400 dark:hover:text-slate-300"
       >
         <ArrowLeft className="w-4 h-4" />
         Back to Plans
@@ -107,7 +107,7 @@ const GymPlanDetailsPage = () => {
       )}
 
       {activePlan && !error && (
-        <div className="mb-8 p-4 bg-yellow-50 border border-yellow-100 rounded-xl flex items-start gap-3 text-yellow-800">
+        <div className="mb-8 p-4 bg-yellow-50 border border-yellow-100 rounded-xl flex items-start gap-3 text-yellow-800 dark:bg-yellow-900/20 dark:border-yellow-900/50 dark:text-yellow-400">
           <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
           <div className="flex-1">
             <p className="font-bold">You currently have an active plan.</p>
@@ -118,28 +118,28 @@ const GymPlanDetailsPage = () => {
           </div>
           <button
             onClick={() => setIsCancelModalOpen(true)}
-            className="shrink-0 px-4 py-2 bg-yellow-100 text-yellow-800 text-sm font-medium rounded-lg hover:bg-yellow-200 transition-colors"
+            className="shrink-0 px-4 py-2 bg-yellow-100 text-yellow-800 text-sm font-medium rounded-lg hover:bg-yellow-200 transition-colors dark:bg-yellow-900/30 dark:text-yellow-400 dark:hover:bg-yellow-900/50"
           >
             Cancel Active Plan
           </button>
         </div>
       )}
 
-      <div className="bg-white rounded-3xl shadow-sm ring-1 ring-slate-100 overflow-hidden">
-        <div className="bg-brand-50 p-8 md:p-12 text-center md:text-left flex flex-col md:flex-row items-center gap-8 border-b border-slate-100">
-          <div className="w-24 h-24 bg-white rounded-2xl shadow-sm flex items-center justify-center shrink-0">
+      <div className="bg-white rounded-3xl shadow-sm ring-1 ring-slate-100 overflow-hidden dark:bg-slate-900 dark:ring-slate-800">
+        <div className="bg-brand-50 p-8 md:p-12 text-center md:text-left flex flex-col md:flex-row items-center gap-8 border-b border-slate-100 dark:bg-brand-900/20 dark:border-slate-800">
+          <div className="w-24 h-24 bg-white rounded-2xl shadow-sm flex items-center justify-center shrink-0 dark:bg-slate-800">
             <Dumbbell className="w-12 h-12 text-brand-500" />
           </div>
           <div className="flex-1">
-            <h1 className="text-3xl md:text-4xl font-black text-slate-900 mb-4">
+            <h1 className="text-3xl md:text-4xl font-black text-slate-900 mb-4 dark:text-white">
               {plan.name}
             </h1>
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-sm font-medium text-slate-600">
-              <span className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-lg shadow-sm border border-slate-100">
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-sm font-medium text-slate-600 dark:text-slate-300">
+              <span className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-lg shadow-sm border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
                 <Clock className="w-4 h-4 text-brand-500" />
                 {plan.duration} Days
               </span>
-              <span className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-lg shadow-sm border border-slate-100">
+              <span className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-lg shadow-sm border border-slate-100 dark:bg-slate-800 dark:border-slate-700">
                 <Dumbbell className="w-4 h-4 text-brand-500" />
                 {plan.sessions?.length || 0} Sessions
               </span>
@@ -149,44 +149,44 @@ const GymPlanDetailsPage = () => {
 
         <div className="p-8 md:p-12 space-y-12">
           <div>
-            <h3 className="text-xl font-bold text-slate-900 mb-4">
+            <h3 className="text-xl font-bold text-slate-900 mb-4 dark:text-white">
               About this plan
             </h3>
-            <p className="text-slate-600 leading-relaxed text-lg whitespace-pre-wrap">
+            <p className="text-slate-600 leading-relaxed text-lg whitespace-pre-wrap dark:text-slate-300">
               {plan.description}
             </p>
             {plan.details && (
-              <p className="text-slate-500 mt-4 leading-relaxed">
+              <p className="text-slate-500 mt-4 leading-relaxed dark:text-slate-400">
                 {plan.details}
               </p>
             )}
           </div>
 
           <div>
-            <h3 className="text-xl font-bold text-slate-900 mb-6">
+            <h3 className="text-xl font-bold text-slate-900 mb-6 dark:text-white">
               What you'll be doing
             </h3>
             <div className="space-y-4">
               {plan.sessions?.map((session, idx) => (
                 <div
                   key={idx}
-                  className="p-5 rounded-2xl bg-slate-50 border border-slate-100 flex items-start gap-4"
+                  className="p-5 rounded-2xl bg-slate-50 border border-slate-100 flex items-start gap-4 dark:bg-slate-800 dark:border-slate-700"
                 >
-                  <div className="w-8 h-8 rounded-full bg-brand-100 text-brand-700 font-bold flex items-center justify-center shrink-0 mt-0.5">
+                  <div className="w-8 h-8 rounded-full bg-brand-100 text-brand-700 font-bold flex items-center justify-center shrink-0 mt-0.5 dark:bg-brand-900/50 dark:text-brand-300">
                     {idx + 1}
                   </div>
                   <div>
-                    <h4 className="font-bold text-slate-900 text-lg mb-2">
+                    <h4 className="font-bold text-slate-900 text-lg mb-2 dark:text-white">
                       {session.name}
                     </h4>
                     <ul className="space-y-1">
                       {session.exercises?.map((ex, eIdx) => (
                         <li
                           key={eIdx}
-                          className="text-sm text-slate-600 flex items-center gap-2"
+                          className="text-sm text-slate-600 flex items-center gap-2 dark:text-slate-300"
                         >
                           <CheckCircle2 className="w-4 h-4 text-brand-400" />
-                          <span className="font-medium text-slate-700">
+                          <span className="font-medium text-slate-700 dark:text-slate-300">
                             {ex.name}
                           </span>
                           <span className="text-slate-400">&mdash;</span>
@@ -204,7 +204,7 @@ const GymPlanDetailsPage = () => {
             </div>
           </div>
 
-          <div className="pt-6 border-t border-slate-100 flex justify-end">
+          <div className="pt-6 border-t border-slate-100 flex justify-end dark:border-slate-800">
             <button
               onClick={handleActivate}
               disabled={activating || activePlan !== null}

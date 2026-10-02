@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import ConfirmModal from "../../components/Dashboard/ConfirmModal.jsx";
 import DashboardLayout from "../../components/Dashboard/DashboardLayout.jsx";
+import TrainerTierUpgradeBanner from "../../components/Dashboard/TrainerTierUpgradeBanner.jsx";
 import { useChat } from "../../context/ChatContext.jsx";
 
 const memberSidebarItems = [
@@ -41,9 +42,11 @@ const GymPlansPage = () => {
       try {
         const [plansRes, activePlanRes, membershipRes] = await Promise.all([
           api.get("/gym-plans"),
-          api.get("/gym-plans/active").catch(() => ({ data: { data: null } })),
           api
-            .get("/memberships/current")
+            .get(`/gym-plans/active?_t=${Date.now()}`)
+            .catch(() => ({ data: { data: null } })),
+          api
+            .get(`/memberships/current?_t=${Date.now()}`)
             .catch(() => ({ data: { data: null } })),
         ]);
 
@@ -65,24 +68,33 @@ const GymPlansPage = () => {
   return (
     <>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">Gym Plans</h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Gym Plans</h1>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
           Choose from our expertly crafted popular plans or let our AI generate
           a custom plan just for you.
         </p>
       </div>
 
+      {activePlan?.trainerTierStatus && (
+        <div className="mb-8">
+          <TrainerTierUpgradeBanner
+            trainerTierStatus={activePlan.trainerTierStatus}
+            onRebalanceComplete={fetchData}
+          />
+        </div>
+      )}
+
       {activePlan && (
-        <div className="mb-12 rounded-2xl bg-brand-50 p-6 border border-brand-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="mb-12 rounded-2xl bg-brand-50 p-6 border border-brand-200 flex flex-col sm:flex-row items-center justify-between gap-4 dark:bg-brand-900/20 dark:border-brand-900/30">
           <div>
-            <h2 className="text-lg font-bold text-brand-900 flex items-center gap-2">
+            <h2 className="text-lg font-bold text-brand-900 flex items-center gap-2 dark:text-brand-100">
               <span className="relative flex h-3 w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-brand-500"></span>
               </span>
               You have an active plan
             </h2>
-            <p className="text-brand-700 mt-1">
+            <p className="text-brand-700 mt-1 dark:text-brand-300">
               You must complete or cancel your current plan before activating a
               new one.
             </p>
@@ -90,7 +102,7 @@ const GymPlansPage = () => {
           <div className="flex flex-col sm:flex-row gap-3 mt-4 sm:mt-0 w-full sm:w-auto">
             <button
               onClick={() => setIsCancelModalOpen(true)}
-              className="w-full sm:w-auto shrink-0 px-6 py-2 bg-white text-red-600 font-medium rounded-lg hover:bg-red-50 border border-red-200 transition-colors"
+              className="w-full sm:w-auto shrink-0 px-6 py-2 bg-white text-red-600 font-medium rounded-lg hover:bg-red-50 border border-red-200 transition-colors dark:bg-slate-900 dark:text-red-400 dark:hover:bg-red-900/20 dark:border-red-900/50"
             >
               Cancel Plan
             </button>
@@ -150,8 +162,8 @@ const GymPlansPage = () => {
       </div>
 
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-slate-900">Popular Plans</h2>
-        <p className="text-slate-500 mt-1">
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Popular Plans</h2>
+        <p className="text-slate-500 mt-1 dark:text-slate-400">
           Ready-to-go routines crafted by our elite trainers.
         </p>
       </div>
@@ -162,8 +174,8 @@ const GymPlansPage = () => {
             <div className="w-10 h-10 border-4 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : plans.length === 0 ? (
-          <div className="col-span-full py-12 text-center bg-white rounded-2xl shadow-sm ring-1 ring-slate-100">
-            <p className="text-slate-500">
+          <div className="col-span-full py-12 text-center bg-white rounded-2xl shadow-sm ring-1 ring-slate-100 dark:bg-slate-900 dark:ring-slate-800">
+            <p className="text-slate-500 dark:text-slate-400">
               No popular plans available right now.
             </p>
           </div>
@@ -171,25 +183,25 @@ const GymPlansPage = () => {
           plans.map((plan) => (
             <div
               key={plan._id}
-              className="bg-white rounded-2xl p-6 shadow-sm ring-1 ring-slate-100 flex flex-col group hover:shadow-md transition-all hover:ring-brand-200"
+              className="bg-white rounded-2xl p-6 shadow-sm ring-1 ring-slate-100 flex flex-col group hover:shadow-md transition-all hover:ring-brand-200 dark:bg-slate-900 dark:ring-slate-800 dark:hover:ring-brand-900/50"
             >
-              <div className="w-12 h-12 bg-brand-50 text-brand-600 rounded-xl flex items-center justify-center mb-6">
+              <div className="w-12 h-12 bg-brand-50 text-brand-600 rounded-xl flex items-center justify-center mb-6 dark:bg-brand-900/20 dark:text-brand-400">
                 <Dumbbell className="w-6 h-6" />
               </div>
 
-              <h3 className="text-xl font-bold text-slate-900 mb-2">
+              <h3 className="text-xl font-bold text-slate-900 mb-2 dark:text-white">
                 {plan.name}
               </h3>
-              <p className="text-slate-500 text-sm mb-6 line-clamp-3 flex-1">
+              <p className="text-slate-500 text-sm mb-6 line-clamp-3 flex-1 dark:text-slate-400">
                 {plan.description}
               </p>
 
-              <div className="flex items-center gap-4 text-sm text-slate-600 mb-6 bg-slate-50 p-3 rounded-lg">
+              <div className="flex items-center gap-4 text-sm text-slate-600 mb-6 bg-slate-50 p-3 rounded-lg dark:text-slate-300 dark:bg-slate-800">
                 <div className="flex items-center gap-1.5 font-medium">
                   <Clock className="w-4 h-4 text-brand-500" />
                   {plan.duration} Days
                 </div>
-                <div className="w-px h-4 bg-slate-200"></div>
+                <div className="w-px h-4 bg-slate-200 dark:bg-slate-700"></div>
                 <div className="font-medium">
                   {plan.sessions?.length || 0} Sessions
                 </div>
@@ -197,7 +209,7 @@ const GymPlansPage = () => {
 
               <Link
                 to={`/member/plans/${plan._id}`}
-                className="mt-auto flex items-center justify-center gap-2 w-full py-3 bg-white border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition-colors group-hover:border-brand-300 group-hover:text-brand-700"
+                className="mt-auto flex items-center justify-center gap-2 w-full py-3 bg-white border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 transition-colors group-hover:border-brand-300 group-hover:text-brand-700 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 dark:group-hover:border-brand-500 dark:group-hover:text-brand-400"
               >
                 View Details
                 <ChevronRight className="w-4 h-4" />

@@ -83,8 +83,8 @@ const ProductDetailsPage = () => {
     </div>
   ) : !product ? (
     <div className="flex min-h-[60vh] flex-col items-center justify-center space-y-4">
-      <p className="text-lg font-medium text-slate-900">Product not found</p>
-      <Link to="/store" className="text-brand-600 hover:underline">
+      <p className="text-lg font-medium text-slate-900 dark:text-white">Product not found</p>
+      <Link to="/store" className="text-brand-600 hover:underline dark:text-brand-400">
         Back to store
       </Link>
     </div>
@@ -94,7 +94,7 @@ const ProductDetailsPage = () => {
         <div className="mb-8 flex items-center justify-between">
           <Link
             to="/store"
-            className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900"
+            className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-300"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to store
@@ -102,7 +102,7 @@ const ProductDetailsPage = () => {
           {user?.role === "Member" && (
             <button
               onClick={toggleCart}
-              className="relative flex h-10 w-10 items-center justify-center rounded-full text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+              className="relative flex h-10 w-10 items-center justify-center rounded-full text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer dark:text-slate-300 dark:hover:bg-slate-800"
             >
               <ShoppingCart className="h-5 w-5" />
               {itemCount > 0 && (
@@ -115,7 +115,7 @@ const ProductDetailsPage = () => {
         </div>
         <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
           <div className="flex flex-col-reverse">
-            <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-slate-100">
+            <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-slate-100 dark:bg-slate-800">
               <img
                 src={getProductImageSrc(product)}
                 alt={product.name}
@@ -131,18 +131,18 @@ const ProductDetailsPage = () => {
             </div>
           </div>
           <div className="mt-10 px-4 sm:px-0 lg:mt-0">
-            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
+            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
               {product.name}
             </h1>
             <div className="mt-3">
               <h2 className="sr-only">Product information</h2>
-              <p className="text-3xl tracking-tight text-slate-900">
+              <p className="text-3xl tracking-tight text-slate-900 dark:text-white">
                 Rs. {product.price.toLocaleString()}
               </p>
             </div>
             <div className="mt-6">
               <h3 className="sr-only">Description</h3>
-              <div className="space-y-6 text-base text-slate-700">
+              <div className="space-y-6 text-base text-slate-700 dark:text-slate-300">
                 <p>{product.description}</p>
               </div>
             </div>
@@ -164,16 +164,16 @@ const ProductDetailsPage = () => {
               </p>
             </div>
             <div className="mt-10 flex">
-              <div className="mr-4 flex items-center border border-slate-300 rounded-lg">
+              <div className="mr-4 flex items-center border border-slate-300 rounded-lg dark:border-slate-700">
                 <button
                   type="button"
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="px-4 py-2 text-slate-500 hover:text-slate-700 cursor-pointer"
+                  className="px-4 py-2 text-slate-500 hover:text-slate-700 cursor-pointer dark:text-slate-400 dark:hover:text-slate-300"
                   disabled={product.stock === 0}
                 >
                   <Minus className="h-4 w-4" />
                 </button>
-                <span className="w-8 text-center font-medium text-slate-900">
+                <span className="w-8 text-center font-medium text-slate-900 dark:text-white">
                   {quantity}
                 </span>
                 <button
@@ -181,7 +181,7 @@ const ProductDetailsPage = () => {
                   onClick={() =>
                     setQuantity(Math.min(product.stock, quantity + 1))
                   }
-                  className="px-4 py-2 text-slate-500 hover:text-slate-700 cursor-pointer"
+                  className="px-4 py-2 text-slate-500 hover:text-slate-700 cursor-pointer dark:text-slate-400 dark:hover:text-slate-300"
                   disabled={product.stock === 0 || quantity >= product.stock}
                 >
                   <Plus className="h-4 w-4" />
@@ -216,7 +216,7 @@ const ProductDetailsPage = () => {
   }
 
   return (
-    <div className="bg-white">
+    <div className="bg-white dark:bg-slate-950">
       {content}
     </div>
   );

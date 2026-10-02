@@ -62,11 +62,11 @@ const { id } = useParams();
   const { trainer, sessionStats, completionRate, totalMembersAssigned } = data;
 
   const getVerdict = (rate) => {
-    if (rate === null) return { text: "No Data", color: "bg-slate-100 text-slate-700" };
-    if (rate >= 90) return { text: "Excellent", color: "bg-green-100 text-green-700" };
-    if (rate >= 75) return { text: "Good", color: "bg-blue-100 text-blue-700" };
-    if (rate >= 50) return { text: "Needs Improvement", color: "bg-amber-100 text-amber-700" };
-    return { text: "Poor", color: "bg-red-100 text-red-700" };
+    if (rate === null) return { text: "No Data", color: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300" };
+    if (rate >= 90) return { text: "Excellent", color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" };
+    if (rate >= 75) return { text: "Good", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" };
+    if (rate >= 50) return { text: "Needs Improvement", color: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-500" };
+    return { text: "Poor", color: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" };
   };
 
   const verdict = getVerdict(completionRate);
@@ -76,22 +76,22 @@ const { id } = useParams();
       <div className="flex items-center gap-4">
         <Link
           to="/admin/trainers"
-          className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+          className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors dark:hover:bg-slate-800 dark:hover:text-slate-300"
         >
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
             Performance Overview
           </h1>
-          <p className="text-slate-500 mt-1">
+          <p className="text-slate-500 mt-1 dark:text-slate-400">
             Session statistics and engagement metrics.
           </p>
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col md:flex-row items-center gap-6">
-        <div className="h-24 w-24 rounded-full bg-slate-100 flex-shrink-0 overflow-hidden border-4 border-white shadow-lg">
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col md:flex-row items-center gap-6 dark:bg-slate-900 dark:border-slate-800">
+        <div className="h-24 w-24 rounded-full bg-slate-100 flex-shrink-0 overflow-hidden border-4 border-white shadow-lg dark:bg-slate-800 dark:border-slate-900">
           {trainer.profilePictureUrl ? (
             <img
               src={trainer.profilePictureUrl}
@@ -107,12 +107,12 @@ const { id } = useParams();
           )}
         </div>
         <div className="text-center md:text-left flex-1">
-          <h2 className="text-2xl font-bold text-slate-900">{trainer.fullName}</h2>
-          <p className="text-brand-600 font-medium mt-1">{trainer.specialization}</p>
-          <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mt-3 text-sm text-slate-500">
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{trainer.fullName}</h2>
+          <p className="text-brand-600 font-medium mt-1 dark:text-brand-400">{trainer.specialization}</p>
+          <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mt-3 text-sm text-slate-500 dark:text-slate-400">
             <span>{trainer.email}</span>
             <span className="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
-            <span className={trainer.isActive ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
+            <span className={trainer.isActive ? "text-green-600 font-medium dark:text-green-400" : "text-red-600 font-medium dark:text-red-400"}>
               {trainer.isActive ? "Active" : "Inactive"}
             </span>
             <span className="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
@@ -124,62 +124,62 @@ const { id } = useParams();
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between dark:bg-slate-900 dark:border-slate-800">
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-brand-50 text-brand-600 rounded-lg">
+            <div className="p-2 bg-brand-50 text-brand-600 rounded-lg dark:bg-brand-900/30 dark:text-brand-400">
               <Activity className="w-5 h-5" />
             </div>
-            <h3 className="font-medium text-slate-700 leading-tight">Completion Rate</h3>
+            <h3 className="font-medium text-slate-700 leading-tight dark:text-slate-300">Completion Rate</h3>
           </div>
-          <p className="text-3xl font-bold text-slate-900">
+          <p className="text-3xl font-bold text-slate-900 dark:text-white">
             {completionRate !== null ? `${completionRate}%` : "N/A"}
           </p>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between dark:bg-slate-900 dark:border-slate-800">
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-green-50 text-green-600 rounded-lg">
+            <div className="p-2 bg-green-50 text-green-600 rounded-lg dark:bg-green-900/30 dark:text-green-400">
               <CheckCircle2 className="w-5 h-5" />
             </div>
-            <h3 className="font-medium text-slate-700 leading-tight">Completed Sessions</h3>
+            <h3 className="font-medium text-slate-700 leading-tight dark:text-slate-300">Completed Sessions</h3>
           </div>
-          <p className="text-3xl font-bold text-slate-900">
+          <p className="text-3xl font-bold text-slate-900 dark:text-white">
             {sessionStats.completed}
           </p>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between dark:bg-slate-900 dark:border-slate-800">
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-red-50 text-red-600 rounded-lg">
+            <div className="p-2 bg-red-50 text-red-600 rounded-lg dark:bg-red-900/30 dark:text-red-400">
               <XCircle className="w-5 h-5" />
             </div>
-            <h3 className="font-medium text-slate-700 leading-tight">Missed Sessions</h3>
+            <h3 className="font-medium text-slate-700 leading-tight dark:text-slate-300">Missed Sessions</h3>
           </div>
-          <p className="text-3xl font-bold text-slate-900">
+          <p className="text-3xl font-bold text-slate-900 dark:text-white">
             {sessionStats.missed}
           </p>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between dark:bg-slate-900 dark:border-slate-800">
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+            <div className="p-2 bg-blue-50 text-blue-600 rounded-lg dark:bg-blue-900/30 dark:text-blue-400">
               <Clock className="w-5 h-5" />
             </div>
-            <h3 className="font-medium text-slate-700 leading-tight">Upcoming Sessions</h3>
+            <h3 className="font-medium text-slate-700 leading-tight dark:text-slate-300">Upcoming Sessions</h3>
           </div>
-          <p className="text-3xl font-bold text-slate-900">
+          <p className="text-3xl font-bold text-slate-900 dark:text-white">
             {sessionStats.upcoming}
           </p>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between dark:bg-slate-900 dark:border-slate-800">
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-purple-50 text-purple-600 rounded-lg">
+            <div className="p-2 bg-purple-50 text-purple-600 rounded-lg dark:bg-purple-900/30 dark:text-purple-400">
               <Users className="w-5 h-5" />
             </div>
-            <h3 className="font-medium text-slate-700 leading-tight">Assigned Members</h3>
+            <h3 className="font-medium text-slate-700 leading-tight dark:text-slate-300">Assigned Members</h3>
           </div>
-          <p className="text-3xl font-bold text-slate-900">
+          <p className="text-3xl font-bold text-slate-900 dark:text-white">
             {totalMembersAssigned}
           </p>
         </div>

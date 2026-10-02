@@ -159,10 +159,10 @@ const Register = () => {
         subtitle="Your GymEase account is ready"
       >
         <div className="flex flex-col items-center text-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-50">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-50 dark:bg-brand-900/30">
             <CheckCircle2 className="h-7 w-7 text-brand-600" strokeWidth={2} />
           </div>
-          <p className="mt-4 text-sm text-slate-600">
+          <p className="mt-4 text-sm text-slate-600 dark:text-slate-400">
             Log in with your new account to purchase a membership and get
             started.
           </p>
@@ -187,11 +187,11 @@ const Register = () => {
       <form onSubmit={handleSubmit} className="space-y-4">
         <GoogleAuthButton label="Sign up with Google" />
         <div className="relative flex items-center py-2">
-          <div className="grow border-t border-slate-200"></div>
-          <span className="mx-4 shrink-0 text-xs text-slate-400">
+          <div className="grow border-t border-slate-200 dark:border-slate-800"></div>
+          <span className="mx-4 shrink-0 text-xs text-slate-400 dark:text-slate-500">
             OR CONTINUE WITH EMAIL
           </span>
-          <div className="grow border-t border-slate-200"></div>
+          <div className="grow border-t border-slate-200 dark:border-slate-800"></div>
         </div>
 
         {serverError && (
@@ -262,7 +262,7 @@ const Register = () => {
           id="age"
           name="age"
           type="number"
-          min="16"
+          min={minimumAge}
           max="100"
           value={formData.age}
           onChange={handleChange}
@@ -273,14 +273,14 @@ const Register = () => {
         />
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">
+          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
             Profile Picture (Optional)
           </label>
           <input
             type="file"
             accept="image/*"
             onChange={handleFileChange}
-            className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 cursor-pointer"
+            className="block w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 cursor-pointer dark:file:bg-brand-900/30 dark:file:text-brand-300 dark:hover:file:bg-brand-900/50"
           />
         </div>
 
@@ -320,7 +320,7 @@ const Register = () => {
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-slate-500">
+      <p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
         Already have an account?{" "}
         <Link
           to="/login"

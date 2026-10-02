@@ -198,31 +198,31 @@ const CustomPlanQuestionnaire = () => {
   const progress = ((currentStep + 1) / questions.length) * 100;
 
   return (
-    <div className="bg-slate-50 py-12 px-6">
+    <div className="bg-slate-50 py-12 px-6 dark:bg-slate-950 dark:bg-transparent">
       <div className="max-w-3xl mx-auto">
         <Link 
           to="/member/plans" 
-          className="inline-flex items-center text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors mb-6"
+          className="inline-flex items-center text-sm font-medium text-slate-600 hover:text-brand-600 transition-colors mb-6 dark:text-slate-300"
         >
           <ArrowLeft className="w-4 h-4 mr-1" />
           Back to Gym Plans
         </Link>
         <div className="text-center mb-12">
-          <div className="w-16 h-16 bg-brand-100 rounded-full flex items-center justify-center mx-auto mb-6 text-brand-600 shadow-sm">
+          <div className="w-16 h-16 bg-brand-100 rounded-full flex items-center justify-center mx-auto mb-6 text-brand-600 shadow-sm dark:bg-brand-900/50 dark:text-brand-300">
             <Wand2 className="w-8 h-8" />
           </div>
 
-          <h1 className="text-3xl font-black text-slate-900 mb-2">
+          <h1 className="text-3xl font-black text-slate-900 mb-2 dark:text-white">
             Custom Plan Generator
           </h1>
 
-          <p className="text-slate-500">
+          <p className="text-slate-500 dark:text-slate-400">
             Let AI craft the perfect workout regimen for your body.
           </p>
         </div>
 
         <div className="mb-8 relative">
-          <div className="flex justify-between text-xs font-semibold text-slate-400 mb-2 px-1">
+          <div className="flex justify-between text-xs font-semibold text-slate-400 mb-2 px-1 dark:text-slate-500">
             <span>
               Question {currentStep + 1} of {questions.length}
             </span>
@@ -230,7 +230,7 @@ const CustomPlanQuestionnaire = () => {
             <span>{Math.round(progress)}% Completed</span>
           </div>
 
-          <div className="w-full h-3 bg-slate-200 rounded-full overflow-hidden">
+          <div className="w-full h-3 bg-slate-200 rounded-full overflow-hidden dark:bg-slate-800">
             <div
               className="h-full bg-brand-500 rounded-full transition-all duration-500 ease-out relative overflow-hidden"
               style={{ width: `${progress}%` }}
@@ -241,14 +241,14 @@ const CustomPlanQuestionnaire = () => {
         </div>
 
         {error && (
-          <div className="mb-8 p-4 bg-red-50 text-red-700 rounded-xl border border-red-100 text-sm font-medium">
+          <div className="mb-8 p-4 bg-red-50 text-red-700 rounded-xl border border-red-100 text-sm font-medium dark:bg-red-900/20 dark:text-red-400 dark:border-red-900/50">
             {error}
           </div>
         )}
 
         <div 
           ref={questionContainerRef}
-          className="bg-white rounded-3xl shadow-xl shadow-slate-200/40 border border-slate-100 p-8 md:p-12 mb-8 relative overflow-hidden"
+          className="bg-white rounded-3xl shadow-xl shadow-slate-200/40 border border-slate-100 p-8 md:p-12 mb-8 relative overflow-hidden dark:bg-slate-900 dark:border-slate-800"
         >
           {submitting ? (
             <div className="py-20 flex flex-col items-center justify-center text-center">
@@ -258,18 +258,18 @@ const CustomPlanQuestionnaire = () => {
                 <Sparkles className="w-6 h-6 text-yellow-400 absolute -top-2 -right-2 animate-bounce" />
               </div>
 
-              <h3 className="text-2xl font-bold text-slate-900 mt-6 mb-2">
+              <h3 className="text-2xl font-bold text-slate-900 mt-6 mb-2 dark:text-white">
                 Generating Your Plan...
               </h3>
 
-              <p className="text-slate-500 max-w-sm">
+              <p className="text-slate-500 max-w-sm dark:text-slate-400">
                 We are analyzing your inputs and assigning the best available
                 trainer to guide you.
               </p>
             </div>
           ) : (
             <div className="animate-in slide-in-from-right-8 fade-in duration-300">
-              <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-8">
+              <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-8 dark:text-white">
                 {question.title}
               </h2>
 
@@ -286,8 +286,8 @@ const CustomPlanQuestionnaire = () => {
                       className={`text-left p-6 rounded-2xl border-2 transition-all group relative overflow-hidden
                         ${
                           isSelected
-                            ? "border-brand-500 bg-brand-50 ring-4 ring-brand-500/10"
-                            : "border-slate-100 hover:border-brand-200 hover:bg-slate-50"
+                            ? "border-brand-500 bg-brand-50 ring-4 ring-brand-500/10 dark:bg-brand-900/20 dark:border-brand-500"
+                            : "border-slate-100 hover:border-brand-200 hover:bg-slate-50 dark:border-slate-800 dark:hover:border-brand-900/50 dark:hover:bg-slate-800"
                         }
                       `}
                     >
@@ -295,8 +295,8 @@ const CustomPlanQuestionnaire = () => {
                         <div
                           className={`shrink-0 ${
                             isSelected
-                              ? "text-brand-600 scale-110 transition-transform"
-                              : "text-slate-400 group-hover:text-brand-500 transition-all"
+                              ? "text-brand-600 scale-110 transition-transform dark:text-brand-400"
+                              : "text-slate-400 group-hover:text-brand-500 transition-all dark:text-slate-500"
                           }`}
                         >
                           <Icon className="w-8 h-8" strokeWidth={1.8} />
@@ -305,7 +305,7 @@ const CustomPlanQuestionnaire = () => {
                         <div className="flex-1">
                           <h3
                             className={`font-bold text-lg mb-1 ${
-                              isSelected ? "text-brand-900" : "text-slate-900"
+                              isSelected ? "text-brand-900 dark:text-brand-100" : "text-slate-900 dark:text-white"
                             }`}
                           >
                             {opt.label}
@@ -313,7 +313,7 @@ const CustomPlanQuestionnaire = () => {
 
                           <p
                             className={`text-sm ${
-                              isSelected ? "text-brand-700" : "text-slate-500"
+                              isSelected ? "text-brand-700 dark:text-brand-300" : "text-slate-500 dark:text-slate-400"
                             }`}
                           >
                             {opt.desc}
@@ -342,8 +342,8 @@ const CustomPlanQuestionnaire = () => {
               className={`flex items-center gap-2 px-6 py-3 font-medium rounded-xl transition-colors cursor-pointer
                 ${
                   currentStep === 0
-                    ? "text-slate-300 cursor-not-allowed"
-                    : "text-slate-600 hover:bg-white hover:text-slate-900 hover:shadow-sm"
+                    ? "text-slate-300 cursor-not-allowed dark:text-slate-600"
+                    : "text-slate-600 hover:bg-white hover:text-slate-900 hover:shadow-sm dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white"
                 }`}
             >
               <ChevronLeft className="w-5 h-5" />

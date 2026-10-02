@@ -95,9 +95,9 @@ const PaymentSuccessPage = () => {
 
   return (
     <section className="mx-auto flex min-h-[65vh] max-w-xl items-center px-6 py-16 text-center">
-      <div className="w-full rounded-2xl bg-white p-8 shadow-xl ring-1 ring-slate-100">
+      <div className="w-full rounded-2xl bg-white p-8 shadow-xl ring-1 ring-slate-100 dark:bg-slate-900 dark:ring-slate-800">
         {state === "verifying" ? (
-          <Loader2 className="mx-auto h-14 w-14 animate-spin text-brand-600" />
+          <Loader2 className="mx-auto h-14 w-14 animate-spin text-brand-600 dark:text-brand-400" />
         ) : isSuccess ? (
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-success/10">
             <CheckCircle2 className="h-10 w-10 text-success" />
@@ -108,7 +108,7 @@ const PaymentSuccessPage = () => {
           </div>
         )}
 
-        <h1 className="mt-6 text-2xl font-bold text-slate-900">
+        <h1 className="mt-6 text-2xl font-bold text-slate-900 dark:text-white">
           {state === "verifying"
             ? "Verifying payment..."
             : isSuccess
@@ -118,7 +118,7 @@ const PaymentSuccessPage = () => {
               : "Payment Verification Failed"}
         </h1>
 
-        <p className="mt-3 text-slate-600 leading-relaxed">{message}</p>
+        <p className="mt-3 text-slate-600 leading-relaxed dark:text-slate-400">{message}</p>
 
         {state !== "verifying" && (
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -127,7 +127,7 @@ const PaymentSuccessPage = () => {
                 <>
                   <Link
                     to="/store"
-                    className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
+                    className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
                   >
                     <ShoppingBag className="h-4 w-4 text-brand-600" />
                     Continue Shopping
@@ -143,7 +143,10 @@ const PaymentSuccessPage = () => {
               ) : (
                 <Link
                   to="/member/dashboard"
-                  state={paymentType === "StoreOrder" ? { newOrder: true } : {}}
+                  state={{
+                    fromPayment: true,
+                    ...(paymentType === "StoreOrder" ? { newOrder: true } : {}),
+                  }}
                   className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-700"
                 >
                   <Dumbbell className="h-4 w-4" />
@@ -160,7 +163,7 @@ const PaymentSuccessPage = () => {
                 </Link>
                 <Link
                   to="/"
-                  className="flex w-full sm:w-auto items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
+                  className="flex w-full sm:w-auto items-center justify-center rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
                 >
                   Return Home
                 </Link>

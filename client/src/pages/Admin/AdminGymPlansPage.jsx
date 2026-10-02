@@ -230,8 +230,8 @@ const [plans, setPlans] = useState([]);
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Gym Plans</h1>
-          <p className="text-slate-500 mt-1">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Gym Plans</h1>
+          <p className="text-slate-500 mt-1 dark:text-slate-400">
             Manage popular workout plans available to members.
           </p>
         </div>
@@ -243,7 +243,7 @@ const [plans, setPlans] = useState([]);
               onChange={(e) => setIncludeInactive(e.target.checked)}
               className="w-4 h-4 text-brand-600 border-slate-300 rounded focus:ring-brand-500"
             />
-            <span className="text-sm font-medium text-slate-700">Show Inactive</span>
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Show Inactive</span>
           </label>
           <button
             onClick={openAddModal}
@@ -261,45 +261,45 @@ const [plans, setPlans] = useState([]);
             <div className="w-8 h-8 border-4 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : plans.length === 0 ? (
-          <div className="col-span-full py-12 text-center bg-white rounded-xl shadow-sm">
-            <p className="text-slate-500">No gym plans available.</p>
+          <div className="col-span-full py-12 text-center bg-white rounded-xl shadow-sm dark:bg-slate-900">
+            <p className="text-slate-500 dark:text-slate-400">No gym plans available.</p>
           </div>
         ) : (
           plans.map((plan) => (
             <div
               key={plan._id}
-              className="bg-white rounded-2xl p-6 shadow-sm ring-1 ring-slate-100 flex flex-col relative overflow-hidden group hover:shadow-md transition-shadow"
+              className="bg-white rounded-2xl p-6 shadow-sm ring-1 ring-slate-100 flex flex-col relative overflow-hidden group hover:shadow-md transition-shadow dark:bg-slate-900 dark:ring-slate-800"
             >
               {!plan.isActive && (
-                <div className="absolute top-4 right-4 px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded z-10">
+                <div className="absolute top-4 right-4 px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded z-10 dark:bg-red-900/30 dark:text-red-400">
                   INACTIVE
                 </div>
               )}
 
               <div className="mb-4">
-                <h3 className="text-xl font-bold text-slate-900 mb-1">
+                <h3 className="text-xl font-bold text-slate-900 mb-1 dark:text-white">
                   {plan.name}
                 </h3>
-                <span className="text-sm font-semibold text-brand-600">
+                <span className="text-sm font-semibold text-brand-600 dark:text-brand-400">
                   {plan.duration} Days Program
                 </span>
               </div>
 
-              <p className="text-slate-600 text-sm mb-6 line-clamp-2">
+              <p className="text-slate-600 text-sm mb-6 line-clamp-2 dark:text-slate-400">
                 {plan.description}
               </p>
 
               <div className="space-y-2 mb-8 flex-1">
                 <div className="flex items-start gap-2">
                   <CheckCircle2 className="w-4 h-4 text-brand-500 shrink-0 mt-0.5" />
-                  <span className="text-sm text-slate-700">{plan.details}</span>
+                  <span className="text-sm text-slate-700 dark:text-slate-300">{plan.details}</span>
                 </div>
               </div>
 
-              <div className="flex gap-2 mt-auto pt-4 border-t border-slate-100">
+              <div className="flex gap-2 mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
                 <button
                   onClick={() => openEditModal(plan)}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-lg transition-colors border border-slate-200 cursor-pointer"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-lg transition-colors border border-slate-200 cursor-pointer dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800"
                 >
                   <Edit2 className="w-4 h-4" />
                   Edit
@@ -307,7 +307,7 @@ const [plans, setPlans] = useState([]);
                 {plan.isActive && (
                   <button
                     onClick={() => handleDelete(plan._id)}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-transparent cursor-pointer"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-transparent cursor-pointer dark:text-red-400 dark:hover:bg-red-900/30"
                   >
                     <Trash2 className="w-4 h-4" />
                     Deactivate
@@ -316,7 +316,7 @@ const [plans, setPlans] = useState([]);
                 {!plan.isActive && (
                   <button
                     onClick={() => handleReactivate(plan._id)}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors border border-emerald-200 cursor-pointer"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors border border-emerald-200 cursor-pointer dark:text-emerald-400 dark:hover:bg-emerald-900/30 dark:border-emerald-800"
                   >
                     <RotateCcw className="w-4 h-4" />
                     Reactivate
@@ -330,15 +330,15 @@ const [plans, setPlans] = useState([]);
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl my-8 flex flex-col max-h-[90vh]">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl my-8 flex flex-col max-h-[90vh] dark:bg-slate-900">
             {/* Header */}
-            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center shrink-0">
-              <h3 className="text-lg font-bold text-slate-900">
+            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center shrink-0 dark:border-slate-800">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                 {editingPlanId ? "Edit Gym Plan" : "Add New Gym Plan"}
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 transition-colors p-1 cursor-pointer"
+                className="text-slate-400 hover:text-slate-600 transition-colors p-1 cursor-pointer dark:hover:text-slate-300"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -350,7 +350,7 @@ const [plans, setPlans] = useState([]);
                 {/* Plan name + duration */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                    <label className="block text-sm font-medium text-slate-700 mb-1 dark:text-slate-300">
                       Plan Name <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -358,12 +358,12 @@ const [plans, setPlans] = useState([]);
                       required
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"
+                      className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                       placeholder="e.g. Muscle Builder"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                    <label className="block text-sm font-medium text-slate-700 mb-1 dark:text-slate-300">
                       Duration (days) <span className="text-red-500">*</span>
                     </label>
                     <input
@@ -372,7 +372,7 @@ const [plans, setPlans] = useState([]);
                       min="1"
                       value={formData.duration}
                       onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-                      className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"
+                      className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                       placeholder="e.g. 30"
                     />
                   </div>
@@ -380,7 +380,7 @@ const [plans, setPlans] = useState([]);
 
                 {/* Description */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                  <label className="block text-sm font-medium text-slate-700 mb-1 dark:text-slate-300">
                     Description <span className="text-red-500">*</span>
                   </label>
                   <textarea
@@ -388,14 +388,14 @@ const [plans, setPlans] = useState([]);
                     rows="2"
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none text-sm"
+                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                     placeholder="e.g. Build muscle mass and increase strength..."
                   />
                 </div>
 
                 {/* Details */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                  <label className="block text-sm font-medium text-slate-700 mb-1 dark:text-slate-300">
                     Details <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -403,7 +403,7 @@ const [plans, setPlans] = useState([]);
                     type="text"
                     value={formData.details}
                     onChange={(e) => setFormData({ ...formData, details: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"
+                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                     placeholder="e.g. Includes weightlifting and cardio..."
                   />
                 </div>
@@ -411,7 +411,7 @@ const [plans, setPlans] = useState([]);
                 {/* Session Builder */}
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <label className="text-sm font-medium text-slate-700">
+                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                       Workout Sessions <span className="text-red-500">*</span>
                     </label>
                     <button
@@ -428,14 +428,14 @@ const [plans, setPlans] = useState([]);
                     {formData.sessions.map((session, si) => (
                       <div
                         key={si}
-                        className="border border-slate-200 rounded-xl overflow-hidden"
+                        className="border border-slate-200 rounded-xl overflow-hidden dark:border-slate-700"
                       >
                         {/* Session header */}
-                        <div className="flex items-center gap-2 px-4 py-3 bg-slate-50 border-b border-slate-200">
+                        <div className="flex items-center gap-2 px-4 py-3 bg-slate-50 border-b border-slate-200 dark:bg-slate-800/50 dark:border-slate-700">
                           <button
                             type="button"
                             onClick={() => toggleSession(si)}
-                            className="text-slate-400 hover:text-slate-600 cursor-pointer shrink-0"
+                            className="text-slate-400 hover:text-slate-600 cursor-pointer shrink-0 dark:hover:text-slate-300"
                           >
                             {session.open ? (
                               <ChevronUp className="w-4 h-4" />
@@ -448,7 +448,7 @@ const [plans, setPlans] = useState([]);
                             required
                             value={session.name}
                             onChange={(e) => updateSession(si, "name", e.target.value)}
-                            className="flex-1 bg-transparent text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none"
+                            className="flex-1 bg-transparent text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none dark:text-white"
                             placeholder={`Session ${si + 1} name, e.g. Day ${si + 1}: Upper Body`}
                           />
                           {formData.sessions.length > 1 && (
@@ -466,7 +466,7 @@ const [plans, setPlans] = useState([]);
                         {session.open && (
                           <div className="p-4 space-y-2">
                             {/* Column labels */}
-                            <div className="grid gap-2 text-[10px] text-slate-400 uppercase tracking-wide px-0.5"
+                            <div className="grid gap-2 text-[10px] text-slate-400 uppercase tracking-wide px-0.5 dark:text-slate-500"
                               style={{ gridTemplateColumns: "1fr 56px 56px 80px 20px" }}
                             >
                               <span>Exercise</span>
@@ -487,7 +487,7 @@ const [plans, setPlans] = useState([]);
                                   required
                                   value={ex.name}
                                   onChange={(e) => updateExercise(si, ei, "name", e.target.value)}
-                                  className="min-w-0 w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-brand-500"
+                                  className="min-w-0 w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                                   placeholder="Exercise name"
                                 />
                                 <input
@@ -495,7 +495,7 @@ const [plans, setPlans] = useState([]);
                                   min="1"
                                   value={ex.sets}
                                   onChange={(e) => updateExercise(si, ei, "sets", e.target.value)}
-                                  className="min-w-0 w-full px-2 py-1.5 border border-slate-200 rounded-lg text-sm text-center focus:outline-none focus:ring-1 focus:ring-brand-500"
+                                  className="min-w-0 w-full px-2 py-1.5 border border-slate-200 rounded-lg text-sm text-center focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                                   placeholder="—"
                                 />
                                 <input
@@ -503,14 +503,14 @@ const [plans, setPlans] = useState([]);
                                   min="1"
                                   value={ex.reps}
                                   onChange={(e) => updateExercise(si, ei, "reps", e.target.value)}
-                                  className="min-w-0 w-full px-2 py-1.5 border border-slate-200 rounded-lg text-sm text-center focus:outline-none focus:ring-1 focus:ring-brand-500"
+                                  className="min-w-0 w-full px-2 py-1.5 border border-slate-200 rounded-lg text-sm text-center focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                                   placeholder="—"
                                 />
                                 <input
                                   type="text"
                                   value={ex.duration}
                                   onChange={(e) => updateExercise(si, ei, "duration", e.target.value)}
-                                  className="min-w-0 w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-brand-500"
+                                  className="min-w-0 w-full px-2.5 py-1.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                                   placeholder="e.g. 30s"
                                 />
                                 <div className="flex justify-center">
@@ -545,11 +545,11 @@ const [plans, setPlans] = useState([]);
             </div>
 
             {/* Footer */}
-            <div className="px-6 py-4 border-t border-slate-100 flex justify-end gap-3 shrink-0 bg-slate-50 rounded-b-2xl">
+            <div className="px-6 py-4 border-t border-slate-100 flex justify-end gap-3 shrink-0 bg-slate-50 rounded-b-2xl dark:border-slate-800 dark:bg-slate-800/50">
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 font-medium text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
+                className="px-4 py-2 font-medium text-slate-600 hover:text-slate-900 transition-colors cursor-pointer dark:text-slate-300 dark:hover:text-white"
               >
                 Cancel
               </button>

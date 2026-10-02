@@ -5,6 +5,8 @@ import asyncHandler from "../utils/asyncHandler.js";
 import MembershipPlan from "../models/membershipPlanModel.js";
 import MembershipSubscription from "../models/membershipSubscriptionModel.js";
 import Attendance from "../models/attendanceModel.js";
+import MemberPlan from "../models/gymPlans/memberPlanModel.js";
+import Session from "../models/gymPlans/sessionModel.js";
 import { createCheckoutUrl } from "./paymentController.js";
 import sendEmail from "../services/nodemailer.js";
 import { getCancellationEmail } from "../utils/emailTemplates.js";
@@ -291,6 +293,21 @@ const cancelMembershipSubscription = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Could not cancel membership subscription");
   }
 
+  const activePlan = await MemberPlan.findOne({
+    memberId: req.user?._id,
+    status: "active",
+  });
+
+  if (activePlan) {
+    activePlan.status = "paused";
+    await activePlan.save({ validateBeforeSave: false });
+
+    await Session.deleteMany({
+      memberPlanId: activePlan._id,
+      status: "upcoming",
+    });
+  }
+
   const emailContent = getCancellationEmail({
     userName: req.user.fullName,
     planName: cancelledSubscripton.membershipPlanId?.name || "Membership",
@@ -298,8 +315,8 @@ const cancelMembershipSubscription = asyncHandler(async (req, res) => {
   });
   sendEmail({
     to: req.user.email,
-    ...emailContent
-  }).catch(err => console.error("Failed to send cancellation email:", err));
+    ...emailContent,
+  }).catch((err) => console.error("Failed to send cancellation email:", err));
 
   res
     .status(200)

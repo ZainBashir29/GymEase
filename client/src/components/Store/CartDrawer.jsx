@@ -23,15 +23,15 @@ const CartDrawer = () => {
       />
       <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
         <div className="pointer-events-auto w-screen max-w-md transform transition-all duration-500 ease-in-out">
-          <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
+          <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl dark:bg-slate-900">
             <div className="flex items-center justify-between px-4 py-6 sm:px-6">
-              <h2 className="text-lg font-medium text-slate-900">
+              <h2 className="text-lg font-medium text-slate-900 dark:text-white">
                 Shopping cart
               </h2>
               <div className="ml-3 flex h-7 items-center">
                 <button
                   type="button"
-                  className="relative -m-2 p-2 text-slate-400 hover:text-slate-500 cursor-pointer"
+                  className="relative -m-2 p-2 text-slate-400 hover:text-slate-500 cursor-pointer dark:hover:text-slate-300"
                   onClick={closeCart}
                 >
                   <span className="absolute -inset-0.5" />
@@ -44,10 +44,10 @@ const CartDrawer = () => {
               {cart?.products?.length === 0 ? (
                 <div className="flex h-full flex-col items-center justify-center space-y-4">
                   <ShoppingBag className="h-12 w-12 text-slate-300" />
-                  <p className="text-lg font-medium text-slate-900">
+                  <p className="text-lg font-medium text-slate-900 dark:text-white">
                     Your cart is empty
                   </p>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
                     Looks like you haven't added anything yet.
                   </p>
                   <Link
@@ -59,10 +59,10 @@ const CartDrawer = () => {
                   </Link>
                 </div>
               ) : (
-                <ul role="list" className="-my-6 divide-y divide-slate-200">
+                <ul role="list" className="-my-6 divide-y divide-slate-200 dark:divide-slate-800">
                   {cart?.products?.map((item) => (
                     <li key={item.productId?._id} className="flex py-6">
-                      <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-slate-200">
+                      <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-slate-200 dark:border-slate-800">
                         <img
                           src={item.productId?.imageUrl}
                           alt={item.productId?.name}
@@ -71,7 +71,7 @@ const CartDrawer = () => {
                       </div>
                       <div className="ml-4 flex flex-1 flex-col">
                         <div>
-                          <div className="flex justify-between text-base font-medium text-slate-900">
+                          <div className="flex justify-between text-base font-medium text-slate-900 dark:text-white">
                             <h3>
                               <Link
                                 to={`/store/product/${item.productId?._id}`}
@@ -83,7 +83,7 @@ const CartDrawer = () => {
                             </h3>
                             <p className="ml-4">Rs {item.productId?.price?.toLocaleString()}</p>
                           </div>
-                          <p className="mt-1 text-sm text-slate-500">
+                          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                             {item.productId?.category}
                           </p>
                         </div>
@@ -100,11 +100,11 @@ const CartDrawer = () => {
                                   );
                                 }
                               }}
-                              className="rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-500 cursor-pointer"
+                              className="rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-500 cursor-pointer dark:hover:bg-slate-800 dark:hover:text-slate-300"
                             >
                               <Minus className="h-4 w-4" />
                             </button>
-                            <span className="font-medium text-slate-900">
+                            <span className="font-medium text-slate-900 dark:text-white">
                               {item.quantity}
                             </span>
                             <button
@@ -115,7 +115,7 @@ const CartDrawer = () => {
                                 )
                               }
                               disabled={item.quantity >= item.productId?.stock}
-                              className="rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-500 disabled:opacity-50"
+                              className="rounded-full p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-500 disabled:opacity-50 dark:hover:bg-slate-800 dark:hover:text-slate-300"
                             >
                               <Plus className="h-4 w-4" />
                             </button>
@@ -124,7 +124,7 @@ const CartDrawer = () => {
                             <button
                               type="button"
                               onClick={() => removeItem(item.productId?._id)}
-                              className="font-medium text-red-600 hover:text-red-500 cursor-pointer"
+                              className="font-medium text-red-600 hover:text-red-500 cursor-pointer dark:text-red-500 dark:hover:text-red-400"
                             >
                               Remove
                             </button>
@@ -137,22 +137,22 @@ const CartDrawer = () => {
               )}
             </div>
             {cart?.products?.length > 0 && checkoutData && (
-              <div className="border-t border-slate-200 px-4 py-6 sm:px-6">
-                <div className="flex justify-between text-base font-medium text-slate-900 mb-2">
+              <div className="border-t border-slate-200 px-4 py-6 sm:px-6 dark:border-slate-800">
+                <div className="flex justify-between text-base font-medium text-slate-900 mb-2 dark:text-white">
                   <p>Subtotal</p>
                   <p>Rs. {checkoutData.subtotal?.toLocaleString()}</p>
                 </div>
-                <div className="flex justify-between text-sm text-slate-500 mb-4">
+                <div className="flex justify-between text-sm text-slate-500 mb-4 dark:text-slate-400">
                   <p>Delivery Fee</p>
                   <p>Rs. {checkoutData.deliveryFee?.toLocaleString()}</p>
                 </div>
-                <div className="flex justify-between text-lg font-bold text-slate-900 mb-6">
+                <div className="flex justify-between text-lg font-bold text-slate-900 mb-6 dark:text-white">
                   <p>Total</p>
                   <p>Rs. {checkoutData.totalAmount?.toLocaleString()}</p>
                 </div>
                 <div className="mt-6">
                   {checkoutData.totalAmount > 100000 && (
-                    <p className="text-sm text-red-600 mb-3 text-center">
+                    <p className="text-sm text-red-600 mb-3 text-center dark:text-red-500">
                       Maximum order limit (Rs. 100,000) exceeded.
                     </p>
                   )}
@@ -168,7 +168,7 @@ const CartDrawer = () => {
                     )}
                   </button>
                 </div>
-                <div className="mt-6 flex justify-center text-center text-sm text-slate-500">
+                <div className="mt-6 flex justify-center text-center text-sm text-slate-500 dark:text-slate-400">
                   <p>
                     or{" "}
                     <Link

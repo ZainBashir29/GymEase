@@ -117,15 +117,15 @@ const AdminMembersPage = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Members</h1>
-          <p className="text-slate-500 mt-1">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Members</h1>
+          <p className="text-slate-500 mt-1 dark:text-slate-400">
             Manage gym members and view their active plans.
           </p>
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-100 overflow-hidden">
-        <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row gap-4 justify-between items-center bg-slate-50">
+      <div className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-100 overflow-hidden dark:bg-slate-900 dark:ring-slate-800">
+        <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row gap-4 justify-between items-center bg-slate-50 dark:bg-slate-900 dark:border-slate-800">
           <div className="relative w-full sm:max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
             <input
@@ -133,7 +133,7 @@ const AdminMembersPage = () => {
               placeholder="Search by name, email, or username..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all"
+              className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all dark:border-slate-700 dark:bg-slate-800 dark:text-white"
             />
           </div>
 
@@ -144,7 +144,7 @@ const AdminMembersPage = () => {
               onChange={(e) => setIncludeInactive(e.target.checked)}
               className="w-4 h-4 text-brand-600 border-slate-300 rounded focus:ring-brand-500"
             />
-            <span className="text-sm font-medium text-slate-700">
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
               Show Inactive
             </span>
           </label>
@@ -153,7 +153,7 @@ const AdminMembersPage = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-200">
             <thead>
-              <tr className="bg-white border-b border-slate-100">
+              <tr className="bg-white border-b border-slate-100 dark:bg-slate-900 dark:border-slate-800">
                 <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                   Member
                 </th>
@@ -174,7 +174,7 @@ const AdminMembersPage = () => {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {loading ? (
                 <tr>
                   <td colSpan="6" className="px-6 py-12 text-center">
@@ -185,7 +185,7 @@ const AdminMembersPage = () => {
                 <tr>
                   <td
                     colSpan="6"
-                    className="px-6 py-12 text-center text-slate-500"
+                    className="px-6 py-12 text-center text-slate-500 dark:text-slate-400"
                   >
                     No members found matching your criteria.
                   </td>
@@ -194,11 +194,11 @@ const AdminMembersPage = () => {
                 filteredMembers.map((member) => (
                   <tr
                     key={member._id}
-                    className="hover:bg-slate-50 transition-colors"
+                    className="hover:bg-slate-50 transition-colors dark:hover:bg-slate-800/50"
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center font-bold overflow-hidden shrink-0">
+                        <div className="w-10 h-10 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center font-bold overflow-hidden shrink-0 dark:bg-brand-900/30 dark:text-brand-400">
                           {member.profilePicture ? (
                             <img
                               src={member.profilePicture}
@@ -210,25 +210,25 @@ const AdminMembersPage = () => {
                           )}
                         </div>
                         <div className="min-w-0">
-                          <p className="font-medium text-slate-900 truncate">
+                          <p className="font-medium text-slate-900 truncate dark:text-white">
                             {member.fullName}
                           </p>
-                          <p className="text-xs text-slate-500 truncate">
+                          <p className="text-xs text-slate-500 truncate dark:text-slate-400">
                             @{member.username}
                           </p>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <p className="text-sm text-slate-600">{member.email}</p>
+                      <p className="text-sm text-slate-600 dark:text-slate-300">{member.email}</p>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {member.membership ? (
                         <div>
-                          <p className="text-sm font-bold text-slate-800">
+                          <p className="text-sm font-bold text-slate-800 dark:text-slate-200">
                             {member.membership.planName}
                           </p>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
                             Expires:{" "}
                             {new Date(
                               member.membership.endDate,
@@ -243,9 +243,16 @@ const AdminMembersPage = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {member.gymPlan ? (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-lg border border-blue-100">
-                          {member.gymPlan.planName}
-                        </span>
+                        <div className="flex flex-col gap-1 items-start">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 text-blue-700 text-xs font-semibold rounded-lg border border-blue-100 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800/50">
+                            {member.gymPlan.planName}
+                          </span>
+                          {member.gymPlan.status === "paused" && (
+                            <span className="text-[10px] uppercase tracking-wider font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-100 dark:bg-amber-900/30 dark:text-amber-500 dark:border-amber-800/50">
+                              Frozen
+                            </span>
+                          )}
+                        </div>
                       ) : (
                         <span className="text-xs text-slate-400 italic">
                           None
@@ -254,11 +261,11 @@ const AdminMembersPage = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {member.isActive ? (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
                           <CheckCircle2 className="w-3 h-3" /> Active
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
                           <XCircle className="w-3 h-3" /> Inactive
                         </span>
                       )}
@@ -267,7 +274,7 @@ const AdminMembersPage = () => {
                       <div className="flex items-center justify-end gap-1">
                         <button
                           onClick={() => openEmailModal(member)}
-                          className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                          className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors dark:hover:bg-indigo-900/30"
                           title="Change Email"
                         >
                           <Mail className="w-4 h-4" />
@@ -275,7 +282,7 @@ const AdminMembersPage = () => {
                         {member.isActive ? (
                           <button
                             onClick={() => handleDelete(member._id)}
-                            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors dark:hover:bg-red-900/30"
                             title="Deactivate Member"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -283,7 +290,7 @@ const AdminMembersPage = () => {
                         ) : (
                           <button
                             onClick={() => handleReactivate(member._id)}
-                            className="p-2 text-slate-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                            className="p-2 text-slate-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors dark:hover:bg-green-900/30"
                             title="Reactivate Member"
                           >
                             <RefreshCw className="w-4 h-4" />
@@ -301,17 +308,17 @@ const AdminMembersPage = () => {
 
       {emailModal.open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
-            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md dark:bg-slate-900">
+            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center dark:border-slate-800">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">Change Email Address</h3>
-                <p className="text-sm text-slate-500 mt-0.5">
-                  For <span className="font-medium text-slate-700">{emailModal.member?.fullName}</span>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Change Email Address</h3>
+                <p className="text-sm text-slate-500 mt-0.5 dark:text-slate-400">
+                  For <span className="font-medium text-slate-700 dark:text-slate-300">{emailModal.member?.fullName}</span>
                 </p>
               </div>
               <button
                 onClick={closeEmailModal}
-                className="text-slate-400 hover:text-slate-600 transition-colors p-1 cursor-pointer"
+                className="text-slate-400 hover:text-slate-600 transition-colors p-1 cursor-pointer dark:hover:text-slate-300"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -319,7 +326,7 @@ const AdminMembersPage = () => {
 
             <form onSubmit={handleChangeEmail} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-medium text-slate-700 mb-1 dark:text-slate-300">
                   Current Email
                 </label>
                 <input
@@ -327,12 +334,12 @@ const AdminMembersPage = () => {
                   value={emailModal.member?.email || ""}
                   readOnly
                   disabled
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-500 cursor-not-allowed text-sm"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-500 cursor-not-allowed text-sm dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-medium text-slate-700 mb-1 dark:text-slate-300">
                   New Email Address <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -340,14 +347,14 @@ const AdminMembersPage = () => {
                   required
                   value={newEmail}
                   onChange={(e) => { setNewEmail(e.target.value); setEmailError(""); }}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                   placeholder="Enter new email address"
                   autoFocus
                 />
               </div>
 
               {emailError && (
-                <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2 dark:text-red-400 dark:bg-red-900/30 dark:border-red-800">
                   {emailError}
                 </p>
               )}
@@ -360,7 +367,7 @@ const AdminMembersPage = () => {
                 <button
                   type="button"
                   onClick={closeEmailModal}
-                  className="px-4 py-2 font-medium text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
+                  className="px-4 py-2 font-medium text-slate-600 hover:text-slate-900 transition-colors cursor-pointer dark:text-slate-400 dark:hover:text-white"
                 >
                   Cancel
                 </button>

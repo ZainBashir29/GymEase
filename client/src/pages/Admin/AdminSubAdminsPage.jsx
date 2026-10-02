@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import api from "../../lib/axios.js";
 import { Loader2, Plus, ShieldAlert, Edit, Trash2, Mail } from "lucide-react";
@@ -147,8 +147,8 @@ export default function AdminSubAdminsPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Sub-Admins</h1>
-          <p className="text-slate-600">Manage admin access and permissions</p>
+          <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Sub-Admins</h1>
+          <p className="text-slate-600 dark:text-slate-400">Manage admin access and permissions</p>
         </div>
         <button
           onClick={() => setIsInviteModalOpen(true)}
@@ -160,13 +160,13 @@ export default function AdminSubAdminsPage() {
       </div>
 
       <div className="space-y-6">
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div className="border-b border-slate-200 bg-slate-50/50 px-6 py-4">
-            <h2 className="font-semibold text-slate-800">Active Sub-Admins</h2>
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:bg-slate-900 dark:border-slate-800">
+          <div className="border-b border-slate-200 bg-slate-50/50 px-6 py-4 dark:border-slate-800 dark:bg-slate-900">
+            <h2 className="font-semibold text-slate-800 dark:text-white">Active Sub-Admins</h2>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-600">
-              <thead className="bg-slate-50 text-slate-700">
+            <table className="w-full text-left text-sm text-slate-600 dark:text-slate-400">
+              <thead className="bg-slate-50 text-slate-700 dark:bg-slate-800/50 dark:text-slate-300">
                 <tr>
                   <th className="px-6 py-3 font-semibold">User</th>
                   <th className="px-6 py-3 font-semibold">Permissions</th>
@@ -175,31 +175,31 @@ export default function AdminSubAdminsPage() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {subAdmins.length === 0 ? (
                   <tr>
                     <td
                       colSpan="3"
-                      className="px-6 py-8 text-center text-slate-500"
+                      className="px-6 py-8 text-center text-slate-500 dark:text-slate-400"
                     >
                       No active sub-admins found
                     </td>
                   </tr>
                 ) : (
                   subAdmins.map((admin) => (
-                    <tr key={admin._id} className="hover:bg-slate-50/50">
+                    <tr key={admin._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
                       <td className="px-6 py-4">
-                        <div className="font-medium text-slate-800">
+                        <div className="font-medium text-slate-800 dark:text-white">
                           {admin.fullName}
                         </div>
-                        <div className="text-slate-500">{admin.email}</div>
+                        <div className="text-slate-500 dark:text-slate-400">{admin.email}</div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex flex-wrap gap-1">
                           {admin.permissions.map((p) => (
                             <span
                               key={p}
-                              className="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700"
+                              className="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
                             >
                               {p.replace("manage_", "")}
                             </span>
@@ -213,7 +213,7 @@ export default function AdminSubAdminsPage() {
                             setEditPermissions(admin.permissions || []);
                             setIsEditModalOpen(true);
                           }}
-                          className="mr-3 text-slate-400 hover:text-blue-600"
+                          className="mr-3 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400"
                           title="Edit Permissions"
                         >
                           <Edit className="h-4 w-4" />
@@ -224,7 +224,7 @@ export default function AdminSubAdminsPage() {
                               setSelectedItem({ ...admin, type: "active" });
                               setIsRevokeModalOpen(true);
                             }}
-                            className="text-slate-400 hover:text-red-600 cursor-pointer"
+                            className="text-slate-400 hover:text-red-600 cursor-pointer dark:hover:text-red-400"
                             title="Revoke Access"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -239,15 +239,15 @@ export default function AdminSubAdminsPage() {
           </div>
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div className="border-b border-slate-200 bg-slate-50/50 px-6 py-4">
-            <h2 className="font-semibold text-slate-800">
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:bg-slate-900 dark:border-slate-800">
+          <div className="border-b border-slate-200 bg-slate-50/50 px-6 py-4 dark:border-slate-800 dark:bg-slate-900">
+            <h2 className="font-semibold text-slate-800 dark:text-white">
               Pending Invitations
             </h2>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-600">
-              <thead className="bg-slate-50 text-slate-700">
+            <table className="w-full text-left text-sm text-slate-600 dark:text-slate-400">
+              <thead className="bg-slate-50 text-slate-700 dark:bg-slate-800/50 dark:text-slate-300">
                 <tr>
                   <th className="px-6 py-3 font-semibold">Email</th>
                   <th className="px-6 py-3 font-semibold">Permissions</th>
@@ -257,7 +257,7 @@ export default function AdminSubAdminsPage() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {pendingInvitations.length === 0 ? (
                   <tr>
                     <td
@@ -269,20 +269,20 @@ export default function AdminSubAdminsPage() {
                   </tr>
                 ) : (
                   pendingInvitations.map((inv) => (
-                    <tr key={inv._id} className="hover:bg-slate-50/50">
+                    <tr key={inv._id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
-                          <Mail className="h-4 w-4 text-slate-400" />
-                          <span className="font-medium text-slate-800">
+                          <Mail className="h-4 w-4 text-slate-400 dark:text-slate-500" />
+                          <span className="font-medium text-slate-800 dark:text-white">
                             {inv.email}
                           </span>
                         </div>
                         {inv.isNewUser ? (
-                          <span className="text-xs text-slate-500">
+                          <span className="text-xs text-slate-500 dark:text-slate-400">
                             New User
                           </span>
                         ) : (
-                          <span className="text-xs text-blue-600">
+                          <span className="text-xs text-blue-600 dark:text-blue-400">
                             Existing User
                           </span>
                         )}
@@ -292,14 +292,14 @@ export default function AdminSubAdminsPage() {
                           {inv.permissions.map((p) => (
                             <span
                               key={p}
-                              className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600"
+                              className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-300"
                             >
                               {p.replace("manage_", "")}
                             </span>
                           ))}
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-slate-500">
+                      <td className="px-6 py-4 text-slate-500 dark:text-slate-400">
                         {new Date(inv.invitationExpiry).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 text-right">
@@ -308,7 +308,7 @@ export default function AdminSubAdminsPage() {
                             setSelectedItem({ ...inv, type: "pending" });
                             setIsRevokeModalOpen(true);
                           }}
-                          className="text-slate-400 hover:text-red-600 cursor-pointer"
+                          className="text-slate-400 hover:text-red-600 cursor-pointer dark:hover:text-red-400"
                           title="Revoke Invitation"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -330,7 +330,7 @@ export default function AdminSubAdminsPage() {
         >
           <form onSubmit={handleInvite} className="space-y-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">
+              <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
                 Email Address
               </label>
               <input
@@ -340,14 +340,14 @@ export default function AdminSubAdminsPage() {
                 onChange={(e) =>
                   setInviteForm({ ...inviteForm, email: e.target.value })
                 }
-                className="w-full rounded-xl border border-slate-200 px-4 py-2 outline-none focus:border-blue-500"
+                className="w-full rounded-xl border border-slate-200 px-4 py-2 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                 placeholder="admin@example.com"
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-slate-700">
+              <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
                 Full Name{" "}
-                <span className="text-xs font-normal text-slate-500">
+                <span className="text-xs font-normal text-slate-500 dark:text-slate-400">
                   (Required for new users)
                 </span>
               </label>
@@ -357,20 +357,20 @@ export default function AdminSubAdminsPage() {
                 onChange={(e) =>
                   setInviteForm({ ...inviteForm, fullName: e.target.value })
                 }
-                className="w-full rounded-xl border border-slate-200 px-4 py-2 outline-none focus:border-blue-500"
+                className="w-full rounded-xl border border-slate-200 px-4 py-2 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                 placeholder="John Doe"
               />
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-slate-700">
+              <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
                 Permissions
               </label>
               <div className="grid grid-cols-2 gap-2">
                 {availablePermissions.map((perm) => (
                   <label
                     key={perm}
-                    className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 p-3 hover:bg-slate-50"
+                    className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 p-3 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800/50"
                   >
                     <input
                       type="checkbox"
@@ -382,7 +382,7 @@ export default function AdminSubAdminsPage() {
                       }
                       className="h-4 w-4 rounded border-slate-300 text-blue-600"
                     />
-                    <span className="text-sm font-medium text-slate-700">
+                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
                       {perm
                         .split("_")
                         .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
@@ -397,7 +397,7 @@ export default function AdminSubAdminsPage() {
               <button
                 type="button"
                 onClick={() => setIsInviteModalOpen(false)}
-                className="rounded-xl px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 cursor-pointer"
+                className="rounded-xl px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 cursor-pointer dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
               >
                 Cancel
               </button>
@@ -425,7 +425,7 @@ export default function AdminSubAdminsPage() {
                 {availablePermissions.map((perm) => (
                   <label
                     key={perm}
-                    className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 p-3 hover:bg-slate-50"
+                    className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 p-3 hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800/50"
                   >
                     <input
                       type="checkbox"
@@ -439,7 +439,7 @@ export default function AdminSubAdminsPage() {
                       }
                       className="h-4 w-4 rounded border-slate-300 text-blue-600"
                     />
-                    <span className="text-sm font-medium text-slate-700">
+                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
                       {perm
                         .split("_")
                         .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
@@ -453,7 +453,7 @@ export default function AdminSubAdminsPage() {
               <button
                 type="button"
                 onClick={() => setIsEditModalOpen(false)}
-                className="rounded-xl px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 cursor-pointer"
+                className="rounded-xl px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 cursor-pointer dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
               >
                 Cancel
               </button>
@@ -476,14 +476,14 @@ export default function AdminSubAdminsPage() {
           onClose={() => setIsRevokeModalOpen(false)}
         >
           <div className="space-y-4">
-            <div className="rounded-lg bg-red-50 p-4 text-red-800">
+            <div className="rounded-lg bg-red-50 p-4 text-red-800 dark:bg-red-900/30 dark:text-red-400">
               <div className="flex items-start gap-3">
-                <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-red-600" />
+                <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-red-600 dark:text-red-500" />
                 <div>
-                  <h3 className="font-semibold text-red-900">
+                  <h3 className="font-semibold text-red-900 dark:text-red-300">
                     Confirm Revocation
                   </h3>
-                  <p className="mt-1 text-sm text-red-700">
+                  <p className="mt-1 text-sm text-red-700 dark:text-red-400">
                     Are you sure you want to revoke{" "}
                     {selectedItem?.type === "active"
                       ? "access for"
@@ -492,7 +492,7 @@ export default function AdminSubAdminsPage() {
                     ?
                   </p>
                   {selectedItem?.type === "active" && (
-                    <p className="mt-2 text-xs text-red-600">
+                    <p className="mt-2 text-xs text-red-600 dark:text-red-400">
                       If this user was an existing member or trainer, their
                       original role will be restored. Otherwise, their account
                       will be deactivated.
@@ -505,7 +505,7 @@ export default function AdminSubAdminsPage() {
               <button
                 type="button"
                 onClick={() => setIsRevokeModalOpen(false)}
-                className="rounded-xl px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 cursor-pointer"
+                className="rounded-xl px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 cursor-pointer dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white"
               >
                 Cancel
               </button>

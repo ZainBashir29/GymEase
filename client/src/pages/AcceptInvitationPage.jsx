@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../lib/axios.js";
 import toast from "react-hot-toast";
@@ -77,23 +77,23 @@ export default function AcceptInvitationPage() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-600 dark:text-blue-400" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
-        <div className="w-full max-w-md rounded-2xl bg-white p-8 text-center shadow-lg">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
-            <ShieldCheck className="h-6 w-6 text-red-600" />
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4 dark:bg-slate-950">
+        <div className="w-full max-w-md rounded-2xl bg-white p-8 text-center shadow-lg dark:bg-slate-900">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
+            <ShieldCheck className="h-6 w-6 text-red-600 dark:text-red-400" />
           </div>
-          <h2 className="mb-2 text-2xl font-bold text-slate-800">
+          <h2 className="mb-2 text-2xl font-bold text-slate-800 dark:text-white">
             Invalid Invitation
           </h2>
-          <p className="mb-6 text-slate-600">{error}</p>
+          <p className="mb-6 text-slate-600 dark:text-slate-400">{error}</p>
           <button
             type="button"
             onClick={() => navigate("/")}
@@ -107,15 +107,15 @@ export default function AcceptInvitationPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
-      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
-          <ShieldCheck className="h-8 w-8 text-blue-600" />
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4 dark:bg-slate-950">
+      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg dark:bg-slate-900">
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30">
+          <ShieldCheck className="h-8 w-8 text-blue-600 dark:text-blue-400" />
         </div>
-        <h2 className="mb-2 text-center text-2xl font-bold text-slate-800">
+        <h2 className="mb-2 text-center text-2xl font-bold text-slate-800 dark:text-white">
           Admin Invitation
         </h2>
-        <p className="mb-6 text-center text-slate-600">
+        <p className="mb-6 text-center text-slate-600 dark:text-slate-400">
           {invitationData?.fullName
             ? `Hello ${invitationData.fullName}, you`
             : "You"}{" "}
@@ -123,13 +123,13 @@ export default function AcceptInvitationPage() {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="rounded-lg bg-slate-50 p-4 text-sm text-slate-600">
+          <div className="rounded-lg bg-slate-50 p-4 text-sm text-slate-600 dark:bg-slate-800 dark:text-slate-400">
             <p>
-              <span className="font-semibold text-slate-700">Email:</span>{" "}
+              <span className="font-semibold text-slate-700 dark:text-slate-300">Email:</span>{" "}
               {invitationData?.email}
             </p>
             {!invitationData?.isNewUser && (
-              <p className="mt-2 text-blue-600">
+              <p className="mt-2 text-blue-600 dark:text-blue-400">
                 You already have a GymEase account. Accepting this invitation
                 will upgrade your existing account with sub-admin privileges.
               </p>
@@ -141,7 +141,7 @@ export default function AcceptInvitationPage() {
               <div>
                 <label 
                   htmlFor="password" 
-                  className="mb-1 block text-sm font-medium text-slate-700"
+                  className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
                 >
                   Set Password
                 </label>
@@ -153,14 +153,14 @@ export default function AcceptInvitationPage() {
                   autoComplete="new-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-2 outline-none focus:border-blue-500"
+                  className="w-full rounded-xl border border-slate-200 px-4 py-2 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                   placeholder="Minimum 8 characters"
                 />
               </div>
               <div>
                 <label 
                   htmlFor="confirmPassword" 
-                  className="mb-1 block text-sm font-medium text-slate-700"
+                  className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300"
                 >
                   Confirm Password
                 </label>
@@ -172,7 +172,7 @@ export default function AcceptInvitationPage() {
                   autoComplete="new-password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 px-4 py-2 outline-none focus:border-blue-500"
+                  className="w-full rounded-xl border border-slate-200 px-4 py-2 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                   placeholder="Confirm your password"
                 />
               </div>

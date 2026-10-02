@@ -33,11 +33,11 @@ const SessionModal = ({ session, onClose, onMarkConducted }) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0">
       <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm cursor-pointer" onClick={onClose} />
       
-      <div className="relative w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl">
+      <div className="relative w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl dark:bg-slate-900">
         
-        <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50 p-6">
+        <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50 p-6 dark:bg-slate-800 dark:border-slate-700">
           <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-brand-100 ring-2 ring-white">
+            <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-brand-100 ring-2 ring-white dark:bg-brand-900/50 dark:ring-slate-800">
               {session.memberId?.profilePicture ? (
                 <img src={session.memberId.profilePicture} alt="Profile" className="h-full w-full object-cover" referrerPolicy="no-referrer" />
               ) : (
@@ -45,51 +45,51 @@ const SessionModal = ({ session, onClose, onMarkConducted }) => {
               )}
             </div>
             <div>
-              <h2 className="text-lg font-bold text-slate-900">{session.memberId?.fullName || "Member"}</h2>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">{session.memberId?.fullName || "Member"}</h2>
               <div className="flex items-center gap-2 mt-0.5">
-                <p className="text-sm font-medium text-slate-500">{session.workoutName}</p>
+                <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{session.workoutName}</p>
                 <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${statusStyles[session.status]}`}>
                   {session.status}
                 </span>
               </div>
             </div>
           </div>
-          <button onClick={onClose} className="rounded-full p-2 text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition-colors cursor-pointer">
+          <button onClick={onClose} className="rounded-full p-2 text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition-colors cursor-pointer dark:hover:bg-slate-700 dark:hover:text-slate-300">
             <X className="h-5 w-5" />
           </button>
         </div>
 
         
         <div className="max-h-[60vh] overflow-y-auto p-6">
-          <h3 className="mb-4 flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-slate-400">
+          <h3 className="mb-4 flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-slate-400 dark:text-slate-500">
             <Dumbbell className="h-4 w-4" />
             Workout Details
           </h3>
           
           {(!session.exercises || session.exercises.length === 0) ? (
-            <p className="text-sm text-slate-500 italic">No exercises detailed for this session.</p>
+            <p className="text-sm text-slate-500 italic dark:text-slate-400">No exercises detailed for this session.</p>
           ) : (
             <div className="space-y-4">
               {session.exercises.map((ex, idx) => (
-                <div key={idx} className="rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
-                  <p className="font-bold text-slate-900">{ex.name}</p>
-                  <div className="mt-2 flex flex-wrap gap-4 text-sm text-slate-600">
+                <div key={idx} className="rounded-xl border border-slate-100 bg-white p-4 shadow-sm dark:bg-slate-800 dark:border-slate-700">
+                  <p className="font-bold text-slate-900 dark:text-white">{ex.name}</p>
+                  <div className="mt-2 flex flex-wrap gap-4 text-sm text-slate-600 dark:text-slate-400">
                     {ex.sets && (
-                      <div className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100">
+                      <div className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100 dark:bg-slate-900/50 dark:border-slate-600">
                         <Activity className="h-3.5 w-3.5 text-brand-600" />
-                        <span><span className="font-bold text-slate-900">{ex.sets}</span> sets</span>
+                        <span><span className="font-bold text-slate-900 dark:text-white">{ex.sets}</span> sets</span>
                       </div>
                     )}
                     {ex.reps && (
-                      <div className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100">
+                      <div className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100 dark:bg-slate-900/50 dark:border-slate-600">
                         <Dumbbell className="h-3.5 w-3.5 text-brand-600" />
-                        <span><span className="font-bold text-slate-900">{ex.reps}</span> reps</span>
+                        <span><span className="font-bold text-slate-900 dark:text-white">{ex.reps}</span> reps</span>
                       </div>
                     )}
                     {ex.duration && (
-                      <div className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100">
+                      <div className="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100 dark:bg-slate-900/50 dark:border-slate-600">
                         <Clock className="h-3.5 w-3.5 text-brand-600" />
-                        <span className="font-bold text-slate-900">{ex.duration}</span>
+                        <span className="font-bold text-slate-900 dark:text-white">{ex.duration}</span>
                       </div>
                     )}
                   </div>
@@ -100,11 +100,11 @@ const SessionModal = ({ session, onClose, onMarkConducted }) => {
         </div>
 
         
-        <div className="border-t border-slate-100 bg-slate-50 p-6 flex flex-col gap-2">
+        <div className="border-t border-slate-100 bg-slate-50 p-6 flex flex-col gap-2 dark:bg-slate-800/50 dark:border-slate-700">
           {error && <p className="text-center text-sm text-danger">{error}</p>}
           
           <div className="flex gap-3">
-            <button onClick={onClose} className="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer">
+            <button onClick={onClose} className="flex-1 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-700">
               Close
             </button>
             {!session.trainerCompletedAt && (
@@ -151,11 +151,11 @@ const SessionRow = ({ session, onClick, onMarkConducted }) => {
   return (
     <div 
       onClick={() => onClick(session)}
-      className="flex cursor-pointer items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-4 py-3.5 transition-colors hover:bg-slate-100 hover:border-slate-200 group"
+      className="flex cursor-pointer items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-4 py-3.5 transition-colors hover:bg-slate-100 hover:border-slate-200 group dark:bg-slate-800/50 dark:border-slate-700 dark:hover:bg-slate-800 dark:hover:border-slate-600"
     >
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <p className="text-sm font-bold text-slate-900 group-hover:text-brand-700 transition-colors">
+          <p className="text-sm font-bold text-slate-900 group-hover:text-brand-700 transition-colors dark:text-white dark:group-hover:text-brand-400">
             {session.workoutName}
           </p>
           <span
@@ -166,7 +166,7 @@ const SessionRow = ({ session, onClick, onMarkConducted }) => {
             {session.status}
           </span>
         </div>
-        <p className="mt-0.5 text-xs font-medium text-slate-500">
+        <p className="mt-0.5 text-xs font-medium text-slate-500 dark:text-slate-400">
           with {session.memberId?.fullName || "Member"}
         </p>
         {error && <p className="mt-1 text-xs text-danger">{error}</p>}
@@ -181,7 +181,7 @@ const SessionRow = ({ session, onClick, onMarkConducted }) => {
         <button
           onClick={handleMark}
           disabled={isMarking}
-          className="flex shrink-0 items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-slate-700 shadow-sm ring-1 ring-slate-200 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex shrink-0 items-center gap-1.5 rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-slate-700 shadow-sm ring-1 ring-slate-200 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-slate-700 dark:text-slate-300 dark:ring-slate-600 dark:hover:bg-slate-600"
         >
           {isMarking && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
           {isMarking ? "Marking..." : "Mark conducted"}
@@ -228,7 +228,7 @@ const TodaySessionsCard = () => {
 
   if (isLoading) {
     return (
-      <div className="flex h-40 items-center justify-center rounded-2xl border border-slate-200 bg-white">
+      <div className="flex h-40 items-center justify-center rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 dark:border-slate-800">
         <Loader2 className="h-5 w-5 animate-spin text-brand-600" />
       </div>
     );
@@ -244,16 +244,16 @@ const TodaySessionsCard = () => {
 
   return (
     <>
-      <div className="rounded-2xl border border-slate-200 bg-white p-6">
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 dark:bg-slate-900 dark:border-slate-800">
         <div className="mb-4 flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 dark:bg-brand-900/30">
             <Dumbbell className="h-5 w-5 text-brand-600" strokeWidth={2} />
           </div>
           <div>
             <p className="text-xs font-medium uppercase tracking-wide text-brand-600">
               Today
             </p>
-            <h3 className="text-base font-bold text-slate-900">
+            <h3 className="text-base font-bold text-slate-900 dark:text-white">
               {sessions.length} session{sessions.length !== 1 ? "s" : ""}{" "}
               scheduled
             </h3>
@@ -262,8 +262,8 @@ const TodaySessionsCard = () => {
 
         {sessions.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-center">
-            <CalendarX className="h-7 w-7 text-slate-400" strokeWidth={1.5} />
-            <p className="mt-3 text-sm text-slate-500">
+            <CalendarX className="h-7 w-7 text-slate-400 dark:text-slate-500" strokeWidth={1.5} />
+            <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
               No sessions scheduled today
             </p>
           </div>

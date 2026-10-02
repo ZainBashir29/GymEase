@@ -97,24 +97,24 @@ const VerifyMembershipPage = () => {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50">
-        <Loader2 className="h-8 w-8 animate-spin text-brand-600" />
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950">
+        <Loader2 className="h-8 w-8 animate-spin text-brand-600 dark:text-brand-400" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
-        <div className="w-full max-w-md rounded-2xl border border-danger/20 bg-white p-8 text-center shadow-sm">
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4 dark:bg-slate-950">
+        <div className="w-full max-w-md rounded-2xl border border-danger/20 bg-white p-8 text-center shadow-sm dark:bg-slate-900">
           <XCircle className="mx-auto mb-4 h-16 w-16 text-danger" />
-          <h1 className="mb-2 text-2xl font-bold text-slate-900">
+          <h1 className="mb-2 text-2xl font-bold text-slate-900 dark:text-white">
             Verification Failed
           </h1>
-          <p className="mb-6 text-slate-600">{error}</p>
+          <p className="mb-6 text-slate-600 dark:text-slate-400">{error}</p>
           <Link
             to="/"
-            className="inline-block rounded-lg bg-slate-100 px-6 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-200"
+            className="inline-block rounded-lg bg-slate-100 px-6 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
           >
             Return Home
           </Link>
@@ -127,8 +127,8 @@ const VerifyMembershipPage = () => {
     result || {};
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
-      <div className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-xl ring-1 ring-slate-100">
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4 dark:bg-slate-950">
+      <div className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-xl ring-1 ring-slate-100 dark:bg-slate-900 dark:ring-slate-800">
         
         <div
           className={`p-8 text-center text-white ${
@@ -152,7 +152,7 @@ const VerifyMembershipPage = () => {
 
         <div className="space-y-5 p-6 sm:p-8">
           <div className="flex items-center gap-4">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-slate-100 ring-2 ring-slate-200">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-slate-100 ring-2 ring-slate-200 dark:bg-slate-800 dark:ring-slate-700">
               {user?.profilePicture ? (
                 <img
                   src={user.profilePicture}
@@ -161,43 +161,43 @@ const VerifyMembershipPage = () => {
                   referrerPolicy="no-referrer"
                 />
               ) : (
-                <User className="h-7 w-7 text-slate-400" />
+                <User className="h-7 w-7 text-slate-400 dark:text-slate-500" />
               )}
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                 Member
               </p>
-              <p className="text-xl font-bold text-slate-900">
+              <p className="text-xl font-bold text-slate-900 dark:text-white">
                 {user?.fullName || "Gym Member"}
               </p>
               {user?.email && (
-                <p className="text-xs text-slate-500">{user.email}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{user.email}</p>
               )}
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3 pt-2">
-            <div className="rounded-xl border border-slate-100 bg-slate-50 p-3">
-              <div className="flex items-center gap-2 text-slate-500">
-                <Dumbbell className="h-4 w-4 text-brand-600" />
+            <div className="rounded-xl border border-slate-100 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-950">
+              <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                <Dumbbell className="h-4 w-4 text-brand-600 dark:text-brand-400" />
                 <span className="text-xs font-medium uppercase tracking-wider">
                   Plan
                 </span>
               </div>
-              <p className="mt-1 text-sm font-bold text-slate-900">
+              <p className="mt-1 text-sm font-bold text-slate-900 dark:text-white">
                 {plan?.name || "Standard Plan"}
               </p>
             </div>
 
-            <div className="rounded-xl border border-slate-100 bg-slate-50 p-3">
-              <div className="flex items-center gap-2 text-slate-500">
-                <Calendar className="h-4 w-4 text-brand-600" />
+            <div className="rounded-xl border border-slate-100 bg-slate-50 p-3 dark:border-slate-800 dark:bg-slate-950">
+              <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                <Calendar className="h-4 w-4 text-brand-600 dark:text-brand-400" />
                 <span className="text-xs font-medium uppercase tracking-wider">
                   Valid Until
                 </span>
               </div>
-              <p className="mt-1 text-sm font-bold text-slate-900">
+              <p className="mt-1 text-sm font-bold text-slate-900 dark:text-white">
                 {endDate
                   ? new Date(endDate).toLocaleDateString("en-US", {
                       month: "short",
@@ -213,7 +213,7 @@ const VerifyMembershipPage = () => {
             className={`rounded-xl border p-4 transition-all ${
               isCheckedInToday
                 ? "border-success/30 bg-success/5"
-                : "border-slate-200 bg-slate-50/50"
+                : "border-slate-200 bg-slate-50/50 dark:border-slate-800 dark:bg-slate-900"
             }`}
           >
             <div className="flex items-center justify-between">
@@ -222,16 +222,16 @@ const VerifyMembershipPage = () => {
                   className={`flex h-9 w-9 items-center justify-center rounded-lg ${
                     isCheckedInToday
                       ? "bg-success/10 text-success"
-                      : "bg-slate-200 text-slate-500"
+                      : "bg-slate-200 text-slate-500 dark:bg-slate-800 dark:text-slate-400"
                   }`}
                 >
                   <MapPin className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                     Today's Attendance
                   </p>
-                  <p className="text-sm font-bold text-slate-900">
+                  <p className="text-sm font-bold text-slate-900 dark:text-white">
                     {isCheckedInToday
                       ? "Checked In Today"
                       : "Not Checked In Yet"}
@@ -240,7 +240,7 @@ const VerifyMembershipPage = () => {
               </div>
 
               {isCheckedInToday && checkedInAt && (
-                <div className="flex items-center gap-1 text-xs font-medium text-slate-500">
+                <div className="flex items-center gap-1 text-xs font-medium text-slate-500 dark:text-slate-400">
                   <Clock className="h-3.5 w-3.5" />
                   {new Date(checkedInAt).toLocaleTimeString("en-US", {
                     hour: "numeric",
@@ -292,12 +292,12 @@ const VerifyMembershipPage = () => {
                 </div>
               )}
 
-              <label className="flex cursor-pointer items-center justify-center gap-2 text-xs font-medium text-slate-500 hover:text-slate-700">
+              <label className="flex cursor-pointer items-center justify-center gap-2 text-xs font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300">
                 <input
                   type="checkbox"
                   checked={autoCheckIn}
                   onChange={handleToggleAutoCheckIn}
-                  className="rounded border-slate-300 text-brand-600 focus:ring-brand-500"
+                  className="rounded border-slate-300 text-brand-600 focus:ring-brand-500 dark:border-slate-700"
                 />
                 <span>Auto check-in on scan (kiosk mode)</span>
               </label>
@@ -305,10 +305,10 @@ const VerifyMembershipPage = () => {
           )}
         </div>
 
-        <div className="border-t border-slate-100 bg-slate-50 p-5 text-center">
+        <div className="border-t border-slate-100 bg-slate-50 p-5 text-center dark:border-slate-800 dark:bg-slate-950">
           <Link
             to="/"
-            className="inline-block text-sm font-semibold text-brand-600 transition-colors hover:text-brand-700"
+            className="inline-block text-sm font-semibold text-brand-600 transition-colors hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
           >
             &larr; Back to GymEase
           </Link>

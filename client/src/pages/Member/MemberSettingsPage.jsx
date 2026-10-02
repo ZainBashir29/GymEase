@@ -156,7 +156,7 @@ const MemberSettingsPage = () => {
   return (
     <>
       <div className="mx-auto max-w-3xl p-6">
-        <h1 className="text-2xl font-bold text-slate-900 mb-8">
+        <h1 className="text-2xl font-bold text-slate-900 mb-8 dark:text-white">
           Account Settings
         </h1>
 
@@ -168,7 +168,7 @@ const MemberSettingsPage = () => {
           </div>
         )}
 
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-8">
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-8 dark:bg-slate-900 dark:border-slate-800">
           <div className="p-6 flex flex-col sm:flex-row items-center gap-6">
             <div className="relative">
               {user?.profilePicture ? (
@@ -179,14 +179,14 @@ const MemberSettingsPage = () => {
                   referrerPolicy="no-referrer"
                 />
               ) : (
-                <div className="w-24 h-24 rounded-full bg-brand-100 flex items-center justify-center text-brand-700 text-3xl font-bold border-4 border-slate-50">
+                <div className="w-24 h-24 rounded-full bg-brand-100 flex items-center justify-center text-brand-700 text-3xl font-bold border-4 border-slate-50 dark:bg-brand-900/50 dark:text-brand-300 dark:border-slate-800">
                   {user?.fullName?.charAt(0).toUpperCase()}
                 </div>
               )}
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isUploadingPic}
-                className="absolute bottom-0 right-0 p-2 bg-white rounded-full border border-slate-200 shadow-sm text-slate-600 hover:text-brand-600 transition-colors disabled:opacity-50 cursor-pointer"
+                className="absolute bottom-0 right-0 p-2 bg-white rounded-full border border-slate-200 shadow-sm text-slate-600 hover:text-brand-600 transition-colors disabled:opacity-50 cursor-pointer dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300"
               >
                 <Camera className="w-4 h-4" />
               </button>
@@ -199,10 +199,10 @@ const MemberSettingsPage = () => {
               />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-slate-900">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                 Profile Picture
               </h3>
-              <p className="text-sm text-slate-500 mb-3">
+              <p className="text-sm text-slate-500 mb-3 dark:text-slate-400">
                 Upload a new avatar. Larger images will be resized.
               </p>
               <button
@@ -216,9 +216,9 @@ const MemberSettingsPage = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-8">
-          <div className="px-6 py-5 border-b border-slate-200">
-            <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-8 dark:bg-slate-900 dark:border-slate-800">
+          <div className="px-6 py-5 border-b border-slate-200 dark:border-slate-800">
+            <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2 dark:text-white">
               <User className="w-5 h-5 text-brand-600" />
               Profile Information
             </h2>
@@ -226,31 +226,31 @@ const MemberSettingsPage = () => {
           <div className="p-6">
             <form onSubmit={handleUpdateProfile} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-medium text-slate-700 mb-1 dark:text-slate-300">
                   Full Name
                 </label>
                 <input
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none"
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-medium text-slate-700 mb-1 dark:text-slate-300">
                   Username
                 </label>
                 <input
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none"
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-medium text-slate-700 mb-1 dark:text-slate-300">
                   Email Address
                 </label>
                 <input
@@ -258,7 +258,7 @@ const MemberSettingsPage = () => {
                   value={user?.email || ""}
                   readOnly
                   disabled
-                  className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-500 cursor-not-allowed outline-none"
+                  className="w-full px-4 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-500 cursor-not-allowed outline-none dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-400"
                 />
                 <p className="mt-1.5 text-xs text-slate-400 flex items-center gap-1">
                   <Lock className="w-3 h-3 shrink-0" />
@@ -282,9 +282,9 @@ const MemberSettingsPage = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-8">
-          <div className="px-6 py-5 border-b border-slate-200">
-            <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-8 dark:bg-slate-900 dark:border-slate-800">
+          <div className="px-6 py-5 border-b border-slate-200 dark:border-slate-800">
+            <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2 dark:text-white">
               <Shield className="w-5 h-5 text-brand-600" />
               Change Password
             </h2>
@@ -314,7 +314,7 @@ const MemberSettingsPage = () => {
                 <button
                   type="submit"
                   disabled={isUpdatingPassword}
-                  className="px-6 py-2.5 bg-slate-900 text-white font-medium rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50 cursor-pointer"
+                  className="px-6 py-2.5 bg-slate-900 text-white font-medium rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50 cursor-pointer dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
                 >
                   {isUpdatingPassword ? "Updating..." : "Update Password"}
                 </button>
@@ -323,15 +323,15 @@ const MemberSettingsPage = () => {
           </div>
         </div>
 
-        <div className="bg-red-50 rounded-2xl border border-red-100 shadow-sm overflow-hidden">
-          <div className="px-6 py-5 border-b border-red-200">
-            <h2 className="text-lg font-semibold text-red-700 flex items-center gap-2">
+        <div className="bg-red-50 rounded-2xl border border-red-100 shadow-sm overflow-hidden dark:bg-red-900/20 dark:border-red-900/50">
+          <div className="px-6 py-5 border-b border-red-200 dark:border-red-900/50">
+            <h2 className="text-lg font-semibold text-red-700 flex items-center gap-2 dark:text-red-400">
               <AlertTriangle className="w-5 h-5" />
               Danger Zone
             </h2>
           </div>
           <div className="p-6">
-            <p className="text-sm text-red-600 mb-4">
+            <p className="text-sm text-red-600 mb-4 dark:text-red-400">
               Permanently delete your account and all of your data. This action
               cannot be undone. You will lose access to all your memberships,
               gym plans, and order history.
@@ -339,7 +339,7 @@ const MemberSettingsPage = () => {
             <button
               onClick={handleDeleteAccount}
               disabled={isDeleting}
-              className="px-6 py-2.5 bg-white border border-red-200 text-red-600 font-medium rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50 flex items-center gap-2 cursor-pointer"
+              className="px-6 py-2.5 bg-white border border-red-200 text-red-600 font-medium rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50 flex items-center gap-2 cursor-pointer dark:bg-slate-900 dark:border-red-900/50 dark:text-red-500 dark:hover:bg-red-900/20"
             >
               <LogOut className="w-4 h-4" />
               {isDeleting ? "Deleting..." : "Delete Account"}

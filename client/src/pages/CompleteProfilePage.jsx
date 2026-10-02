@@ -76,13 +76,13 @@ const CompleteProfilePage = () => {
         subtitle="You're all set to use GymEase."
       >
         <div className="flex flex-col items-center text-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-50">
-            <CheckCircle2 className="h-7 w-7 text-brand-600" strokeWidth={2} />
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-50 dark:bg-brand-900/30">
+            <CheckCircle2 className="h-7 w-7 text-brand-600 dark:text-brand-400" strokeWidth={2} />
           </div>
-          <p className="mt-4 text-sm text-slate-600">
+          <p className="mt-4 text-sm text-slate-600 dark:text-slate-400">
             Profile completed successfully! Setting up your account...
           </p>
-          <Loader2 className="mt-4 h-5 w-5 animate-spin text-brand-600" />
+          <Loader2 className="mt-4 h-5 w-5 animate-spin text-brand-600 dark:text-brand-400" />
         </div>
       </AuthLayout>
     );

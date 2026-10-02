@@ -33,7 +33,12 @@ const MembershipCard = () => {
   useEffect(() => {
     const fetchMembership = async () => {
       try {
-        const { data } = await api.get("/memberships/current");
+        const { data } = await api.get(`/memberships/current?_t=${Date.now()}`, {
+          headers: {
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+          },
+        });
         setMembership(data.data);
       } catch (err) {
         if (err.response?.status === 404) {
@@ -71,7 +76,7 @@ const MembershipCard = () => {
 
   if (isLoading) {
     return (
-      <div className="flex h-32 items-center justify-center rounded-2xl border border-slate-200 bg-white">
+      <div className="flex h-32 items-center justify-center rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 dark:border-slate-800">
         <Loader2 className="h-5 w-5 animate-spin text-brand-600" />
       </div>
     );
@@ -87,12 +92,12 @@ const MembershipCard = () => {
 
   if (!membership) {
     return (
-      <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-6 text-center">
+      <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-6 text-center dark:bg-slate-900 dark:border-slate-700">
         <CreditCard
           className="mx-auto h-7 w-7 text-slate-400"
           strokeWidth={1.5}
         />
-        <p className="mt-3 text-sm font-medium text-slate-600">
+        <p className="mt-3 text-sm font-medium text-slate-600 dark:text-slate-300">
           No active membership
         </p>
         <Link
@@ -188,15 +193,15 @@ const MembershipCard = () => {
   );
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:bg-slate-900 dark:border-slate-800">
       <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-sm font-bold tracking-tight text-slate-900">
+        <h3 className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">
           Digital ID Card
         </h3>
         <button
           onClick={handleDownload}
           disabled={isDownloading}
-          className="flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-200 disabled:opacity-50 cursor-pointer"
+          className="flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-200 disabled:opacity-50 cursor-pointer dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
         >
           {isDownloading ? (
             <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -228,7 +233,7 @@ const MembershipCard = () => {
         </div>
       )}
 
-      <div className="mt-5 flex justify-center border-t border-slate-100 pt-4">
+      <div className="mt-5 flex justify-center border-t border-slate-100 pt-4 dark:border-slate-800">
         <Link
           to="/member/membership"
           className="text-sm font-semibold text-brand-600 hover:text-brand-700"
@@ -248,7 +253,7 @@ const MembershipCard = () => {
           >
             <button
               onClick={() => setIsModalOpen(false)}
-              className="absolute -right-2 -top-4 sm:-right-4 sm:-top-4 z-50 flex h-8 w-8 items-center justify-center rounded-full bg-white text-slate-900 shadow-md hover:bg-slate-100 cursor-pointer"
+              className="absolute -right-2 -top-4 sm:-right-4 sm:-top-4 z-50 flex h-8 w-8 items-center justify-center rounded-full bg-white text-slate-900 shadow-md hover:bg-slate-100 cursor-pointer dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
             >
               <X className="h-5 w-5" />
             </button>

@@ -10,26 +10,23 @@ const navLinks = [
 
 const Footer = () => {
   return (
-    <footer className="border-t border-slate-200 bg-white">
+    <footer className="border-t border-slate-200 bg-white dark:bg-slate-950 dark:border-slate-800">
       <div className="mx-auto max-w-7xl px-6 py-14">
 
-        {/* Main layout: all three centered */}
         <div className="flex flex-col items-center gap-10 lg:flex-row lg:items-start lg:justify-center lg:gap-20">
 
-          {/* Brand */}
           <div className="flex flex-col items-center gap-4 text-center lg:items-start lg:text-left">
             <Link to="/" className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600">
                 <Dumbbell className="h-4 w-4 text-white" strokeWidth={2.5} />
               </div>
-              <span className="text-base font-bold text-slate-900">GymEase</span>
+              <span className="text-base font-bold text-slate-900 dark:text-white">GymEase</span>
             </Link>
-            <p className="max-w-xs text-sm leading-relaxed text-slate-500">
+            <p className="max-w-xs text-sm leading-relaxed text-slate-500 dark:text-slate-400">
               One app for memberships, training plans, progress tracking, and your gym store.
             </p>
           </div>
 
-          {/* Navigate */}
           <div className="flex flex-col items-center lg:items-start">
             <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">
               Navigate
@@ -39,7 +36,7 @@ const Footer = () => {
                 <li key={link.to}>
                   <Link
                     to={link.to}
-                    className="text-sm text-slate-600 transition-colors hover:text-brand-600"
+                    className="text-sm text-slate-600 transition-colors hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-400"
                   >
                     {link.label}
                   </Link>
@@ -48,7 +45,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Legal */}
           <div className="flex flex-col items-center lg:items-start">
             <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">
               Legal
@@ -57,7 +53,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/privacy"
-                  className="text-sm text-slate-600 transition-colors hover:text-brand-600"
+                  className="text-sm text-slate-600 transition-colors hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-400"
                 >
                   Privacy Policy
                 </Link>
@@ -67,8 +63,7 @@ const Footer = () => {
 
         </div>
 
-        {/* Bottom bar */}
-        <div className="mt-12 border-t border-slate-100 pt-6 text-center text-sm text-slate-400">
+        <div className="mt-12 border-t border-slate-100 pt-6 text-center text-sm text-slate-400 dark:border-slate-800 dark:text-slate-500">
           &copy; {new Date().getFullYear()} GymEase. All rights reserved.
         </div>
 

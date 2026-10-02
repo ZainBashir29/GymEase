@@ -18,7 +18,14 @@ const Memberships = ({ isDashboardMode = false }) => {
       try {
         const [plansRes, currentRes] = await Promise.allSettled([
           api.get("/memberships/plans"),
-          user ? api.get("/memberships/current") : Promise.reject("No user"),
+          user
+            ? api.get(`/memberships/current?_t=${Date.now()}`, {
+                headers: {
+                  "Cache-Control": "no-cache",
+                  Pragma: "no-cache",
+                },
+              })
+            : Promise.reject("No user"),
         ]);
         
         if (plansRes.status === "fulfilled") {
@@ -71,13 +78,13 @@ const Memberships = ({ isDashboardMode = false }) => {
   };
 
   return (
-    <div className={isDashboardMode ? "py-4" : "bg-slate-50 min-h-screen py-16 sm:py-24"}>
+    <div className={isDashboardMode ? "py-4" : "bg-slate-50 dark:bg-slate-950 min-h-screen py-16 sm:py-24"}>
       <div className={`mx-auto max-w-7xl px-6 lg:px-8 ${isDashboardMode ? "px-0" : ""}`}>
         <div className="mx-auto max-w-2xl text-center">
-          <p className="mt-2 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+          <p className="mt-2 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl dark:text-white">
             {isDashboardMode ? "Change your plan" : "Choose the right plan for you"}
           </p>
-          <p className="mt-6 text-lg leading-8 text-slate-600">
+          <p className="mt-6 text-lg leading-8 text-slate-600 dark:text-slate-400">
             {isDashboardMode
               ? "Your current plan will be replaced with the one you select below."
               : "Whether you're just getting started or are already an athlete, we have a membership plan that fits your goals."}
@@ -99,7 +106,7 @@ const Memberships = ({ isDashboardMode = false }) => {
             )}
             <div className={`isolate mx-auto mt-16 grid max-w-md grid-cols-1 gap-y-8 sm:mt-20 ${
               isDashboardMode 
-                ? "xl:mx-0 xl:max-w-none xl:grid-cols-3 xl:gap-x-8 2xl:gap-x-12" 
+                ? "lg:mx-0 lg:max-w-none lg:grid-cols-2 2xl:grid-cols-3 lg:gap-x-6 xl:gap-x-8" 
                 : "lg:mx-0 lg:max-w-none lg:grid-cols-3 lg:gap-x-8 xl:gap-x-12"
             }`}>
               {plans.map((plan, planIdx) => {
@@ -112,7 +119,7 @@ const Memberships = ({ isDashboardMode = false }) => {
                   className={`relative rounded-3xl p-8 ring-1 sm:p-10 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col ${
                     isFeatured
                       ? "bg-brand-900 ring-brand-900 text-white shadow-2xl scale-105 z-10"
-                      : "bg-white ring-slate-200 shadow-md hover:ring-brand-200"
+                      : "bg-white ring-slate-200 shadow-md hover:ring-brand-200 dark:bg-slate-900 dark:ring-slate-800 dark:hover:ring-brand-800"
                   } ${showBanner ? "pt-12 sm:pt-14" : ""}`}
                 >
                   {isCurrent && (
@@ -128,7 +135,7 @@ const Memberships = ({ isDashboardMode = false }) => {
                   <h3
                     id={plan._id}
                     className={`text-lg font-semibold leading-8 ${
-                      planIdx === 1 ? "text-white" : "text-brand-600"
+                      planIdx === 1 ? "text-white" : "text-brand-600 dark:text-brand-400"
                     }`}
                   >
                     {plan.name}
@@ -136,21 +143,21 @@ const Memberships = ({ isDashboardMode = false }) => {
                   <p className="mt-4 flex items-baseline gap-x-1">
                     <span
                       className={`text-xl font-semibold ${
-                        planIdx === 1 ? "text-white/80" : "text-slate-500"
+                        planIdx === 1 ? "text-white/80" : "text-slate-500 dark:text-slate-400"
                       }`}
                     >
                       Rs.
                     </span>
                     <span
                       className={`text-4xl sm:text-5xl font-bold tracking-tight ${
-                        planIdx === 1 ? "text-white" : "text-slate-900"
+                        planIdx === 1 ? "text-white" : "text-slate-900 dark:text-white"
                       }`}
                     >
                       {plan.price.toLocaleString()}
                     </span>
                     <span
                       className={`ml-1 text-sm font-medium ${
-                        planIdx === 1 ? "text-brand-200" : "text-slate-500"
+                        planIdx === 1 ? "text-brand-200" : "text-slate-500 dark:text-slate-400"
                       }`}
                     >
                       / {plan.duration} days
@@ -158,7 +165,7 @@ const Memberships = ({ isDashboardMode = false }) => {
                   </p>
                   <p
                     className={`mt-6 text-sm leading-6 ${
-                      planIdx === 1 ? "text-slate-300" : "text-slate-600"
+                      planIdx === 1 ? "text-slate-300" : "text-slate-600 dark:text-slate-300"
                     }`}
                   >
                     Includes access to gym equipment and up to {plan.maxTrainers}{" "}
@@ -167,19 +174,19 @@ const Memberships = ({ isDashboardMode = false }) => {
                   <ul
                     role="list"
                     className={`mt-8 space-y-3 text-sm leading-6 sm:mt-10 flex-1 ${
-                      planIdx === 1 ? "text-slate-300" : "text-slate-600"
+                      planIdx === 1 ? "text-slate-300" : "text-slate-600 dark:text-slate-300"
                     }`}
                   >
                     {plan.details.map((detail, index) => (
                       <li key={index} className="flex gap-x-3 items-center">
                         <div
                           className={`flex h-6 w-6 flex-none items-center justify-center rounded-full ${
-                            planIdx === 1 ? "bg-brand-500/20" : "bg-brand-50"
+                            planIdx === 1 ? "bg-brand-500/20" : "bg-brand-50 dark:bg-brand-900/30"
                           }`}
                         >
                           <Check
                             className={`h-4 w-4 ${
-                              planIdx === 1 ? "text-brand-300" : "text-brand-600"
+                              planIdx === 1 ? "text-brand-300" : "text-brand-600 dark:text-brand-400"
                             }`}
                             aria-hidden="true"
                           />

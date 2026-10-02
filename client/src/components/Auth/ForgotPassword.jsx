@@ -64,11 +64,11 @@ const ForgotPassword = () => {
           </button>
         </form>
       ) : (
-        <div className="rounded-lg border border-brand-200 bg-brand-50 p-6 text-center">
-          <p className="text-brand-800 font-medium mb-4">
+        <div className="rounded-lg border border-brand-200 bg-brand-50 p-6 text-center dark:border-brand-800 dark:bg-brand-900/30">
+          <p className="text-brand-800 font-medium mb-4 dark:text-brand-300">
             If an account with {email} exists, we've sent a password reset link.
           </p>
-          <p className="text-brand-600 text-sm">
+          <p className="text-brand-600 text-sm dark:text-brand-400">
             Please check your email inbox and spam folder.
           </p>
         </div>
@@ -77,7 +77,7 @@ const ForgotPassword = () => {
       <div className="mt-6 flex justify-center">
         <Link
           to="/login"
-          className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-700"
+          className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to login

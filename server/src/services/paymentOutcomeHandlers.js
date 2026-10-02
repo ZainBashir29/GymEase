@@ -197,11 +197,9 @@ const handleSuccessfulPayment = async (trackerToken) => {
       ...emailContent,
     }).catch((err) => console.error("Failed to send membership email:", err));
 
-    if (membershipPaymentType === "renewal" || membershipPaymentType === "returning_member") {
-      resumePausedMemberPlan(updatedPayment.memberId._id).catch(err =>
-        console.error("Failed to auto-resume member gym plan after payment:", err)
-      );
-    }
+    resumePausedMemberPlan(updatedPayment.memberId._id).catch(err =>
+      console.error("Failed to auto-resume member gym plan after payment:", err)
+    );
   }
 
   if (updatedPayment.type === "StoreOrder") {

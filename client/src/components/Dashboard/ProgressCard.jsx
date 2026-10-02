@@ -9,10 +9,10 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 const StatBlock = ({ label, value, accent = false }) => (
   <div>
-    <p className="text-xs font-medium text-slate-500">{label}</p>
+    <p className="text-xs font-medium text-slate-500 dark:text-slate-400">{label}</p>
     <p
       className={`mt-1 text-2xl font-bold ${
-        accent ? "text-brand-600" : "text-slate-900"
+        accent ? "text-brand-600" : "text-slate-900 dark:text-white"
       }`}
     >
       {value}
@@ -42,7 +42,7 @@ const ProgressCard = () => {
 
   if (isLoading) {
     return (
-      <div className="flex h-56 items-center justify-center rounded-2xl border border-slate-200 bg-white">
+      <div className="flex h-56 items-center justify-center rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 dark:border-slate-800">
         <Loader2 className="h-5 w-5 animate-spin text-brand-600" />
       </div>
     );
@@ -85,12 +85,12 @@ const ProgressCard = () => {
     };
 
     return (
-      <div className="rounded-2xl border border-slate-200 bg-white p-6">
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 dark:bg-slate-900 dark:border-slate-800">
         <div className="flex items-center gap-3 mb-6">
           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50">
             <TrendingUp className="h-5 w-5 text-brand-600" strokeWidth={2} />
           </div>
-          <h3 className="text-base font-bold text-slate-900">Your Progress</h3>
+          <h3 className="text-base font-bold text-slate-900 dark:text-white">Your Progress</h3>
         </div>
 
         <div className="mt-6 flex justify-center">
@@ -128,7 +128,7 @@ const ProgressCard = () => {
 
         <Link
           to="/member/plans"
-          className="mt-6 inline-block w-full text-center rounded-lg bg-slate-50 px-4 py-3 text-sm font-semibold text-brand-600 hover:bg-slate-100 transition-colors"
+          className="mt-6 inline-block w-full text-center rounded-lg bg-slate-50 px-4 py-3 text-sm font-semibold text-brand-600 hover:bg-slate-100 transition-colors dark:bg-slate-800 dark:hover:bg-slate-700"
         >
           Select a gym plan for detailed tracking &rarr;
         </Link>
@@ -153,15 +153,15 @@ const ProgressCard = () => {
   };
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6">
+    <div className="rounded-2xl border border-slate-200 bg-white p-6 dark:bg-slate-900 dark:border-slate-800">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50">
             <TrendingUp className="h-5 w-5 text-brand-600" strokeWidth={2} />
           </div>
-          <h3 className="text-base font-bold text-slate-900">Your Progress</h3>
+          <h3 className="text-base font-bold text-slate-900 dark:text-white">Your Progress</h3>
         </div>
-        <span className="text-sm font-medium text-slate-500">
+        <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
           {progress.remainingDays} days left
         </span>
       </div>
@@ -182,12 +182,12 @@ const ProgressCard = () => {
 
       <div className="mt-5">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-slate-600">Attendance</span>
-          <span className="font-semibold text-slate-900">
+          <span className="text-slate-600 dark:text-slate-400">Attendance</span>
+          <span className="font-semibold text-slate-900 dark:text-white">
             {progress.attendancePercentage}%
           </span>
         </div>
-        <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-slate-100">
+        <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
           <div
             className="h-full rounded-full bg-brand-600 transition-all"
             style={{ width: `${progress.attendancePercentage}%` }}
@@ -206,9 +206,9 @@ const ProgressCard = () => {
       </div>
 
       {progress.nextSession && (
-        <div className="mt-5 rounded-lg bg-slate-50 px-4 py-3">
-          <p className="text-xs font-medium text-slate-500">Next up</p>
-          <p className="mt-0.5 text-sm font-semibold text-slate-900">
+        <div className="mt-5 rounded-lg bg-slate-50 px-4 py-3 dark:bg-slate-800">
+          <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Next up</p>
+          <p className="mt-0.5 text-sm font-semibold text-slate-900 dark:text-white">
             {progress.nextSession.workoutName}
           </p>
         </div>

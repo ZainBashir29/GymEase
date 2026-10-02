@@ -8,9 +8,9 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 const StatBlock = ({ label, value, accent = false }) => (
   <div>
-    <p className="text-xs font-medium text-slate-500">{label}</p>
+    <p className="text-xs font-medium text-slate-500 dark:text-slate-400">{label}</p>
     <p
-      className={`mt-1 text-2xl font-bold ${accent ? "text-brand-600" : "text-slate-900"}`}
+      className={`mt-1 text-2xl font-bold ${accent ? "text-brand-600" : "text-slate-900 dark:text-white"}`}
     >
       {value}
     </p>
@@ -39,7 +39,7 @@ const TrainerProgressCard = () => {
 
   if (isLoading) {
     return (
-      <div className="flex h-48 items-center justify-center rounded-2xl border border-slate-200 bg-white">
+      <div className="flex h-48 items-center justify-center rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 dark:border-slate-800">
         <Loader2 className="h-5 w-5 animate-spin text-brand-600" />
       </div>
     );
@@ -70,12 +70,12 @@ const TrainerProgressCard = () => {
   };
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6">
+    <div className="rounded-2xl border border-slate-200 bg-white p-6 dark:bg-slate-900 dark:border-slate-800">
       <div className="flex items-center gap-3">
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50">
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 dark:bg-brand-900/30">
           <TrendingUp className="h-5 w-5 text-brand-600" strokeWidth={2} />
         </div>
-        <h3 className="text-base font-bold text-slate-900">This Month</h3>
+        <h3 className="text-base font-bold text-slate-900 dark:text-white">This Month</h3>
       </div>
 
       <div className="mt-6 flex justify-center">
@@ -94,12 +94,12 @@ const TrainerProgressCard = () => {
 
       <div className="mt-5">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-slate-600">Completion rate</span>
-          <span className="font-semibold text-slate-900">
+          <span className="text-slate-600 dark:text-slate-400">Completion rate</span>
+          <span className="font-semibold text-slate-900 dark:text-white">
             {progress.completionRate}%
           </span>
         </div>
-        <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-slate-100">
+        <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
           <div
             className="h-full rounded-full bg-brand-600 transition-all"
             style={{ width: `${progress.completionRate}%` }}
@@ -117,15 +117,15 @@ const TrainerProgressCard = () => {
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2 text-xs font-medium">
-        <div className="flex items-center gap-1 text-slate-600">
+        <div className="flex items-center gap-1 text-slate-600 dark:text-slate-400">
           <div className="h-2 w-2 rounded-full bg-success"></div>
           {progress.completedThisMonth} Completed
         </div>
-        <div className="flex items-center gap-1 text-slate-600">
+        <div className="flex items-center gap-1 text-slate-600 dark:text-slate-400">
           <div className="h-2 w-2 rounded-full bg-danger"></div>
           {progress.missedThisMonth} Missed
         </div>
-        <div className="flex items-center gap-1 text-slate-600">
+        <div className="flex items-center gap-1 text-slate-600 dark:text-slate-400">
           <div className="h-2 w-2 rounded-full bg-blue-500"></div>
           {progress.upcomingThisMonth} Upcoming
         </div>

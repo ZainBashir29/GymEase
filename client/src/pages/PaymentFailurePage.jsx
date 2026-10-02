@@ -77,14 +77,14 @@ const PaymentFailurePage = () => {
 
   return (
     <section className="mx-auto flex min-h-[60vh] max-w-xl items-center px-6 py-16 text-center">
-      <div className="w-full rounded-2xl bg-white p-8 shadow-lg ring-1 ring-slate-200">
+      <div className="w-full rounded-2xl bg-white p-8 shadow-lg ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-800">
         {loading ? (
-          <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-600" />
+          <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-600 dark:text-brand-400" />
         ) : (
           <XCircle className="mx-auto h-12 w-12 text-red-500" />
         )}
-        <h1 className="mt-5 text-2xl font-bold text-slate-900">{title}</h1>
-        <p className="mt-3 text-slate-600">{message}</p>
+        <h1 className="mt-5 text-2xl font-bold text-slate-900 dark:text-white">{title}</h1>
+        <p className="mt-3 text-slate-600 dark:text-slate-400">{message}</p>
         <div className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link
             to="/pricing"
@@ -94,7 +94,7 @@ const PaymentFailurePage = () => {
           </Link>
           <Link
             to="/member/membership"
-            className="inline-flex rounded-md border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-700 hover:bg-slate-50"
+            className="inline-flex rounded-md border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
           >
             View Membership
           </Link>

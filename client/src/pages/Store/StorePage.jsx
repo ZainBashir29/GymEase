@@ -61,13 +61,13 @@ const StorePage = () => {
   ) : (
     <div className={`mx-auto max-w-7xl ${user?.role === "Member" ? "mb-8" : "px-4 py-16 sm:px-6 lg:px-8 lg:py-24"}`}>
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+        <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
           GymEase Store
         </h2>
         {user?.role === "Member" && (
           <button
             onClick={toggleCart}
-            className="relative flex h-10 w-10 items-center justify-center rounded-full text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+            className="relative flex h-10 w-10 items-center justify-center rounded-full text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer dark:text-slate-300 dark:hover:bg-slate-800"
           >
             <ShoppingCart className="h-5 w-5" />
             {itemCount > 0 && (
@@ -80,13 +80,13 @@ const StorePage = () => {
       </div>
       {products.length === 0 ? (
         <div className="mt-16 flex flex-col items-center justify-center space-y-4">
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-brand-50">
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-brand-50 dark:bg-brand-900/30">
             <PackageSearch className="h-10 w-10 text-brand-500" />
           </div>
-          <h3 className="text-xl font-semibold text-slate-900">
+          <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
             No Products Found
           </h3>
-          <p className="text-slate-500 max-w-md text-center">
+          <p className="text-slate-500 max-w-md text-center dark:text-slate-400">
             We are currently out of stock. Please check back later.
           </p>
         </div>
@@ -101,8 +101,8 @@ const StorePage = () => {
             return (
             <div key={product._id}>
               <Link to={`/store/product/${product._id}`}>
-                <div className="relative group cursor-pointer h-full flex flex-col bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg transition-all hover:border-brand-300">
-                  <div className="relative h-64 w-full overflow-hidden bg-slate-100">
+                <div className="relative group cursor-pointer h-full flex flex-col bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg transition-all hover:border-brand-300 dark:bg-slate-900 dark:border-slate-800 dark:hover:border-brand-800">
+                  <div className="relative h-64 w-full overflow-hidden bg-slate-100 dark:bg-slate-800">
                     <img
                       src={getProductImageSrc(product)}
                       alt={product.name}
@@ -128,22 +128,22 @@ const StorePage = () => {
                     )}
                   </div>
                   <div className="relative p-5 flex flex-col flex-1">
-                    <h3 className="text-lg font-bold text-slate-900 line-clamp-1">
+                    <h3 className="text-lg font-bold text-slate-900 line-clamp-1 dark:text-white">
                       {product.name}
                     </h3>
-                    <p className="mt-1 text-sm text-slate-500 line-clamp-2 min-h-[2.5rem]">
+                    <p className="mt-1 text-sm text-slate-500 line-clamp-2 min-h-[2.5rem] dark:text-slate-400">
                       {product.description}
                     </p>
-                    <p className="mt-4 text-xl font-black text-brand-600">
+                    <p className="mt-4 text-xl font-black text-brand-600 dark:text-brand-400">
                       Rs. {product.price.toLocaleString()}
                     </p>
                     <div
                       className={`mt-6 flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-sm font-bold transition-all ${
                         product.stock === 0
-                          ? "cursor-not-allowed bg-slate-200 text-slate-400"
+                          ? "cursor-not-allowed bg-slate-200 text-slate-400 dark:bg-slate-800 dark:text-slate-500"
                           : inCartQuantity > 0
-                          ? "bg-brand-50 text-brand-700 hover:bg-brand-100 border border-brand-200"
-                          : "bg-slate-900 text-white hover:bg-slate-800"
+                          ? "bg-brand-50 text-brand-700 hover:bg-brand-100 border border-brand-200 dark:bg-brand-900/30 dark:text-brand-300 dark:hover:bg-brand-900/50 dark:border-brand-800/50"
+                          : "bg-brand-600 text-white hover:bg-brand-700"
                       }`}
                     >
                       <ShoppingCart className="h-4 w-4" />

@@ -8,6 +8,7 @@ import { RouterProvider, createBrowserRouter, Navigate, Outlet } from "react-rou
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { CartProvider } from "./context/CartContext.jsx";
 import { ChatProvider } from "./context/ChatContext.jsx";
+import { ThemeProvider } from "./context/ThemeContext.jsx";
 
 const HomePage = lazy(() => import("./pages/HomePage.jsx"));
 const MembershipPlansPage = lazy(() => import("./pages/MembershipPlansPage.jsx"));
@@ -247,23 +248,25 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <AuthProvider>
-      <CartProvider>
-        <ChatProvider>
-          <Suspense
-            fallback={
-              <div className="flex min-h-screen w-full items-center justify-center bg-slate-50 px-4">
-                <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white/90 px-5 py-3.5 shadow-sm ring-1 ring-slate-100 backdrop-blur-sm">
-                  <Loader2 className="h-5 w-5 animate-spin text-brand-600" />
-                  <span className="text-sm font-semibold tracking-wide text-slate-700">Loading...</span>
+    <ThemeProvider>
+      <AuthProvider>
+        <CartProvider>
+          <ChatProvider>
+            <Suspense
+              fallback={
+                <div className="flex min-h-screen w-full items-center justify-center bg-slate-50 px-4 dark:bg-slate-900">
+                  <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white/90 px-5 py-3.5 shadow-sm ring-1 ring-slate-100 backdrop-blur-sm dark:bg-slate-800 dark:border-slate-700 dark:ring-slate-700">
+                    <Loader2 className="h-5 w-5 animate-spin text-brand-600" />
+                    <span className="text-sm font-semibold tracking-wide text-slate-700 dark:text-slate-200">Loading...</span>
+                  </div>
                 </div>
-              </div>
-            }
-          >
-            <RouterProvider router={router} />
-          </Suspense>
-        </ChatProvider>
-      </CartProvider>
-    </AuthProvider>
+              }
+            >
+              <RouterProvider router={router} />
+            </Suspense>
+          </ChatProvider>
+        </CartProvider>
+      </AuthProvider>
+    </ThemeProvider>
   </StrictMode>,
 );

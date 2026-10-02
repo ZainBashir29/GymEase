@@ -49,22 +49,22 @@ const MemberOrdersPage = () => {
     switch (status) {
       case "Pending":
       case "Processing":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400";
       case "Paid":
       case "Delivered":
-        return "bg-green-100 text-green-800";
+        return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
       case "Cancelled":
-        return "bg-red-100 text-red-800";
+        return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
       default:
-        return "bg-slate-100 text-slate-800";
+        return "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300";
     }
   };
 
   return (
     <>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">Your Orders</h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Your Orders</h1>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
           View your order history and current placed orders.
         </p>
       </div>
@@ -73,12 +73,12 @@ const MemberOrdersPage = () => {
           <Loader2 className="h-8 w-8 animate-spin text-brand-600" />
         </div>
       ) : orders.length === 0 ? (
-        <div className="rounded-xl border border-slate-200 bg-white p-12 text-center shadow-sm">
-          <Package className="mx-auto h-12 w-12 text-slate-300" />
-          <h3 className="mt-4 text-lg font-medium text-slate-900">
+        <div className="rounded-xl border border-slate-200 bg-white p-12 text-center shadow-sm dark:bg-slate-900 dark:border-slate-800">
+          <Package className="mx-auto h-12 w-12 text-slate-300 dark:text-slate-600" />
+          <h3 className="mt-4 text-lg font-medium text-slate-900 dark:text-white">
             No orders found
           </h3>
-          <p className="mt-2 text-slate-500">
+          <p className="mt-2 text-slate-500 dark:text-slate-400">
             You haven't placed any orders yet.
           </p>
         </div>
@@ -87,17 +87,17 @@ const MemberOrdersPage = () => {
           {orders.map((order) => (
             <div
               key={order._id}
-              className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
+              className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:bg-slate-900 dark:border-slate-800"
             >
-              <div className="flex flex-col border-b border-slate-200 bg-slate-50 p-6 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-col border-b border-slate-200 bg-slate-50 p-6 sm:flex-row sm:items-center sm:justify-between dark:bg-slate-800/50 dark:border-slate-800">
                 <div>
-                  <p className="text-sm font-medium text-slate-900">
+                  <p className="text-sm font-medium text-slate-900 dark:text-white">
                     Order ID:{" "}
-                    <span className="font-mono text-slate-600">
+                    <span className="font-mono text-slate-600 dark:text-slate-300">
                       {order._id}
                     </span>
                   </p>
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                     Placed on {new Date(order.createdAt).toLocaleDateString()}
                   </p>
                 </div>
@@ -109,16 +109,16 @@ const MemberOrdersPage = () => {
                   >
                     {order.orderStatus}
                   </span>
-                  <span className="text-lg font-bold text-slate-900">
+                  <span className="text-lg font-bold text-slate-900 dark:text-white">
                     Rs. {order.totalAmount?.toLocaleString()}
                   </span>
                 </div>
               </div>
               <div className="p-6">
-                <ul role="list" className="divide-y divide-slate-100">
+                <ul role="list" className="divide-y divide-slate-100 dark:divide-slate-800">
                   {order.products.map((item, index) => (
                     <li key={index} className="flex py-4">
-                      <div className="h-16 w-16 shrink-0 overflow-hidden rounded-md border border-slate-200 bg-slate-50">
+                      <div className="h-16 w-16 shrink-0 overflow-hidden rounded-md border border-slate-200 bg-slate-50 dark:bg-slate-800 dark:border-slate-700">
                         <img
                           src={item.productId?.imageUrl}
                           alt={item.productId?.name}
@@ -127,13 +127,13 @@ const MemberOrdersPage = () => {
                       </div>
                       <div className="ml-4 flex flex-1 flex-col justify-center">
                         <div>
-                          <div className="flex justify-between text-base font-medium text-slate-900">
+                          <div className="flex justify-between text-base font-medium text-slate-900 dark:text-white">
                             <h3>{item.productId?.name}</h3>
                             <p className="ml-4">
                               Rs. {item.productId?.price?.toLocaleString()}
                             </p>
                           </div>
-                          <p className="mt-1 text-sm text-slate-500">
+                          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                             Qty: {item.quantity}
                           </p>
                         </div>

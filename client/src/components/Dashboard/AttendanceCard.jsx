@@ -49,18 +49,18 @@ const AttendanceCard = () => {
 
   if (isLoading) {
     return (
-      <div className="flex h-32 items-center justify-center rounded-2xl border border-slate-200 bg-white">
+      <div className="flex h-32 items-center justify-center rounded-2xl border border-slate-200 bg-white dark:bg-slate-900 dark:border-slate-800">
         <Loader2 className="h-5 w-5 animate-spin text-brand-600" />
       </div>
     );
   }
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6">
+    <div className="rounded-2xl border border-slate-200 bg-white p-6 dark:bg-slate-900 dark:border-slate-800">
       <div className="flex items-center gap-3">
         <div
           className={`flex h-11 w-11 items-center justify-center rounded-xl ${
-            isMarked ? "bg-success/10" : "bg-slate-100"
+            isMarked ? "bg-success/10 dark:bg-success/20" : "bg-slate-100 dark:bg-slate-800"
           }`}
         >
           <MapPin
@@ -69,10 +69,10 @@ const AttendanceCard = () => {
           />
         </div>
         <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
             Attendance
           </p>
-          <h3 className="text-base font-bold text-slate-900">
+          <h3 className="text-base font-bold text-slate-900 dark:text-white">
             {isMarked ? "You're checked in today" : "Not checked in yet"}
           </h3>
         </div>

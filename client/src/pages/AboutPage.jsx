@@ -31,7 +31,7 @@ const values = [
 
 const AboutPage = () => {
   return (
-    <div className="bg-white">
+    <div className="bg-white dark:bg-slate-950">
       <section className="relative overflow-hidden bg-slate-900 py-24 sm:py-32">
         <div
           aria-hidden="true"
@@ -54,29 +54,29 @@ const AboutPage = () => {
         </div>
       </section>
 
-      <section className="border-b border-slate-100 bg-slate-50 py-12">
+      <section className="border-b border-slate-100 bg-slate-50 py-12 dark:bg-slate-950 dark:border-slate-800">
         <div className="mx-auto max-w-5xl px-6">
           <dl className="grid grid-cols-1 gap-8 sm:grid-cols-3 text-center">
             {stats.map(({ value, label, sub }) => (
               <div key={label} className="flex flex-col items-center gap-1">
-                <dt className="text-5xl font-extrabold tracking-tight text-brand-600">
+                <dt className="text-5xl font-extrabold tracking-tight text-brand-600 dark:text-brand-500">
                   {value}
                 </dt>
-                <dd className="text-base font-semibold text-slate-800">{label}</dd>
-                <dd className="text-sm text-slate-500">{sub}</dd>
+                <dd className="text-base font-semibold text-slate-800 dark:text-slate-100">{label}</dd>
+                <dd className="text-sm text-slate-500 dark:text-slate-400">{sub}</dd>
               </div>
             ))}
           </dl>
         </div>
       </section>
 
-      <section className="py-24 sm:py-32">
+      <section className="py-24 sm:py-32 dark:bg-slate-900">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+            <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
               What Drives Us
             </h2>
-            <p className="mt-4 text-lg text-slate-600">
+            <p className="mt-4 text-lg text-slate-600 dark:text-slate-400">
               Our core values shape everything we build, ensuring that GymEase
               remains the most reliable partner for your fitness journey.
             </p>
@@ -88,13 +88,13 @@ const AboutPage = () => {
                 const Icon = item.icon;
                 return (
                   <div key={item.title} className="flex flex-col">
-                    <dt className="flex items-center gap-x-3 text-base font-semibold leading-7 text-slate-900">
+                    <dt className="flex items-center gap-x-3 text-base font-semibold leading-7 text-slate-900 dark:text-white">
                       <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-600">
                         <Icon className="h-6 w-6 text-white" aria-hidden="true" />
                       </div>
                       {item.title}
                     </dt>
-                    <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-slate-600">
+                    <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-slate-600 dark:text-slate-400">
                       <p className="flex-auto">{item.description}</p>
                     </dd>
                   </div>
@@ -105,15 +105,15 @@ const AboutPage = () => {
         </div>
       </section>
 
-      <section className="border-t border-slate-100 bg-slate-50 py-20">
+      <section className="border-t border-slate-100 bg-slate-50 py-20 dark:bg-slate-950 dark:border-slate-800">
         <div className="mx-auto max-w-3xl px-6 text-center">
-          <p className="text-sm font-semibold uppercase tracking-widest text-brand-600">
+          <p className="text-sm font-semibold uppercase tracking-widest text-brand-600 dark:text-brand-500">
             Final Year Project
           </p>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+          <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl dark:text-white">
             Built from the ground up
           </h2>
-          <p className="mx-auto mt-5 max-w-xl text-lg text-slate-600">
+          <p className="mx-auto mt-5 max-w-xl text-lg text-slate-600 dark:text-slate-400">
             GymEase is a full-stack capstone project covering role-based access
             control, real-time chat, integrated payments, QR-based attendance,
             and a full gym store, all in one platform.

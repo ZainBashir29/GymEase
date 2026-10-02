@@ -1,16 +1,18 @@
 import { useAuth } from "../../context/AuthContext.jsx";
 import React, { useState, useEffect } from "react";
 import api from "../../lib/axios.js";
-import { Plus,
+import {
+  Plus,
   Trash2,
   Package,
   X,
   Image as ImageIcon,
   Edit2,
-  RotateCcw, ShieldAlert } from "lucide-react";
+  RotateCcw, ShieldAlert
+} from "lucide-react";
 
 const AdminStorePage = () => {
-  
+
   const { hasPermission } = useAuth();
   if (!hasPermission("manage_products")) {
     return (
@@ -23,7 +25,7 @@ const AdminStorePage = () => {
       </div>
     );
   }
-const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [includeInactive, setIncludeInactive] = useState(true);
 
@@ -143,9 +145,9 @@ const [products, setProducts] = useState([]);
     } catch (error) {
       alert(
         error.response?.data?.message ||
-          (editingProductId
-            ? "Failed to update product"
-            : "Failed to add product"),
+        (editingProductId
+          ? "Failed to update product"
+          : "Failed to add product"),
       );
     } finally {
       setSubmitting(false);
@@ -156,8 +158,8 @@ const [products, setProducts] = useState([]);
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Store Products</h1>
-          <p className="text-slate-500 mt-1">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Store Products</h1>
+          <p className="text-slate-500 mt-1 dark:text-slate-400">
             Manage e-commerce products and inventory.
           </p>
         </div>
@@ -169,7 +171,7 @@ const [products, setProducts] = useState([]);
               onChange={(e) => setIncludeInactive(e.target.checked)}
               className="w-4 h-4 text-brand-600 border-slate-300 rounded focus:ring-brand-500"
             />
-            <span className="text-sm font-medium text-slate-700">Show Inactive</span>
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Show Inactive</span>
           </label>
           <button
             onClick={openAddModal}
@@ -187,8 +189,8 @@ const [products, setProducts] = useState([]);
             <div className="w-8 h-8 border-4 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : products.length === 0 ? (
-          <div className="col-span-full py-12 text-center bg-white rounded-xl shadow-sm">
-            <p className="text-slate-500">
+          <div className="col-span-full py-12 text-center bg-white rounded-xl shadow-sm dark:bg-slate-900">
+            <p className="text-slate-500 dark:text-slate-400">
               No products available in the store.
             </p>
           </div>
@@ -196,11 +198,11 @@ const [products, setProducts] = useState([]);
           products.map((product) => (
             <div
               key={product._id}
-              className="bg-white rounded-2xl overflow-hidden shadow-sm ring-1 ring-slate-100 flex flex-col group hover:shadow-md transition-shadow"
+              className="bg-white rounded-2xl overflow-hidden shadow-sm ring-1 ring-slate-100 flex flex-col group hover:shadow-md transition-shadow dark:bg-slate-900 dark:ring-slate-800"
             >
-              <div className="aspect-square bg-slate-100 relative overflow-hidden">
+              <div className="aspect-square bg-slate-100 relative overflow-hidden dark:bg-slate-800">
                 {!product.isActive && (
-                  <div className="absolute top-2 right-2 z-10 px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded">
+                  <div className="absolute top-2 right-2 z-10 px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded dark:bg-red-900/30 dark:text-red-400">
                     INACTIVE
                   </div>
                 )}
@@ -219,42 +221,42 @@ const [products, setProducts] = useState([]);
 
               <div className="p-4 flex flex-col flex-1">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-bold text-slate-900 line-clamp-1 flex-1">
+                  <h3 className="font-bold text-slate-900 line-clamp-1 flex-1 dark:text-white">
                     {product.name}
                   </h3>
-                  <span className="font-black text-brand-600 ml-2">
+                  <span className="font-black text-brand-600 ml-2 dark:text-brand-400">
                     Rs. {product.price.toLocaleString()}
                   </span>
                 </div>
 
-                <p className="text-xs text-slate-500 mb-4 uppercase tracking-wider font-semibold">
+                <p className="text-xs text-slate-500 mb-4 uppercase tracking-wider font-semibold dark:text-slate-400">
                   {product.category} Stock: {product.stock}
                 </p>
 
-                <div className="flex gap-2 mt-auto pt-4 border-t border-slate-100">
+                <div className="flex gap-2 mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
                   <button
                     onClick={() => openEditModal(product)}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-lg transition-colors border border-slate-200 cursor-pointer"
+                    className="flex-1 flex items-center justify-center gap-1.5 px-2 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-lg transition-colors border border-slate-200 cursor-pointer dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800"
                   >
-                    <Edit2 className="w-4 h-4" />
-                    Edit
+                    <Edit2 className="w-4 h-4 shrink-0" />
+                    <span>Edit</span>
                   </button>
                   {product.isActive && (
                     <button
                       onClick={() => handleDelete(product._id)}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-transparent cursor-pointer"
+                      className="flex-1 flex items-center justify-center gap-1.5 px-2 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-transparent cursor-pointer dark:text-red-400 dark:hover:bg-red-900/30"
                     >
-                      <Trash2 className="w-4 h-4" />
-                      Deactivate
+                      <Trash2 className="w-4 h-4 shrink-0" />
+                      <span className="truncate">Deactivate</span>
                     </button>
                   )}
                   {!product.isActive && (
                     <button
                       onClick={() => handleReactivate(product._id)}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors border border-emerald-200 cursor-pointer"
+                      className="flex-1 flex items-center justify-center gap-1.5 px-2 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors border border-emerald-200 cursor-pointer dark:text-emerald-400 dark:hover:bg-emerald-900/30 dark:border-emerald-800"
                     >
-                      <RotateCcw className="w-4 h-4" />
-                      Reactivate
+                      <RotateCcw className="w-4 h-4 shrink-0" />
+                      <span className="truncate">Reactivate</span>
                     </button>
                   )}
                 </div>
@@ -266,14 +268,14 @@ const [products, setProducts] = useState([]);
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md my-8 flex flex-col max-h-[90vh]">
-            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center shrink-0">
-              <h3 className="text-lg font-bold text-slate-900">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md my-8 flex flex-col max-h-[90vh] dark:bg-slate-900">
+            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center shrink-0 dark:border-slate-800">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                 {editingProductId ? "Edit Product" : "Add New Product"}
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 transition-colors p-1 cursor-pointer"
+                className="text-slate-400 hover:text-slate-600 transition-colors p-1 cursor-pointer dark:hover:text-slate-300"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -286,7 +288,7 @@ const [products, setProducts] = useState([]);
                 className="space-y-4"
               >
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                  <label className="block text-sm font-medium text-slate-700 mb-1 dark:text-slate-300">
                     Product Name <span className="text-danger ml-1">*</span>
                   </label>
                   <input
@@ -296,13 +298,13 @@ const [products, setProducts] = useState([]);
                     onChange={(e) =>
                       setFormData({ ...formData, name: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                     placeholder="e.g. Whey Protein Isolate"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                  <label className="block text-sm font-medium text-slate-700 mb-1 dark:text-slate-300">
                     Description <span className="text-danger ml-1">*</span>
                   </label>
                   <textarea
@@ -312,14 +314,14 @@ const [products, setProducts] = useState([]);
                     onChange={(e) =>
                       setFormData({ ...formData, description: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none"
+                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                     placeholder="e.g. High-quality protein powder for muscle recovery..."
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                    <label className="block text-sm font-medium text-slate-700 mb-1 dark:text-slate-300">
                       Price (Rs.) <span className="text-danger ml-1">*</span>
                     </label>
                     <input
@@ -330,12 +332,12 @@ const [products, setProducts] = useState([]);
                       onChange={(e) =>
                         setFormData({ ...formData, price: e.target.value })
                       }
-                      className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
+                      className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                       placeholder="e.g. 2999"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                    <label className="block text-sm font-medium text-slate-700 mb-1 dark:text-slate-300">
                       Stock <span className="text-danger ml-1">*</span>
                     </label>
                     <input
@@ -346,14 +348,14 @@ const [products, setProducts] = useState([]);
                       onChange={(e) =>
                         setFormData({ ...formData, stock: e.target.value })
                       }
-                      className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
+                      className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                       placeholder="e.g. 50"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                  <label className="block text-sm font-medium text-slate-700 mb-1 dark:text-slate-300">
                     Category
                   </label>
                   <select
@@ -361,7 +363,7 @@ const [products, setProducts] = useState([]);
                     onChange={(e) =>
                       setFormData({ ...formData, category: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                   >
                     <option value="Supplement">Supplement</option>
                     <option value="Equipment">Equipment</option>
@@ -371,15 +373,15 @@ const [products, setProducts] = useState([]);
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                  <label className="block text-sm font-medium text-slate-700 mb-1 dark:text-slate-300">
                     Product Image{" "}
                     {editingProductId && (
-                      <span className="text-slate-400 font-normal">
+                      <span className="text-slate-400 font-normal dark:text-slate-500">
                         (Leave blank to keep current)
                       </span>
                     )}
                   </label>
-                  <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-200 border-dashed rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer relative">
+                  <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-200 border-dashed rounded-xl bg-slate-50 hover:bg-slate-100 transition-colors cursor-pointer relative dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700">
                     <input
                       type="file"
                       accept="image/*"
@@ -395,13 +397,13 @@ const [products, setProducts] = useState([]);
                       ) : (
                         <>
                           <ImageIcon className="mx-auto h-12 w-12 text-slate-400" />
-                          <div className="flex text-sm text-slate-600">
+                          <div className="flex text-sm text-slate-600 dark:text-slate-400">
                             <span className="relative cursor-pointer rounded-md bg-transparent font-medium text-brand-600 focus-within:outline-none hover:text-brand-500">
                               Upload a file
                             </span>
                             <p className="pl-1">or drag and drop</p>
                           </div>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
                             PNG, JPG, GIF up to 5MB
                           </p>
                         </>
@@ -412,11 +414,11 @@ const [products, setProducts] = useState([]);
               </form>
             </div>
 
-            <div className="px-6 py-4 border-t border-slate-100 flex justify-end gap-3 shrink-0 bg-slate-50 rounded-b-2xl">
+            <div className="px-6 py-4 border-t border-slate-100 flex justify-end gap-3 shrink-0 bg-slate-50 rounded-b-2xl dark:border-slate-800 dark:bg-slate-800/50">
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 font-medium text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
+                className="px-4 py-2 font-medium text-slate-600 hover:text-slate-900 transition-colors cursor-pointer dark:text-slate-300 dark:hover:text-white"
               >
                 Cancel
               </button>

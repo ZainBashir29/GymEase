@@ -85,8 +85,8 @@ const ChatWidget = () => {
       </button>
 
       {isChatOpen && (
-        <div className="fixed bottom-24 right-6 z-50 flex h-125 w-80 sm:w-96 flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-slate-200 transition-all">
-          <div className="flex items-center bg-brand-600 px-4 py-3 text-white">
+        <div className="fixed bottom-24 right-6 z-50 flex h-125 w-80 sm:w-96 flex-col overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-slate-200 transition-all dark:bg-slate-900 dark:ring-slate-800">
+          <div className="flex items-center bg-brand-600 px-4 py-3 text-white dark:bg-slate-800 dark:border-b dark:border-slate-700">
             {activeConversation || showContacts ? (
               <button
                 onClick={() => {
@@ -103,7 +103,7 @@ const ChatWidget = () => {
               {activeConversation ? (
                 <div className="flex items-center gap-2">
                   <div className="relative shrink-0">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 text-brand-700 font-bold overflow-hidden">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 text-brand-700 font-bold overflow-hidden dark:bg-brand-900/50 dark:text-brand-300">
                       {getOtherParticipant(activeConversation.participants)
                         ?.profilePicture ? (
                         <img
@@ -173,16 +173,16 @@ const ChatWidget = () => {
             </button>
           </div>
 
-          <div className="flex-1 overflow-hidden bg-slate-50 flex flex-col">
+          <div className="flex-1 overflow-hidden bg-slate-50 flex flex-col dark:bg-slate-900">
             {showContacts ? (
               <div className="flex-1 overflow-y-auto">
                 {contacts.length === 0 ? (
-                  <div className="flex h-full flex-col items-center justify-center text-slate-400 p-6 text-center">
+                  <div className="flex h-full flex-col items-center justify-center text-slate-400 p-6 text-center dark:text-slate-500">
                     <Users className="h-12 w-12 mb-3 opacity-20" />
                     <p className="text-sm">No available contacts.</p>
                   </div>
                 ) : (
-                  <ul className="divide-y divide-slate-100">
+                  <ul className="divide-y divide-slate-100 dark:divide-slate-800">
                     {contacts.map((contact) => (
                       <li
                         key={contact._id}
@@ -190,10 +190,10 @@ const ChatWidget = () => {
                           startConversation(contact._id);
                           setShowContacts(false);
                         }}
-                        className="flex cursor-pointer items-center p-4 hover:bg-slate-100 transition-colors"
+                        className="flex cursor-pointer items-center p-4 hover:bg-slate-100 transition-colors dark:hover:bg-slate-800"
                       >
                         <div className="relative shrink-0">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-100 text-brand-700 font-bold overflow-hidden">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-100 text-brand-700 font-bold overflow-hidden dark:bg-brand-900/50 dark:text-brand-300">
                             {contact.profilePicture ? (
                               <img
                                 src={contact.profilePicture}
@@ -209,10 +209,10 @@ const ChatWidget = () => {
                           )}
                         </div>
                         <div className="ml-3 flex-1 overflow-hidden">
-                          <p className="truncate text-sm font-medium text-slate-900">
+                          <p className="truncate text-sm font-medium text-slate-900 dark:text-white">
                             {contact.fullName}
                           </p>
-                          <p className="truncate text-xs text-slate-500">
+                          <p className="truncate text-xs text-slate-500 dark:text-slate-400">
                             {contact.role}
                           </p>
                         </div>
@@ -224,14 +224,14 @@ const ChatWidget = () => {
             ) : !activeConversation ? (
               <div className="flex-1 overflow-y-auto">
                 {conversations.length === 0 ? (
-                  <div className="flex h-full flex-col items-center justify-center text-slate-400 p-6 text-center">
+                  <div className="flex h-full flex-col items-center justify-center text-slate-400 p-6 text-center dark:text-slate-500">
                     <MessageCircle className="h-12 w-12 mb-3 opacity-20" />
                     <p className="text-sm">
                       You don't have any conversations yet.
                     </p>
                   </div>
                 ) : (
-                  <ul className="divide-y divide-slate-100">
+                  <ul className="divide-y divide-slate-100 dark:divide-slate-800">
                     {conversations.map((conv) => {
                       const other = getOtherParticipant(conv.participants);
                       const isOnline = onlineUsers.has(String(other?._id));
@@ -242,10 +242,10 @@ const ChatWidget = () => {
                         <li
                           key={conv._id}
                           onClick={() => openConversation(conv)}
-                          className={`flex cursor-pointer items-center p-4 transition-colors ${convUnread > 0 ? "bg-brand-50 hover:bg-brand-100" : "hover:bg-slate-100"}`}
+                          className={`flex cursor-pointer items-center p-4 transition-colors ${convUnread > 0 ? "bg-brand-50 hover:bg-brand-100 dark:bg-brand-900/20 dark:hover:bg-brand-900/30" : "hover:bg-slate-100 dark:hover:bg-slate-800"}`}
                         >
                           <div className="relative shrink-0">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-100 text-brand-700 font-bold overflow-hidden">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-100 text-brand-700 font-bold overflow-hidden dark:bg-brand-900/50 dark:text-brand-300">
                               {other?.profilePicture ? (
                                 <img
                                   src={other.profilePicture}
@@ -263,7 +263,7 @@ const ChatWidget = () => {
                           <div className="ml-3 flex-1 overflow-hidden">
                             <div className="flex justify-between items-center">
                               <p
-                                className={`truncate text-sm ${convUnread > 0 ? "font-bold text-brand-900" : "font-medium text-slate-900"}`}
+                                className={`truncate text-sm ${convUnread > 0 ? "font-bold text-brand-900 dark:text-brand-100" : "font-medium text-slate-900 dark:text-white"}`}
                               >
                                 {other?.fullName}
                               </p>
@@ -274,7 +274,7 @@ const ChatWidget = () => {
                               )}
                             </div>
                             <p
-                              className={`truncate text-xs mt-1 ${convUnread > 0 ? "font-semibold text-brand-700" : "text-slate-500"}`}
+                              className={`truncate text-xs mt-1 ${convUnread > 0 ? "font-semibold text-brand-700 dark:text-brand-300" : "text-slate-500 dark:text-slate-400"}`}
                             >
                               {conv.lastMessage || "Start a conversation"}
                             </p>
@@ -298,7 +298,7 @@ const ChatWidget = () => {
                         className={`flex ${isMe ? "justify-end" : "justify-start"}`}
                       >
                         <div
-                          className={`max-w-[75%] rounded-2xl px-4 py-2 text-sm ${isMe ? "bg-brand-600 text-white rounded-br-none" : "bg-white border border-slate-200 text-slate-800 rounded-bl-none"}`}
+                          className={`max-w-[75%] rounded-2xl px-4 py-2 text-sm ${isMe ? "bg-brand-600 text-white rounded-br-none" : "bg-white border border-slate-200 text-slate-800 rounded-bl-none dark:bg-slate-800 dark:border-slate-700 dark:text-slate-200"}`}
                         >
                           <p>{msg.messageText}</p>
                           <div
@@ -333,7 +333,7 @@ const ChatWidget = () => {
                   <div ref={messagesEndRef} />
                 </div>
 
-                <div className="border-t border-slate-200 bg-white p-3">
+                <div className="border-t border-slate-200 bg-white p-3 dark:border-slate-800 dark:bg-slate-900">
                   <form
                     onSubmit={handleSend}
                     className="flex items-center gap-2"
@@ -343,7 +343,7 @@ const ChatWidget = () => {
                       value={messageText}
                       onChange={(e) => setMessageText(e.target.value)}
                       placeholder="Type a message..."
-                      className="flex-1 rounded-full border border-slate-300 bg-slate-50 px-4 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                      className="flex-1 rounded-full border border-slate-300 bg-slate-50 px-4 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                     />
                     <button
                       type="submit"

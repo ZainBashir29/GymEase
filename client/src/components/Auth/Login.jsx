@@ -56,11 +56,11 @@ const Login = () => {
       <form onSubmit={handleSubmit} className="space-y-4">
         <GoogleAuthButton label="Log in with Google" />
         <div className="relative flex items-center py-2">
-          <div className="flex-grow border-t border-slate-200"></div>
-          <span className="mx-4 shrink-0 text-xs text-slate-400">
+          <div className="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
+          <span className="mx-4 shrink-0 text-xs text-slate-400 dark:text-slate-500">
             OR CONTINUE WITH EMAIL
           </span>
-          <div className="flex-grow border-t border-slate-200"></div>
+          <div className="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
         </div>
 
         {error && (
@@ -110,7 +110,7 @@ const Login = () => {
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-slate-500">
+      <p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
         Don't have an account?{" "}
         <Link
           to="/register"

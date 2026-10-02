@@ -18,6 +18,7 @@ import ProgressCard from "../../components/Dashboard/ProgressCard.jsx";
 import QuickLinks from "../../components/Dashboard/QuickLinks.jsx";
 import MembershipCard from "../../components/Dashboard/MembershipCard.jsx";
 import UpcomingScheduleCard from "../../components/Dashboard/UpcomingScheduleCard.jsx";
+import TrainerTierUpgradeBanner from "../../components/Dashboard/TrainerTierUpgradeBanner.jsx";
 
 const memberSidebarItems = [
   {
@@ -35,36 +36,47 @@ const memberSidebarItems = [
 
 const MemberDashboard = () => {
   const { user } = useAuth();
+  const [activePlan, setActivePlan] = useState(null);
   const [hasActivePlan, setHasActivePlan] = useState(true);
   const [isLoadingPlan, setIsLoadingPlan] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     const checkActivePlan = async () => {
       try {
-        await api.get("/gym-plans/active");
+        const { data } = await api.get(`/gym-plans/active?_t=${Date.now()}`);
+        setActivePlan(data.data);
         setHasActivePlan(true);
       } catch (err) {
+        setActivePlan(null);
         setHasActivePlan(false);
       } finally {
         setIsLoadingPlan(false);
       }
     };
     checkActivePlan();
-  }, []);
+  }, [refreshKey]);
 
   return (
     <>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900">
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
           Welcome back, {user?.fullName?.split(" ")[0]}
         </h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
           Here's what's happening with your fitness today.
         </p>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
+          {activePlan?.trainerTierStatus && (
+            <TrainerTierUpgradeBanner
+              trainerTierStatus={activePlan.trainerTierStatus}
+              onRebalanceComplete={() => setRefreshKey((k) => k + 1)}
+            />
+          )}
+
           {!isLoadingPlan && !hasActivePlan ? (
             <div className="bg-linear-to-br from-brand-600 to-brand-800 rounded-3xl p-8 md:p-12 text-white shadow-xl relative overflow-hidden">
               <div className="absolute -right-12 -top-12 rounded-full bg-white/10 blur-3xl h-64 w-64"></div>
@@ -87,8 +99,8 @@ const MemberDashboard = () => {
             </div>
           ) : (
             <>
-              <TodaySessionCard />
-              <UpcomingScheduleCard />
+              <TodaySessionCard key={`today-${refreshKey}`} />
+              <UpcomingScheduleCard key={`sched-${refreshKey}`} />
             </>
           )}
           <AttendanceCard />

@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 
 const CtaBanner = () => {
   return (
-    <section className="bg-white py-24">
+    <section className="bg-white py-24 dark:bg-slate-950">
       <div className="mx-auto max-w-5xl px-6">
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-400 via-brand-600 to-brand-800 px-8 py-16 text-center shadow-xl sm:px-16">
           <div

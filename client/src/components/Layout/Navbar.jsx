@@ -3,6 +3,7 @@ import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { Dumbbell, ShoppingCart, Menu, X } from "lucide-react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useCart } from "../../context/CartContext.jsx";
+import { ThemeToggle } from "../ThemeToggle.jsx";
 
 const navbarLinks = [
   { label: "Home", to: "/" },
@@ -31,13 +32,13 @@ const Navbar = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-sm">
+    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-950/80">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 relative">
         <Link to="/" className="flex items-center gap-2">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-600">
             <Dumbbell className="h-5 w-5 text-white" strokeWidth={2.5} />
           </div>
-          <span className="text-lg font-bold tracking-tight text-slate-900">
+          <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-white">
             GymEase
           </span>
         </Link>
@@ -53,7 +54,7 @@ const Navbar = () => {
                   isActive && (link.to !== "/" || hasNavigatedAway);
                 return `text-sm font-medium transition-colors ${showActive
                     ? "text-brand-600 font-semibold"
-                    : "text-slate-600 hover:text-brand-600"
+                    : "text-slate-600 hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400"
                   }`;
               }}
             >
@@ -63,12 +64,13 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-3">
+          <ThemeToggle />
           {user ? (
             <>
               {user.role === "Member" && (
                 <button
                   onClick={toggleCart}
-                  className="relative flex h-10 w-10 items-center justify-center rounded-full text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                  className="relative flex h-10 w-10 items-center justify-center rounded-full text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer dark:text-slate-300 dark:hover:bg-slate-800"
                 >
                   <ShoppingCart className="h-5 w-5" />
                   {itemCount > 0 && (
@@ -86,9 +88,9 @@ const Navbar = () => {
                       ? "/admin/dashboard"
                       : "/member/dashboard"
                 }
-                className="hidden sm:flex items-center gap-2.5 rounded-full bg-brand-50 pl-2 pr-4 py-1.5 text-sm font-semibold text-brand-700 hover:bg-brand-100 transition-colors border border-brand-100"
+                className="hidden sm:flex items-center gap-2.5 rounded-full bg-brand-50 pl-2 pr-4 py-1.5 text-sm font-semibold text-brand-700 hover:bg-brand-100 transition-colors border border-brand-100 dark:bg-brand-900/30 dark:text-brand-300 dark:border-brand-800/50 dark:hover:bg-brand-900/50"
               >
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-200 text-brand-800 overflow-hidden shrink-0">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-200 text-brand-800 overflow-hidden shrink-0 dark:bg-brand-800 dark:text-brand-200">
                   {user?.profilePicture ? (
                     <img
                       src={user.profilePicture}
@@ -113,7 +115,7 @@ const Navbar = () => {
             <>
               <Link
                 to="/login"
-                className="hidden sm:block text-sm font-semibold text-slate-700 transition-colors hover:text-brand-600"
+                className="hidden sm:block text-sm font-semibold text-slate-700 transition-colors hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400"
               >
                 Log in
               </Link>
@@ -127,7 +129,7 @@ const Navbar = () => {
           )}
 
           <button
-            className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg -mr-2 cursor-pointer"
+            className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg -mr-2 cursor-pointer dark:text-slate-300 dark:hover:bg-slate-800"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? (
@@ -140,7 +142,7 @@ const Navbar = () => {
       </nav>
 
       {isMobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-200 bg-white absolute w-full left-0 right-0 shadow-lg">
+        <div className="md:hidden border-t border-slate-200 bg-white absolute w-full left-0 right-0 shadow-lg dark:bg-slate-950 dark:border-slate-800">
           <div className="flex flex-col">
             {navbarLinks.map((link) => (
               <NavLink
@@ -149,9 +151,9 @@ const Navbar = () => {
                 end={link.to === "/"}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={({ isActive }) =>
-                  `text-base font-medium px-6 py-4 border-b border-slate-100 transition-colors ${isActive && link.to !== "/"
-                    ? "text-brand-600 font-semibold bg-brand-50 border-l-2 border-l-brand-600"
-                    : "text-slate-700 hover:bg-slate-50 hover:text-brand-600"
+                  `text-base font-medium px-6 py-4 border-b border-slate-100 transition-colors dark:border-slate-800 ${isActive && link.to !== "/"
+                    ? "text-brand-600 font-semibold bg-brand-50 border-l-2 border-l-brand-600 dark:text-brand-400 dark:bg-brand-900/20 dark:border-l-brand-500"
+                    : "text-slate-700 hover:bg-slate-50 hover:text-brand-600 dark:text-slate-300 dark:hover:bg-slate-800/50 dark:hover:text-brand-400"
                   }`
                 }
               >
@@ -165,7 +167,7 @@ const Navbar = () => {
                   handleLogout();
                   setIsMobileMenuOpen(false);
                 }}
-                className="text-left text-base font-medium text-red-600 hover:bg-red-50 px-6 py-4 sm:hidden"
+                className="text-left text-base font-medium text-red-600 hover:bg-red-50 px-6 py-4 sm:hidden dark:text-red-400 dark:hover:bg-red-900/20"
               >
                 Logout
               </button>
@@ -173,7 +175,7 @@ const Navbar = () => {
               <Link
                 to="/login"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-brand-600 px-6 py-4 sm:hidden"
+                className="text-base font-medium text-slate-700 hover:bg-slate-50 hover:text-brand-600 px-6 py-4 sm:hidden dark:text-slate-300 dark:hover:bg-slate-800/50 dark:hover:text-brand-400"
               >
                 Log in
               </Link>

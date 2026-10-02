@@ -1,26 +1,54 @@
 import { useState, useEffect } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import api from "../../lib/axios.js";
 
 const RequireMembership = ({ children }) => {
   const [hasMembership, setHasMembership] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const location = useLocation();
 
   useEffect(() => {
+    let isMounted = true;
+
     const checkMembership = async () => {
+      const fetchCurrent = () =>
+        api.get(`/memberships/current?_t=${Date.now()}`, {
+          headers: {
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+          },
+        });
+
       try {
-        await api.get("/memberships/current");
-        setHasMembership(true);
+        await fetchCurrent();
+        if (isMounted) setHasMembership(true);
       } catch {
-        setHasMembership(false);
+        // If coming directly after payment or verification, or in case of brief propagation lag,
+        // retry once after 800ms before redirecting
+        try {
+          await new Promise((resolve) => setTimeout(resolve, 800));
+          await fetchCurrent();
+          if (isMounted) {
+            setHasMembership(true);
+            return;
+          }
+        } catch {
+          // Final attempt failed
+        }
+
+        if (isMounted) setHasMembership(false);
       } finally {
-        setIsLoading(false);
+        if (isMounted) setIsLoading(false);
       }
     };
 
     checkMembership();
-  }, []);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [location.pathname]);
 
   if (isLoading) {
     return (

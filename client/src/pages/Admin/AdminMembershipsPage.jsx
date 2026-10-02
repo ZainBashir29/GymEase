@@ -149,10 +149,10 @@ const [plans, setPlans] = useState([]);
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
             Membership Plans
           </h1>
-          <p className="text-slate-500 mt-1">
+          <p className="text-slate-500 mt-1 dark:text-slate-400">
             Manage pricing and subscription plans.
           </p>
         </div>
@@ -164,7 +164,7 @@ const [plans, setPlans] = useState([]);
               onChange={(e) => setIncludeInactive(e.target.checked)}
               className="w-4 h-4 text-brand-600 border-slate-300 rounded focus:ring-brand-500"
             />
-            <span className="text-sm font-medium text-slate-700">Show Inactive</span>
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Show Inactive</span>
           </label>
           <button
             onClick={openAddModal}
@@ -182,30 +182,30 @@ const [plans, setPlans] = useState([]);
             <div className="w-8 h-8 border-4 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : plans.length === 0 ? (
-          <div className="col-span-full py-12 text-center bg-white rounded-xl shadow-sm">
-            <p className="text-slate-500">No membership plans available.</p>
+          <div className="col-span-full py-12 text-center bg-white rounded-xl shadow-sm dark:bg-slate-900">
+            <p className="text-slate-500 dark:text-slate-400">No membership plans available.</p>
           </div>
         ) : (
           plans.map((plan) => (
             <div
               key={plan._id}
-              className="bg-white rounded-2xl p-6 shadow-sm ring-1 ring-slate-100 flex flex-col relative overflow-hidden group hover:shadow-md transition-shadow"
+              className="bg-white rounded-2xl p-6 shadow-sm ring-1 ring-slate-100 flex flex-col relative overflow-hidden group hover:shadow-md transition-shadow dark:bg-slate-900 dark:ring-slate-800"
             >
               {!plan.isActive && (
-                <div className="absolute top-4 right-4 px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded z-10">
+                <div className="absolute top-4 right-4 px-2 py-1 bg-red-100 text-red-700 text-xs font-bold rounded z-10 dark:bg-red-900/30 dark:text-red-400">
                   INACTIVE
                 </div>
               )}
 
               <div className="mb-6">
-                <h3 className="text-xl font-bold text-slate-900 mb-2">
+                <h3 className="text-xl font-bold text-slate-900 mb-2 dark:text-white">
                   {plan.name}
                 </h3>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-black text-brand-600">
+                  <span className="text-3xl font-black text-brand-600 dark:text-brand-400">
                     Rs. {plan.price.toLocaleString()}
                   </span>
-                  <span className="text-slate-500 font-medium">
+                  <span className="text-slate-500 font-medium dark:text-slate-400">
                     / {plan.duration} days
                   </span>
                 </div>
@@ -214,9 +214,9 @@ const [plans, setPlans] = useState([]);
               <div className="space-y-3 mb-8 flex-1">
                 <div className="flex items-start gap-2">
                   <CheckCircle2 className="w-5 h-5 text-brand-500 shrink-0 mt-0.5" />
-                  <span className="text-sm text-slate-600">
+                  <span className="text-sm text-slate-600 dark:text-slate-400">
                     Up to{" "}
-                    <strong className="text-slate-900">
+                    <strong className="text-slate-900 dark:text-white">
                       {plan.maxTrainers}
                     </strong>{" "}
                     Trainers included
@@ -225,15 +225,15 @@ const [plans, setPlans] = useState([]);
                 {plan.details?.map((detail, idx) => (
                   <div key={idx} className="flex items-start gap-2">
                     <CheckCircle2 className="w-5 h-5 text-brand-500 shrink-0 mt-0.5" />
-                    <span className="text-sm text-slate-600">{detail}</span>
+                    <span className="text-sm text-slate-600 dark:text-slate-400">{detail}</span>
                   </div>
                 ))}
               </div>
 
-              <div className="flex gap-2 mt-auto pt-4 border-t border-slate-100">
+              <div className="flex gap-2 mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
                 <button
                   onClick={() => openEditModal(plan)}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-lg transition-colors border border-slate-200 cursor-pointer"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-lg transition-colors border border-slate-200 cursor-pointer dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800"
                 >
                   <Edit2 className="w-4 h-4" />
                   Edit
@@ -241,7 +241,7 @@ const [plans, setPlans] = useState([]);
                 {plan.isActive && (
                   <button
                     onClick={() => handleDelete(plan._id)}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-transparent cursor-pointer"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-transparent cursor-pointer dark:text-red-400 dark:hover:bg-red-900/30"
                   >
                     <Trash2 className="w-4 h-4" />
                     Deactivate
@@ -250,7 +250,7 @@ const [plans, setPlans] = useState([]);
                 {!plan.isActive && (
                   <button
                     onClick={() => handleReactivate(plan._id)}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors border border-emerald-200 cursor-pointer"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors border border-emerald-200 cursor-pointer dark:text-emerald-400 dark:hover:bg-emerald-900/30 dark:border-emerald-800"
                   >
                     <RotateCcw className="w-4 h-4" />
                     Reactivate
@@ -264,16 +264,16 @@ const [plans, setPlans] = useState([]);
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md my-8">
-            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white rounded-t-2xl z-10">
-              <h3 className="text-lg font-bold text-slate-900">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md my-8 dark:bg-slate-900">
+            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white rounded-t-2xl z-10 dark:bg-slate-900 dark:border-slate-800">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
                 {editingPlanId
                   ? "Edit Membership Plan"
                   : "Add New Membership Plan"}
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 transition-colors p-1 cursor-pointer"
+                className="text-slate-400 hover:text-slate-600 transition-colors p-1 cursor-pointer dark:hover:text-slate-300"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -281,7 +281,7 @@ const [plans, setPlans] = useState([]);
 
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-medium text-slate-700 mb-1 dark:text-slate-300">
                   Plan Name <span className="text-danger ml-1">*</span>
                 </label>
                 <input
@@ -291,14 +291,14 @@ const [plans, setPlans] = useState([]);
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                   placeholder="e.g. Standard"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                  <label className="block text-sm font-medium text-slate-700 mb-1 dark:text-slate-300">
                     Price (Rs) <span className="text-danger ml-1">*</span>
                   </label>
                   <input
@@ -309,12 +309,12 @@ const [plans, setPlans] = useState([]);
                     onChange={(e) =>
                       setFormData({ ...formData, price: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                     placeholder="e.g. 5000"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
+                  <label className="block text-sm font-medium text-slate-700 mb-1 dark:text-slate-300">
                     Duration (Days) <span className="text-danger ml-1">*</span>
                   </label>
                   <input
@@ -325,14 +325,14 @@ const [plans, setPlans] = useState([]);
                     onChange={(e) =>
                       setFormData({ ...formData, duration: e.target.value })
                     }
-                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                     placeholder="e.g. 30"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-medium text-slate-700 mb-1 dark:text-slate-300">
                   Max Trainers Allowed <span className="text-danger ml-1">*</span>
                 </label>
                 <input
@@ -343,13 +343,13 @@ const [plans, setPlans] = useState([]);
                   onChange={(e) =>
                     setFormData({ ...formData, maxTrainers: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                   placeholder="e.g. 1"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+                <label className="block text-sm font-medium text-slate-700 mb-1 dark:text-slate-300">
                   Plan Perks <span className="text-danger ml-1">*</span>
                 </label>
                 <textarea
@@ -359,15 +359,15 @@ const [plans, setPlans] = useState([]);
                   onChange={(e) =>
                     setFormData({ ...formData, details: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none text-sm"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none text-sm dark:border-slate-700 dark:bg-slate-800 dark:text-white"
                   placeholder="e.g. Access to all equipment, 1 free consultation..."
                 />
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-slate-500 mt-1 dark:text-slate-400">
                   Separate each perk with a comma.
                 </p>
               </div>
 
-              <div className="pt-4 border-t border-slate-100 sticky bottom-0 bg-white pb-2 z-10">
+              <div className="pt-4 border-t border-slate-100 sticky bottom-0 bg-white pb-2 z-10 dark:bg-slate-900 dark:border-slate-800">
                 <button
                   type="submit"
                   disabled={submitting}

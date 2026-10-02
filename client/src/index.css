@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 @theme {
   --color-brand-50: #ecfdf5;
   --color-brand-100: #d1fae5;
@@ -20,5 +22,5 @@
 }
 
 body {
-  @apply bg-slate-50 text-slate-900 font-sans antialiased;
+  @apply bg-slate-50 text-slate-900 font-sans antialiased transition-colors duration-200 dark:bg-slate-950 dark:text-slate-100;
 }
