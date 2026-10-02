@@ -8,7 +8,6 @@ import { RouterProvider, createBrowserRouter, Navigate, Outlet } from "react-rou
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { CartProvider } from "./context/CartContext.jsx";
 import { ChatProvider } from "./context/ChatContext.jsx";
-import { ThemeProvider } from "./context/ThemeContext.jsx";
 
 const HomePage = lazy(() => import("./pages/HomePage.jsx"));
 const MembershipPlansPage = lazy(() => import("./pages/MembershipPlansPage.jsx"));
@@ -248,7 +247,6 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <ThemeProvider>
       <AuthProvider>
         <CartProvider>
           <ChatProvider>
@@ -267,6 +265,5 @@ createRoot(document.getElementById("root")).render(
           </ChatProvider>
         </CartProvider>
       </AuthProvider>
-    </ThemeProvider>
   </StrictMode>,
 );
