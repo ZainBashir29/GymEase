@@ -43,7 +43,7 @@ const MemberDashboard = () => {
   useEffect(() => {
     const checkActivePlan = async () => {
       try {
-        const { data } = await api.get(`/gym-plans/active?_t=${Date.now()}`);
+        const { data } = await api.get(`/gym-plans/active`);
         setActivePlan(data.data);
         setHasActivePlan(true);
       } catch (err) {

@@ -40,10 +40,10 @@ const GymPlansPage = () => {
       const [plansRes, activePlanRes, membershipRes] = await Promise.all([
         api.get("/gym-plans").catch(() => ({ data: { data: [] } })),
         api
-          .get(`/gym-plans/active?_t=${Date.now()}`)
+          .get(`/gym-plans/active`)
           .catch(() => ({ data: { data: null } })),
         api
-          .get(`/memberships/current?_t=${Date.now()}`)
+          .get(`/memberships/current`)
           .catch(() => ({ data: { data: null } })),
       ]);
 

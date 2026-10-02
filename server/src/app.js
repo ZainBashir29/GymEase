@@ -52,59 +52,11 @@ app.use(
   }),
 );
 
-const isPublicCacheableRoute = (req) => {
-  if (req.method !== "GET") return false;
-
-  const path = req.path;
-
-  if (
-    path === "/api/v1/store/products" ||
-    path.startsWith("/api/v1/store/products/")
-  ) {
-    return true;
-  }
-
-  if (
-    path === "/api/v1/memberships/plans" ||
-    path.startsWith("/api/v1/memberships/plan/")
-  ) {
-    return true;
-  }
-
-  if (path === "/api/v1/gym-plans") {
-    return true;
-  }
-
-  const privateGymPlanPrefixes = [
-    "/api/v1/gym-plans/active",
-    "/api/v1/gym-plans/member-history",
-    "/api/v1/gym-plans/questionnaire",
-    "/api/v1/gym-plans/sessions",
-    "/api/v1/gym-plans/custom",
-  ];
-  if (
-    path.startsWith("/api/v1/gym-plans/") &&
-    !privateGymPlanPrefixes.some((prefix) => path.startsWith(prefix))
-  ) {
-    return true;
-  }
-
-  return false;
-};
-
 app.use((req, res, next) => {
-  if (isPublicCacheableRoute(req)) {
-    res.setHeader(
-      "Cache-Control",
-      "public, max-age=300, stale-while-revalidate=600",
-    );
-  } else {
-    res.setHeader(
-      "Cache-Control",
-      "no-store, no-cache, must-revalidate, proxy-revalidate",
-    );
-  }
-
+  res.setHeader(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate",
+  );
   next();
 });
 

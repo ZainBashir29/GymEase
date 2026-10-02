@@ -13,7 +13,7 @@ const RequireMembership = ({ children }) => {
 
     const checkMembership = async () => {
       const fetchCurrent = () =>
-        api.get(`/memberships/current?_t=${Date.now()}`, {
+        api.get(`/memberships/current`, {
           headers: {
             "Cache-Control": "no-cache",
             Pragma: "no-cache",

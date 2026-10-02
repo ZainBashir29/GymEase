@@ -43,13 +43,13 @@ const MyMembershipPage = () => {
     const fetchData = async () => {
       try {
         const [currentRes, historyRes] = await Promise.allSettled([
-          api.get(`/memberships/current?_t=${Date.now()}`, {
+          api.get(`/memberships/current`, {
             headers: {
               "Cache-Control": "no-cache",
               Pragma: "no-cache",
             },
           }),
-          api.get(`/memberships/history?_t=${Date.now()}`, {
+          api.get(`/memberships/history`, {
             headers: {
               "Cache-Control": "no-cache",
               Pragma: "no-cache",

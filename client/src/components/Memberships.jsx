@@ -19,7 +19,7 @@ const Memberships = ({ isDashboardMode = false }) => {
         const [plansRes, currentRes] = await Promise.allSettled([
           api.get("/memberships/plans"),
           user
-            ? api.get(`/memberships/current?_t=${Date.now()}`, {
+            ? api.get(`/memberships/current`, {
                 headers: {
                   "Cache-Control": "no-cache",
                   Pragma: "no-cache",

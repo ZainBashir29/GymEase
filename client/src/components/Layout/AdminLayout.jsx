@@ -105,7 +105,7 @@ const AdminLayout = () => {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 border-r border-slate-200 bg-white text-slate-900 dark:border-slate-800 dark:bg-slate-900 dark:text-white flex flex-col shrink-0 transform transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
+        className={`fixed inset-y-0 left-0 z-50 w-64 border-r border-slate-200 bg-slate-800 text-slate-900 dark:border-slate-800 dark:bg-slate-900 dark:text-white flex flex-col shrink-0 transform transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
       >
         <div className="p-6 flex items-center gap-3">
           <div className="bg-brand-500 rounded p-1.5 shrink-0">

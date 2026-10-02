@@ -33,7 +33,7 @@ const MembershipCard = () => {
   useEffect(() => {
     const fetchMembership = async () => {
       try {
-        const { data } = await api.get(`/memberships/current?_t=${Date.now()}`, {
+        const { data } = await api.get(`/memberships/current`, {
           headers: {
             "Cache-Control": "no-cache",
             Pragma: "no-cache",
