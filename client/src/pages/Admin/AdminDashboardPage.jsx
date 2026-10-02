@@ -133,10 +133,6 @@ const AdminDashboardPage = () => {
     ],
   };
 
-  const isDarkMode = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
-  const textColor = isDarkMode ? "#94a3b8" : "#64748b";
-  const gridColor = isDarkMode ? "#334155" : "#f1f5f9";
-
   const barOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -149,8 +145,8 @@ const AdminDashboardPage = () => {
       },
     },
     scales: {
-      y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor } },
-      x: { grid: { display: false }, ticks: { maxTicksLimit: 10, color: textColor } },
+      y: { beginAtZero: true, grid: { color: "#f1f5f9" }, ticks: { color: "#64748b" } },
+      x: { grid: { display: false }, ticks: { maxTicksLimit: 10, color: "#64748b" } },
     },
   };
 
@@ -159,7 +155,7 @@ const AdminDashboardPage = () => {
     maintainAspectRatio: false,
     cutout: "75%",
     plugins: {
-      legend: { position: "bottom", labels: { color: textColor } },
+      legend: { position: "bottom", labels: { color: "#64748b" } },
     },
   };
 
