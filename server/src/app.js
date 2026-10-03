@@ -34,7 +34,6 @@ app.use(
 
 app.use(express.urlencoded({ extended: true, limit: LIMIT }));
 
-// kaleemullah ye special route hai, is ko express.raw required hai, isi liye isko express.json wali line ke uper likha hai
 app.post(
   "/api/v1/payments/webhook",
   express.raw({ type: "application/json" }),
@@ -62,7 +61,6 @@ app.use((req, res, next) => {
 
 app.use(cookieParser());
 
-// routes declaration
 import authRoutes from "./routes/authRoutes.js";
 import membershipRoutes from "./routes/membershipRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";

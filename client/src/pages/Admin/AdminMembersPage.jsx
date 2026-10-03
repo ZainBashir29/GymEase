@@ -92,8 +92,7 @@ const AdminMembersPage = () => {
       setEmailChanging(false);
     }
   };
-
-  // Permission guard — placed after all hooks
+ 
   if (!hasPermission("manage_members")) {
     return (
       <div className="flex h-[calc(100vh-200px)] items-center justify-center p-8">

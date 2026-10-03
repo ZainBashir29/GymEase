@@ -108,7 +108,6 @@ const [plans, setPlans] = useState([]);
     setIsModalOpen(true);
   };
 
-  // ── Session helpers ──────────────────────────────────────────────────────────
   const addSession = () =>
     setFormData((f) => ({ ...f, sessions: [...f.sessions, emptySession()] }));
 
@@ -168,12 +167,10 @@ const [plans, setPlans] = useState([]);
       ),
     }));
 
-  // ── Submit ───────────────────────────────────────────────────────────────────
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
 
-    // Validate sessions
     for (let i = 0; i < formData.sessions.length; i++) {
       const s = formData.sessions[i];
       if (!s.name.trim()) {

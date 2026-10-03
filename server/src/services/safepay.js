@@ -1,5 +1,4 @@
 import Safepay from "@sfpy/node-core";
-// import axios from "axios";
 
 const safepay = Safepay(process.env.SAFEPAY_SECRET_KEY, {
   authType: "secret",
