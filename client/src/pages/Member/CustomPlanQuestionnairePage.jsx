@@ -217,7 +217,7 @@ const CustomPlanQuestionnaire = () => {
           </h1>
 
           <p className="text-slate-500 dark:text-slate-400">
-            Let AI craft the perfect workout regimen for your body.
+            Let the system craft the perfect workout regimen for your body.
           </p>
         </div>
 
@@ -263,8 +263,8 @@ const CustomPlanQuestionnaire = () => {
               </h3>
 
               <p className="text-slate-500 max-w-sm dark:text-slate-400">
-                We are analyzing your inputs and assigning the best available
-                trainer to guide you.
+                We are analyzing your answers and assigning the best available
+                trainer for your journey.
               </p>
             </div>
           ) : (
