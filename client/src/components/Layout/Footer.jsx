@@ -61,6 +61,36 @@ const Footer = () => {
             </ul>
           </div>
 
+          <div className="flex flex-col items-center lg:items-start">
+            <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">
+              Contact
+            </p>
+            <ul className="space-y-2.5">
+              <li className="flex flex-col gap-4">
+                <a
+                  href="https://mail.google.com/mail/u/0/?fs=1&to=gymease1@gmail.com&tf=cm"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-slate-600 transition-colors hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-400"
+                >
+                  gymease1@gmail.com
+                </a>
+                <a
+                  href="tel:+923264713441"
+                  className="text-sm text-slate-600 transition-colors hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-400"
+                >
+                  +92 3264713441
+                </a>
+                <a
+                  href="tel:+923095458868"
+                  className="text-sm text-slate-600 transition-colors hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-400"
+                >
+                  +92 3095458868
+                </a>
+              </li>
+            </ul>
+          </div>
+
         </div>
 
         <div className="mt-12 border-t border-slate-100 pt-6 text-center text-sm text-slate-400 dark:border-slate-800 dark:text-slate-500">
