@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
-import { Dumbbell, ShoppingCart, Menu, X } from "lucide-react";
+import { Dumbbell, ShoppingCart, Menu, X, LayoutDashboard } from "lucide-react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useCart } from "../../context/CartContext.jsx";
 
@@ -24,6 +24,13 @@ const Navbar = () => {
       setHasNavigatedAway(true);
     }
   }, [location.pathname]);
+
+  const dashboardPath =
+    user?.role === "Trainer"
+      ? "/trainer/dashboard"
+      : user?.role === "Admin"
+        ? "/admin/dashboard"
+        : "/member/dashboard";
 
   const handleLogout = async () => {
     await logout();
@@ -79,13 +86,14 @@ const Navbar = () => {
                 </button>
               )}
               <Link
-                to={
-                  user.role === "Trainer"
-                    ? "/trainer/dashboard"
-                    : user.role === "Admin"
-                      ? "/admin/dashboard"
-                      : "/member/dashboard"
-                }
+                to={dashboardPath}
+                className="sm:hidden flex h-10 w-10 items-center justify-center rounded-full text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer dark:text-slate-300 dark:hover:bg-slate-800"
+                title="Dashboard"
+              >
+                <LayoutDashboard className="h-5 w-5 text-brand-600 dark:text-brand-400" />
+              </Link>
+              <Link
+                to={dashboardPath}
                 className="hidden sm:flex items-center gap-2.5 rounded-full bg-brand-50 pl-2 pr-4 py-1.5 text-sm font-semibold text-brand-700 hover:bg-brand-100 transition-colors border border-brand-100 dark:bg-brand-900/30 dark:text-brand-300 dark:border-brand-800/50 dark:hover:bg-brand-900/50"
               >
                 <div className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-200 text-brand-800 overflow-hidden shrink-0 dark:bg-brand-800 dark:text-brand-200">
@@ -142,6 +150,17 @@ const Navbar = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden border-t border-slate-200 bg-white absolute w-full left-0 right-0 shadow-lg dark:bg-slate-950 dark:border-slate-800">
           <div className="flex flex-col">
+            {user && (
+              <NavLink
+                to={dashboardPath}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center gap-3 text-base font-semibold px-6 py-4 border-b border-slate-100 text-brand-600 hover:bg-brand-50/50 transition-colors dark:border-slate-800 dark:text-brand-400 dark:hover:bg-brand-900/20"
+              >
+                <LayoutDashboard className="h-5 w-5 shrink-0" />
+                <span>Dashboard</span>
+              </NavLink>
+            )}
+
             {navbarLinks.map((link) => (
               <NavLink
                 key={link.to}

@@ -37,7 +37,9 @@ router
   .route("/renew")
   .post(verifyJwt, role("Member"), renewMembershipSubscription);
 
-router.route("/verify/:id").get(verifyMembership);
+router
+  .route("/verify/:id")
+  .get(verifyJwt, role("Admin", "Trainer"), verifyMembership);
 
 router
   .route("/verify/check-in/:id")
