@@ -37,6 +37,7 @@ const AdminStorePage = lazy(() => import("./pages/Admin/AdminStorePage.jsx"));
 const AdminOrdersPage = lazy(() => import("./pages/Admin/AdminOrdersPage.jsx"));
 
 const MemberLayout = lazy(() => import("./components/Layout/MemberLayout.jsx"));
+const TrainerLayout = lazy(() => import("./components/Layout/TrainerLayout.jsx"));
 
 const GymPlansPage = lazy(() => import("./pages/Member/GymPlansPage.jsx"));
 const GymPlanDetailsPage = lazy(() => import("./pages/Member/GymPlanDetailsPage.jsx"));
@@ -168,20 +169,22 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: "/trainer/dashboard",
+        path: "/trainer",
         element: (
           <ProtectedRoute allowedRoles={["Trainer"]}>
-            <TrainerDashboardPage />
+            <TrainerLayout />
           </ProtectedRoute>
         ),
-      },
-      {
-        path: "/trainer/members",
-        element: (
-          <ProtectedRoute allowedRoles={["Trainer"]}>
-            <MyMembersPage />
-          </ProtectedRoute>
-        ),
+        children: [
+          {
+            path: "dashboard",
+            element: <TrainerDashboardPage />,
+          },
+          {
+            path: "members",
+            element: <MyMembersPage />,
+          },
+        ],
       },
       {
         path: "/payment/success",

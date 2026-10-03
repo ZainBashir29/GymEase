@@ -16,6 +16,7 @@ import {
   getAllMembers,
   getMemberById,
   deleteMember,
+  deactivateMember,
   reactivateMember,
   changeMemberEmail,
   getAllTrainers,
@@ -23,6 +24,7 @@ import {
   addTrainer,
   updateTrainer,
   deleteTrainer,
+  deactivateTrainer,
   reactivateTrainer,
   getTrainerPerformance,
   getSystemOverview,
@@ -53,6 +55,9 @@ router
   .route("/members/delete/:id")
   .delete(requirePermission("manage_members"), deleteMember);
 router
+  .route("/members/deactivate/:id")
+  .patch(requirePermission("manage_members"), deactivateMember);
+router
   .route("/members/reactivate/:id")
   .patch(requirePermission("manage_members"), reactivateMember);
 router
@@ -82,6 +87,9 @@ router
 router
   .route("/trainers/delete/:id")
   .delete(requirePermission("manage_trainers"), deleteTrainer);
+router
+  .route("/trainers/deactivate/:id")
+  .patch(requirePermission("manage_trainers"), deactivateTrainer);
 router
   .route("/trainers/reactivate/:id")
   .patch(requirePermission("manage_trainers"), reactivateTrainer);

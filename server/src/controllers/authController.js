@@ -141,10 +141,6 @@ const login = asyncHandler(async (req, res) => {
     throw new ApiError(404, "No user account found");
   }
 
-  if (!user.isActive) {
-    throw new ApiError(403, "This account has been deactivated");
-  }
-
   const isPasswordValid = await user.isPasswordCorrect(password);
 
   if (!isPasswordValid) {
@@ -403,9 +399,6 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     const user = await User.findById(decodedToken?._id);
     if (!user) {
       throw new ApiError(401, "Invalid refresh token");
-    }
-    if (!user.isActive) {
-      throw new ApiError(403, "This account has been deactivated");
     }
     if (receivedRefreshToken !== user.refreshToken) {
       throw new ApiError(401, "Refresh token is expired or invalid");

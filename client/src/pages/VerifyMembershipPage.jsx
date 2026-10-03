@@ -10,11 +10,15 @@ import {
   MapPin,
   Clock,
   Sparkles,
+  Lock,
 } from "lucide-react";
 import api from "../lib/axios.js";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const VerifyMembershipPage = () => {
   const { id } = useParams();
+  const { user: currentUser } = useAuth();
+  const isStaff = currentUser && (currentUser.role === "Admin" || currentUser.role === "Trainer");
   const [result, setResult] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -237,23 +241,46 @@ const VerifyMembershipPage = () => {
           {isValid && (
             <div className="space-y-3 pt-1">
               {!isCheckedInToday ? (
-                <button
-                  onClick={handleCheckIn}
-                  disabled={isCheckingIn}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand-600 py-3 text-base font-bold text-white shadow-md transition-all hover:bg-brand-700 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {isCheckingIn ? (
-                    <>
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                      Checking in...
-                    </>
-                  ) : (
-                    <>
-                      <CheckCircle2 className="h-5 w-5" />
-                      Check In Member
-                    </>
-                  )}
-                </button>
+                isStaff ? (
+                  <button
+                    onClick={handleCheckIn}
+                    disabled={isCheckingIn}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand-600 py-3 text-base font-bold text-white shadow-md transition-all hover:bg-brand-700 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
+                  >
+                    {isCheckingIn ? (
+                      <>
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        Checking in...
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle2 className="h-5 w-5" />
+                        Check In Member
+                      </>
+                    )}
+                  </button>
+                ) : (
+                  <div className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50 p-3.5 text-xs font-medium text-slate-600 dark:border-slate-800 dark:bg-slate-800/60 dark:text-slate-300">
+                    <Lock className="h-4 w-4 shrink-0 text-slate-400" />
+                    <span>
+                      {currentUser ? (
+                        "Only gym staff (Admins and Trainers) can check members in."
+                      ) : (
+                        <>
+                          Gym staff?{" "}
+                          <Link
+                            to="/login"
+                            state={{ redirectTo: `/verify/${id}` }}
+                            className="font-bold text-brand-600 underline hover:text-brand-700 dark:text-brand-400"
+                          >
+                            Log in
+                          </Link>{" "}
+                          to check in this member.
+                        </>
+                      )}
+                    </span>
+                  </div>
+                )
               ) : (
                 <div className="flex w-full items-center justify-center gap-2 rounded-xl border border-success/30 bg-success/10 py-3 text-sm font-bold text-success">
                   <CheckCircle2 className="h-5 w-5" />

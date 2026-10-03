@@ -18,7 +18,13 @@ const verifyJwt = asyncHandler( async (req, _, next) => {
     if(!user) {
         throw new ApiError(401, "Invalid access token");
     }
-    if(!user.isActive) {
+    const isExempt = 
+        req.originalUrl.includes("/current-user") || 
+        req.originalUrl.includes("/logout") || 
+        req.originalUrl.includes("/conversations") || 
+        req.originalUrl.includes("/messages");
+
+    if(!user.isActive && !isExempt) {
         throw new ApiError(403, "This account has been deactivated");
     }
     req.user = user;

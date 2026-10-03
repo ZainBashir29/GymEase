@@ -39,6 +39,8 @@ router
 
 router.route("/verify/:id").get(verifyMembership);
 
-router.route("/verify/check-in/:id").post(checkInMemberByVerificationId);
+router
+  .route("/verify/check-in/:id")
+  .post(verifyJwt, role("Admin", "Trainer"), checkInMemberByVerificationId);
 
 export default router;

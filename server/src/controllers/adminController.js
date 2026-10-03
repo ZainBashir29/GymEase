@@ -90,7 +90,7 @@ const getMemberById = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, member, "Member fetched successfully"));
 });
 
-const deleteMember = asyncHandler(async (req, res) => {
+const deactivateMember = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   if (!id || !mongoose.isValidObjectId(id)) {
@@ -107,54 +107,40 @@ const deleteMember = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Member is already deactivated");
   }
 
-  try {
-    member.isActive = false;
-    await member.save({ validateBeforeSave: false });
-
-    await MembershipSubscription.findOneAndUpdate(
-      {
-        memberId: id,
-        status: "active",
-      },
-      {
-        $set: {
-          status: "expired",
-        },
-      },
-      {
-        returnDocument: "after",
-      },
-    );
-
-    const cancelledMemberPlan = await MemberPlan.findOne({
-      memberId: id,
-      status: "active",
-    });
-
-    if (cancelledMemberPlan) {
-      cancelledMemberPlan.status = "cancelled";
-      await cancelledMemberPlan.save({ validateBeforeSave: false });
-
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      await Session.deleteMany({
-        memberPlanId: cancelledMemberPlan._id,
-        date: {
-          $gte: today,
-        },
-      });
-    }
-  } catch (error) {
-    console.error(
-      "Error occured in saving updated member to the database: ",
-      error?.message,
-    );
-  }
+  member.isActive = false;
+  await member.save({ validateBeforeSave: false });
 
   res
     .status(200)
     .json(new ApiResponse(200, member, "Member deactivated successfully"));
+});
+const deleteMember = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id || !mongoose.isValidObjectId(id)) {
+    throw new ApiError(400, "No or invalid member id");
+  }
+
+  const member = await Member.findById(id);
+
+  if (!member) {
+    throw new ApiError(404, "Member not found");
+  }
+
+  try {
+    await Promise.all([
+      Member.findByIdAndDelete(id),
+      MembershipSubscription.deleteMany({ memberId: id }),
+      Order.deleteMany({ memberId: id }),
+      MemberPlan.deleteMany({ memberId: id }),
+      Session.deleteMany({ memberId: id })
+    ]);
+  } catch (error) {
+    console.error("Error deleting member and associated records:", error);
+    throw new ApiError(500, "Failed to permanently delete member");
+  }
+
+  res.status(200).json(new ApiResponse(200, {}, "Member deleted successfully"));
 });
 
 const reactivateMember = asyncHandler(async (req, res) => {
@@ -354,7 +340,7 @@ const updateTrainer = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, updatedTrainer, "Trainer updated successfully"));
 });
 
-const deleteTrainer = asyncHandler(async (req, res) => {
+const deactivateTrainer = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   if (!id || !mongoose.isValidObjectId(id)) {
@@ -383,19 +369,39 @@ const deleteTrainer = asyncHandler(async (req, res) => {
     );
   }
 
-  try {
-    trainer.isActive = false;
-    await trainer.save({ validateBeforeSave: false });
-  } catch (error) {
-    console.error(
-      "Error occured in saving updated trainer in the database: ",
-      error?.message,
-    );
-  }
+  trainer.isActive = false;
+  await trainer.save({ validateBeforeSave: false });
 
   res
     .status(200)
     .json(new ApiResponse(200, trainer, "Trainer deactivated successfully"));
+});
+
+const deleteTrainer = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id || !mongoose.isValidObjectId(id)) {
+    throw new ApiError(400, "No or invalid trainer id");
+  }
+
+  const trainer = await Trainer.findById(id);
+
+  if (!trainer) {
+    throw new ApiError(404, "Trainer not found");
+  }
+
+  try {
+    await Promise.all([
+      Trainer.findByIdAndDelete(id),
+      GymPlan.updateMany({ trainerIds: id }, { $pull: { trainerIds: id } }),
+      Session.deleteMany({ trainerId: id }),
+    ]);
+  } catch (error) {
+    console.error("Error deleting trainer and associated records:", error);
+    throw new ApiError(500, "Failed to permanently delete trainer");
+  }
+
+  res.status(200).json(new ApiResponse(200, {}, "Trainer deleted successfully"));
 });
 
 const reactivateTrainer = asyncHandler(async (req, res) => {
@@ -991,6 +997,7 @@ export {
   getAllMembers,
   getMemberById,
   deleteMember,
+  deactivateMember,
   reactivateMember,
   changeMemberEmail,
   getAllTrainers,
@@ -998,6 +1005,7 @@ export {
   addTrainer,
   updateTrainer,
   deleteTrainer,
+  deactivateTrainer,
   reactivateTrainer,
   getTrainerPerformance,
   getSystemOverview,

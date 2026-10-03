@@ -1,7 +1,7 @@
 import { useAuth } from "../../context/AuthContext.jsx";
 import React, { useState, useEffect } from "react";
 import api from "../../lib/axios.js";
-import { Search, Trash2, CheckCircle2, XCircle, RefreshCw, Mail, X, ShieldAlert } from "lucide-react";
+import { Search, Trash2, CheckCircle2, XCircle, RefreshCw, Mail, X, ShieldAlert, PowerOff } from "lucide-react";
 
 const AdminMembersPage = () => {
   const { hasPermission } = useAuth();
@@ -36,8 +36,21 @@ const AdminMembersPage = () => {
     }
   }, [includeInactive]);
 
-  const handleDelete = async (id) => {
+  const handleDeactivate = async (id) => {
     if (!window.confirm("Are you sure you want to deactivate this member?"))
+      return;
+
+    try {
+      await api.patch(`/admin/members/deactivate/${id}`);
+      fetchMembers();
+    } catch (error) {
+      console.error("Failed to deactivate member", error);
+      alert(error.response?.data?.message || "Failed to deactivate member");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to permanently delete this member?"))
       return;
 
     try {
@@ -45,7 +58,7 @@ const AdminMembersPage = () => {
       fetchMembers();
     } catch (error) {
       console.error("Failed to delete member", error);
-      alert(error.response?.data?.message || "Failed to deactivate member");
+      alert(error.response?.data?.message || "Failed to delete member");
     }
   };
 
@@ -279,21 +292,39 @@ const AdminMembersPage = () => {
                           <Mail className="w-4 h-4" />
                         </button>
                         {member.isActive ? (
-                          <button
-                            onClick={() => handleDelete(member._id)}
-                            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors dark:hover:bg-red-900/30"
-                            title="Deactivate Member"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                          <>
+                            <button
+                              onClick={() => handleDeactivate(member._id)}
+                              className="p-2 text-slate-400 hover:text-slate-500 hover:bg-slate-50 rounded-lg transition-colors dark:hover:bg-orange-900/30"
+                              title="Inactive Member"
+                            >
+                              <PowerOff className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(member._id)}
+                              className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors dark:hover:bg-red-900/30"
+                              title="Delete Member"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </>
                         ) : (
-                          <button
-                            onClick={() => handleReactivate(member._id)}
-                            className="p-2 text-slate-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors dark:hover:bg-green-900/30"
-                            title="Reactivate Member"
-                          >
-                            <RefreshCw className="w-4 h-4" />
-                          </button>
+                          <>
+                            <button
+                              onClick={() => handleReactivate(member._id)}
+                              className="p-2 text-slate-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors dark:hover:bg-green-900/30"
+                              title="Reactivate Member"
+                            >
+                              <RefreshCw className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(member._id)}
+                              className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors dark:hover:bg-red-900/30"
+                              title="Delete Member"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </>
                         )}
                       </div>
                     </td>

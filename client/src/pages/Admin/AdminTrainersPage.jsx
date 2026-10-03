@@ -15,6 +15,7 @@ import {
   User,
   BarChart2,
   ShieldAlert,
+  PowerOff,
 } from "lucide-react";
 import FormInput from "../../components/Auth/FormInput.jsx";
 
@@ -68,7 +69,7 @@ const AdminTrainersPage = () => {
     fetchTrainers();
   }, [includeInactive]);
 
-  const handleDelete = async (id) => {
+  const handleDeactivate = async (id) => {
     if (
       !window.confirm(
         "Are you sure you want to deactivate this trainer? They cannot have upcoming sessions.",
@@ -77,11 +78,24 @@ const AdminTrainersPage = () => {
       return;
 
     try {
+      await api.patch(`/admin/trainers/deactivate/${id}`);
+      fetchTrainers();
+    } catch (error) {
+      console.error("Failed to deactivate trainer", error);
+      alert(error.response?.data?.message || "Failed to deactivate trainer");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to permanently delete this trainer?"))
+      return;
+
+    try {
       await api.delete(`/admin/trainers/delete/${id}`);
       fetchTrainers();
     } catch (error) {
       console.error("Failed to delete trainer", error);
-      alert(error.response?.data?.message || "Failed to deactivate trainer");
+      alert(error.response?.data?.message || "Failed to delete trainer");
     }
   };
 
@@ -317,21 +331,39 @@ const AdminTrainersPage = () => {
                           <Edit2 className="w-4 h-4" />
                         </button>
                         {trainer.isActive ? (
-                          <button
-                            onClick={() => handleDelete(trainer._id)}
-                            className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer dark:hover:bg-red-900/30 dark:hover:text-red-400"
-                            title="Deactivate Trainer"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                          <>
+                            <button
+                              onClick={() => handleDeactivate(trainer._id)}
+                              className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-lg transition-colors cursor-pointer dark:hover:bg-orange-900/30 dark:hover:text-orange-400"
+                              title="Inactive Trainer"
+                            >
+                              <PowerOff className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(trainer._id)}
+                              className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer dark:hover:bg-red-900/30 dark:hover:text-red-400"
+                              title="Delete Trainer"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </>
                         ) : (
-                          <button
-                            onClick={() => handleReactivate(trainer._id)}
-                            className="p-2 text-slate-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors cursor-pointer dark:hover:bg-green-900/30 dark:hover:text-green-400"
-                            title="Reactivate Trainer"
-                          >
-                            <RefreshCw className="w-4 h-4" />
-                          </button>
+                          <>
+                            <button
+                              onClick={() => handleReactivate(trainer._id)}
+                              className="p-2 text-slate-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors cursor-pointer dark:hover:bg-green-900/30 dark:hover:text-green-400"
+                              title="Reactivate Trainer"
+                            >
+                              <RefreshCw className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(trainer._id)}
+                              className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer dark:hover:bg-red-900/30 dark:hover:text-red-400"
+                              title="Delete Trainer"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </>
                         )}
                       </div>
                     </td>
