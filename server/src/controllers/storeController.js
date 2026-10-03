@@ -116,7 +116,7 @@ const updateProduct = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, updatedProduct, "Product updated successfully"));
 });
 
-const deleteProduct = asyncHandler(async (req, res) => {
+const deactivateProduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   if (!id || !mongoose.isValidObjectId(id)) {
@@ -137,6 +137,30 @@ const deleteProduct = asyncHandler(async (req, res) => {
   res
     .status(200)
     .json(new ApiResponse(200, product, "Product deactivated successfully"));
+});
+
+const deleteProduct = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id || !mongoose.isValidObjectId(id)) {
+    throw new ApiError(400, "No or invalid product id");
+  }
+
+  const product = await StoreProduct.findById(id);
+
+  if (!product) throw new ApiError(404, "Product not found");
+
+  if (product.imagePublicId) {
+    try {
+      await deleteFromCloudinary(product.imagePublicId);
+    } catch (err) {
+      console.error("Failed to delete product image from cloudinary", err);
+    }
+  }
+
+  await StoreProduct.findByIdAndDelete(id);
+
+  res.status(200).json(new ApiResponse(200, {}, "Product deleted successfully"));
 });
 
 const reactivateProduct = asyncHandler(async (req, res) => {
@@ -502,10 +526,27 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, order, "Order status updated successfully"));
 });
 
+const deleteOrder = asyncHandler(async (req, res) => {
+  const { orderId } = req.params;
+
+  if (!orderId || !mongoose.isValidObjectId(orderId)) {
+    throw new ApiError(400, "No or invalid order id");
+  }
+
+  const order = await Order.findByIdAndDelete(orderId);
+
+  if (!order) {
+    throw new ApiError(404, "Order not found");
+  }
+
+  res.status(200).json(new ApiResponse(200, {}, "Order deleted successfully"));
+});
+
 export {
   addProduct,
   updateProduct,
   deleteProduct,
+  deactivateProduct,
   reactivateProduct,
   getProducts,
   getSingleProduct,
@@ -519,4 +560,5 @@ export {
   getMemberOrders,
   getAllOrders,
   updateOrderStatus,
+  deleteOrder,
 };

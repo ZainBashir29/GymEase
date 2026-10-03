@@ -32,10 +32,12 @@ import {
   addGymPlan,
   updateGymPlan,
   deleteGymPlan,
+  deactivateGymPlan,
   reactivateGymPlan,
   addMembershipPlan,
   updateMembershipPlan,
   deleteMembershipPlan,
+  deactivateMembershipPlan,
   reactivateMembershipPlan,
 } from "../controllers/adminController.js";
 
@@ -114,6 +116,9 @@ router
   .route("/delete-gym-plan/:id")
   .delete(requirePermission("manage_gym_plans"), deleteGymPlan);
 router
+  .route("/deactivate-gym-plan/:id")
+  .patch(requirePermission("manage_gym_plans"), deactivateGymPlan);
+router
   .route("/reactivate-gym-plan/:id")
   .patch(requirePermission("manage_gym_plans"), reactivateGymPlan);
 
@@ -128,6 +133,9 @@ router
 router
   .route("/delete-membership-plan/:id")
   .delete(requirePermission("manage_membership_plans"), deleteMembershipPlan);
+router
+  .route("/deactivate-membership-plan/:id")
+  .patch(requirePermission("manage_membership_plans"), deactivateMembershipPlan);
 router
   .route("/reactivate-membership-plan/:id")
   .patch(

@@ -8,7 +8,8 @@ import {
   X,
   Image as ImageIcon,
   Edit2,
-  RotateCcw, ShieldAlert
+  RotateCcw, ShieldAlert,
+  PowerOff,
 } from "lucide-react";
 
 const AdminStorePage = () => {
@@ -59,14 +60,25 @@ const AdminStorePage = () => {
     fetchProducts();
   }, [includeInactive]);
 
-  const handleDelete = async (id) => {
+  const handleDeactivate = async (id) => {
     if (!window.confirm("Are you sure you want to deactivate this product?"))
+      return;
+    try {
+      await api.patch(`/store/products/deactivate/${id}`);
+      fetchProducts();
+    } catch (error) {
+      alert(error.response?.data?.message || "Failed to deactivate product");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to permanently delete this product?"))
       return;
     try {
       await api.delete(`/store/products/delete/${id}`);
       fetchProducts();
     } catch (error) {
-      alert("Failed to delete product");
+      alert(error.response?.data?.message || "Failed to delete product");
     }
   };
 
@@ -235,30 +247,40 @@ const AdminStorePage = () => {
 
                 <div className="flex gap-2 mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
                   <button
+                    type="button"
                     onClick={() => openEditModal(product)}
-                    className="flex-1 flex items-center justify-center gap-1.5 px-2 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-lg transition-colors border border-slate-200 cursor-pointer dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800"
+                    title="Edit Product"
+                    className="flex-1 flex items-center justify-center py-2 text-slate-600 hover:bg-slate-50 rounded-lg transition-colors border border-slate-200 cursor-pointer dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800"
                   >
                     <Edit2 className="w-4 h-4 shrink-0" />
-                    <span>Edit</span>
                   </button>
-                  {product.isActive && (
+                  {product.isActive ? (
                     <button
-                      onClick={() => handleDelete(product._id)}
-                      className="flex-1 flex items-center justify-center gap-1.5 px-2 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-transparent cursor-pointer dark:text-red-400 dark:hover:bg-red-900/30"
+                      type="button"
+                      onClick={() => handleDeactivate(product._id)}
+                      title="Deactivate Product"
+                      className="flex-1 flex items-center justify-center py-2 text-amber-600 hover:bg-amber-50 rounded-lg transition-colors border border-transparent cursor-pointer dark:text-amber-400 dark:hover:bg-amber-900/30"
                     >
-                      <Trash2 className="w-4 h-4 shrink-0" />
-                      <span className="truncate">Deactivate</span>
+                      <PowerOff className="w-4 h-4 shrink-0" />
                     </button>
-                  )}
-                  {!product.isActive && (
+                  ) : (
                     <button
+                      type="button"
                       onClick={() => handleReactivate(product._id)}
-                      className="flex-1 flex items-center justify-center gap-1.5 px-2 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors border border-emerald-200 cursor-pointer dark:text-emerald-400 dark:hover:bg-emerald-900/30 dark:border-emerald-800"
+                      title="Reactivate Product"
+                      className="flex-1 flex items-center justify-center py-2 text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors border border-emerald-200 cursor-pointer dark:text-emerald-400 dark:hover:bg-emerald-900/30 dark:border-emerald-800"
                     >
                       <RotateCcw className="w-4 h-4 shrink-0" />
-                      <span className="truncate">Reactivate</span>
                     </button>
                   )}
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(product._id)}
+                    title="Delete Product"
+                    className="flex-1 flex items-center justify-center py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-transparent cursor-pointer dark:text-red-400 dark:hover:bg-red-900/30"
+                  >
+                    <Trash2 className="w-4 h-4 shrink-0" />
+                  </button>
                 </div>
               </div>
             </div>

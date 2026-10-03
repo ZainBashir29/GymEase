@@ -8,6 +8,7 @@ import {
   addProduct,
   updateProduct,
   deleteProduct,
+  deactivateProduct,
   reactivateProduct,
   getProducts,
   getSingleProduct,
@@ -21,6 +22,7 @@ import {
   getMemberOrders,
   getAllOrders,
   updateOrderStatus,
+  deleteOrder,
 } from "../controllers/storeController.js";
 import requireActiveMembership from "../middlewares/requireActiveMembershipMiddleware.js";
 
@@ -38,6 +40,9 @@ router
 router
   .route("/products/delete/:id")
   .delete(verifyJwt, role("Admin"), requirePermission("manage_products"), deleteProduct);
+router
+  .route("/products/deactivate/:id")
+  .patch(verifyJwt, role("Admin"), requirePermission("manage_products"), deactivateProduct);
 router
   .route("/products/reactivate/:id")
   .patch(verifyJwt, role("Admin"), requirePermission("manage_products"), reactivateProduct);
@@ -66,5 +71,8 @@ router.route("/orders").get(verifyJwt, role("Admin"), requirePermission("manage_
 router
   .route("/orders/update-status/:orderId")
   .patch(verifyJwt, role("Admin"), requirePermission("manage_orders"), updateOrderStatus);
+router
+  .route("/orders/delete/:orderId")
+  .delete(verifyJwt, role("Admin"), requirePermission("manage_orders"), deleteOrder);
 
 export default router;

@@ -5,6 +5,7 @@ import { Package,
   Search,
   ChevronDown,
   Eye,
+  Trash2,
   X,
   ShoppingBag, ShieldAlert } from "lucide-react";
 
@@ -62,6 +63,20 @@ const [orders, setOrders] = useState([]);
       alert("Failed to update order status");
     } finally {
       setUpdatingId(null);
+    }
+  };
+
+  const handleDeleteOrder = async (orderId) => {
+    if (!window.confirm("Are you sure you want to permanently delete this order?"))
+      return;
+    try {
+      await api.delete(`/store/orders/delete/${orderId}`);
+      setOrders((prev) => prev.filter((o) => o._id !== orderId));
+      if (selectedOrder && selectedOrder._id === orderId) {
+        setSelectedOrder(null);
+      }
+    } catch (error) {
+      alert(error.response?.data?.message || "Failed to delete order");
     }
   };
 
@@ -250,6 +265,14 @@ const [orders, setOrders] = useState([]);
                             className="p-1.5 text-slate-500 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors cursor-pointer dark:text-slate-400 dark:hover:text-brand-400 dark:hover:bg-brand-900/30"
                           >
                             <Eye className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteOrder(order._id)}
+                            title="Delete Order"
+                            className="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer dark:text-slate-400 dark:hover:text-red-400 dark:hover:bg-red-900/30"
+                          >
+                            <Trash2 className="w-4 h-4" />
                           </button>
                           <div className="relative inline-block text-left">
                             <select
@@ -452,13 +475,23 @@ const [orders, setOrders] = useState([]);
                 </select>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setSelectedOrder(null)}
-                className="w-full sm:w-auto px-5 py-2 bg-slate-900 text-white rounded-lg text-sm font-semibold hover:bg-slate-800 transition-colors cursor-pointer dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
-              >
-                Close
-              </button>
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <button
+                  type="button"
+                  onClick={() => handleDeleteOrder(selectedOrder._id)}
+                  title="Delete Order"
+                  className="p-2 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors cursor-pointer dark:border-red-900/50 dark:text-red-400 dark:hover:bg-red-900/20"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedOrder(null)}
+                  className="w-full sm:w-auto px-5 py-2 bg-slate-900 text-white rounded-lg text-sm font-semibold hover:bg-slate-800 transition-colors cursor-pointer dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
         </div>

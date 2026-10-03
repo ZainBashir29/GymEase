@@ -746,7 +746,7 @@ const updateGymPlan = asyncHandler(async (req, res) => {
     );
 });
 
-const deleteGymPlan = asyncHandler(async (req, res) => {
+const deactivateGymPlan = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   if (!id || !mongoose.isValidObjectId(id)) {
@@ -763,19 +763,38 @@ const deleteGymPlan = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Gym plan is already deactivated");
   }
 
-  try {
-    gymPlan.isActive = false;
-    await gymPlan.save({ validateBeforeSave: false });
-  } catch (error) {
-    console.error(
-      "Error occurred in saving updated gym plan to the database: ",
-      error,
-    );
-  }
+  gymPlan.isActive = false;
+  await gymPlan.save({ validateBeforeSave: false });
 
   res
     .status(200)
     .json(new ApiResponse(200, gymPlan, "Gym plan deactivated successfully"));
+});
+
+const deleteGymPlan = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id || !mongoose.isValidObjectId(id)) {
+    throw new ApiError(400, "No or invalid gym plan id");
+  }
+
+  const gymPlan = await GymPlan.findById(id);
+
+  if (!gymPlan) {
+    throw new ApiError(404, "Gym plan not found");
+  }
+
+  try {
+    await Promise.all([
+      GymPlan.findByIdAndDelete(id),
+      MemberPlan.deleteMany({ gymPlanId: id }),
+    ]);
+  } catch (error) {
+    console.error("Error deleting gym plan:", error);
+    throw new ApiError(500, "Failed to permanently delete gym plan");
+  }
+
+  res.status(200).json(new ApiResponse(200, {}, "Gym plan deleted successfully"));
 });
 
 const reactivateGymPlan = asyncHandler(async (req, res) => {
@@ -860,7 +879,7 @@ const updateMembershipPlan = asyncHandler(async (req, res) => {
     );
 });
 
-const deleteMembershipPlan = asyncHandler(async (req, res) => {
+const deactivateMembershipPlan = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   if (!id || !mongoose.isValidObjectId(id)) {
@@ -877,15 +896,8 @@ const deleteMembershipPlan = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Membership plan is already deactivated");
   }
 
-  try {
-    membershipPlan.isActive = false;
-    await membershipPlan.save({ validateBeforeSave: false });
-  } catch (error) {
-    console.error(
-      "Error occurred in saving updated membership plan to the database: ",
-      error,
-    );
-  }
+  membershipPlan.isActive = false;
+  await membershipPlan.save({ validateBeforeSave: false });
 
   res
     .status(200)
@@ -896,6 +908,32 @@ const deleteMembershipPlan = asyncHandler(async (req, res) => {
         "Membership plan deactivated successfully",
       ),
     );
+});
+
+const deleteMembershipPlan = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id || !mongoose.isValidObjectId(id)) {
+    throw new ApiError(400, "No or invalid membership plan id");
+  }
+
+  const membershipPlan = await MembershipPlan.findById(id);
+
+  if (!membershipPlan) {
+    throw new ApiError(404, "Membership plan not found");
+  }
+
+  try {
+    await Promise.all([
+      MembershipPlan.findByIdAndDelete(id),
+      MembershipSubscription.deleteMany({ membershipPlanId: id }),
+    ]);
+  } catch (error) {
+    console.error("Error deleting membership plan:", error);
+    throw new ApiError(500, "Failed to permanently delete membership plan");
+  }
+
+  res.status(200).json(new ApiResponse(200, {}, "Membership plan deleted successfully"));
 });
 
 const reactivateMembershipPlan = asyncHandler(async (req, res) => {
@@ -1013,9 +1051,11 @@ export {
   addGymPlan,
   updateGymPlan,
   deleteGymPlan,
+  deactivateGymPlan,
   reactivateGymPlan,
   addMembershipPlan,
   updateMembershipPlan,
   deleteMembershipPlan,
+  deactivateMembershipPlan,
   reactivateMembershipPlan,
 };
