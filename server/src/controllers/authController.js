@@ -300,14 +300,12 @@ const forgotPassword = asyncHandler(async (req, res) => {
         <td align="center">
           <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 520px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
             
-            <!-- Header / Brand -->
             <tr>
               <td style="padding: 32px 40px 20px 40px; text-align: left;">
                 <h2 style="margin: 0; font-size: 20px; font-weight: 700; color: #111827;">Password Reset</h2>
               </td>
             </tr>
 
-            <!-- Content Body -->
             <tr>
               <td style="padding: 0 40px; color: #4b5563; font-size: 15px; line-height: 1.6;">
                 <p style="margin: 0 0 16px 0;">Hello,</p>
@@ -326,7 +324,6 @@ const forgotPassword = asyncHandler(async (req, res) => {
                   This link expires in 1 hour. If you didn't request a password change, you can safely ignore this email; your account remains secure.
                 </p>
 
-                <!-- Fallback Plain URL -->
                 <p style="margin: 24px 0 0 0; font-size: 12px; color: #9ca3af; word-break: break-all; border-top: 1px solid #e5e7eb; padding-top: 16px;">
                   If the button above doesn't work, paste this link into your browser:<br>
                   <a href="${redirectUrl}" style="color: #2563eb; text-decoration: underline;">${redirectUrl}</a>
@@ -334,7 +331,6 @@ const forgotPassword = asyncHandler(async (req, res) => {
               </td>
             </tr>
 
-            <!-- Footer -->
             <tr>
               <td style="padding: 32px 40px; text-align: left; font-size: 12px; color: #9ca3af;">
                 <p style="margin: 0;">&copy; ${new Date().getFullYear()} GymEase. All rights reserved.</p>
