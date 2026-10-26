@@ -8,6 +8,9 @@ import {
   Package,
   Loader2,
   Settings,
+  Truck,
+  Store,
+  MapPin,
 } from "lucide-react";
 import DashboardLayout from "../../components/Dashboard/DashboardLayout.jsx";
 import api from "../../lib/axios.js";
@@ -101,7 +104,24 @@ const MemberOrdersPage = () => {
                     Placed on {new Date(order.createdAt).toLocaleDateString()}
                   </p>
                 </div>
-                <div className="mt-4 flex items-center gap-4 sm:mt-0">
+                <div className="mt-4 flex flex-wrap items-center gap-3 sm:mt-0">
+                  <span
+                    className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
+                      order.fulfillmentMethod === "pickup"
+                        ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400"
+                        : "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400"
+                    }`}
+                  >
+                    {order.fulfillmentMethod === "pickup" ? (
+                      <>
+                        <Store className="h-3.5 w-3.5" /> Gym Pickup (Free)
+                      </>
+                    ) : (
+                      <>
+                        <Truck className="h-3.5 w-3.5" /> Home Delivery
+                      </>
+                    )}
+                  </span>
                   <span
                     className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${getStatusColor(
                       order.orderStatus,
@@ -112,6 +132,29 @@ const MemberOrdersPage = () => {
                   <span className="text-lg font-bold text-slate-900 dark:text-white">
                     Rs. {order.totalAmount?.toLocaleString()}
                   </span>
+                </div>
+              </div>
+              <div className="border-b border-slate-100 bg-slate-50/40 px-6 py-3 text-xs text-slate-600 dark:border-slate-800 dark:bg-slate-900/50 dark:text-slate-400">
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
+                  <span className="inline-flex items-center gap-1.5">
+                    <MapPin className="h-3.5 w-3.5 text-brand-600 dark:text-brand-400" />
+                    {order.fulfillmentMethod === "pickup"
+                      ? "Collect at GymEase Front Desk"
+                      : [
+                          order.shippingDetails?.address,
+                          order.shippingDetails?.city,
+                        ]
+                          .filter(Boolean)
+                          .join(", ") || "Home Delivery"}
+                  </span>
+                  {order.shippingDetails?.phone && (
+                    <span>Phone: {order.shippingDetails.phone}</span>
+                  )}
+                  {order.shippingDetails?.notes && (
+                    <span className="italic">
+                      Note: &ldquo;{order.shippingDetails.notes}&rdquo;
+                    </span>
+                  )}
                 </div>
               </div>
               <div className="p-6">

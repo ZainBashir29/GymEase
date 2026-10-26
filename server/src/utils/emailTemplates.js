@@ -121,9 +121,23 @@ export const getStoreOrderEmail = ({ userName, amount, paymentId, order }) => {
   const itemText = order.products
     .map((item) => `${item.productId?.name || "Product"} x ${item.quantity}`)
     .join(", ");
+  const isPickup = order.fulfillmentMethod === "pickup";
+  const fulfillmentLabel = isPickup
+    ? "Gym Pickup (Free)"
+    : "Home Delivery (Rs. 200)";
+  const addressSummary = isPickup
+    ? "Pick up at GymEase Front Desk"
+    : [order.shippingDetails?.address, order.shippingDetails?.city]
+        .filter(Boolean)
+        .join(", ") || "N/A";
   const rows = [
     ["Order number", order._id],
     ["Order date", formatDate(order.createdAt)],
+    ["Fulfillment", fulfillmentLabel],
+    ["Delivery / Pickup", addressSummary],
+    ...(order.shippingDetails?.phone
+      ? [["Contact phone", order.shippingDetails.phone]]
+      : []),
     ["Order status", "Processing"],
     ["Payment status", "Paid"],
     ["Payment reference", paymentId],
@@ -132,7 +146,7 @@ export const getStoreOrderEmail = ({ userName, amount, paymentId, order }) => {
 
   return {
     subject: `GymEase order confirmed: #${order._id}`,
-    text: `Hi ${userName},\n\nYour order #${order._id} has been confirmed and is now processing.\nItems: ${itemText}\nOrder date: ${formatDate(order.createdAt)}\nPayment status: Paid\nPayment reference: ${paymentId}\nTotal paid: ${formatAmount(amount)}\n\nWe will email you when the order status changes.\n\nGymEase Support: ${supportEmail}`,
+    text: `Hi ${userName},\n\nYour order #${order._id} has been confirmed and is now processing.\nItems: ${itemText}\nFulfillment: ${fulfillmentLabel}\nDelivery / Pickup: ${addressSummary}${order.shippingDetails?.phone ? `\nContact phone: ${order.shippingDetails.phone}` : ""}\nOrder date: ${formatDate(order.createdAt)}\nPayment status: Paid\nPayment reference: ${paymentId}\nTotal paid: ${formatAmount(amount)}\n\nWe will email you when the order status changes.\n\nGymEase Support: ${supportEmail}`,
     html: emailLayout({
       title: "Order confirmed",
       preview: `Your order #${order._id} has been paid and is processing.`,

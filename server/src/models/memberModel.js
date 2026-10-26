@@ -23,6 +23,21 @@ const Member = User.discriminator("Member", new mongoose.Schema({
         type: String,
         default: null
     },
+    phone: {
+        type: String,
+        trim: true,
+        default: "",
+    },
+    address: {
+        type: String,
+        trim: true,
+        default: "",
+    },
+    city: {
+        type: String,
+        trim: true,
+        default: "",
+    },
 }))
 
 export default Member;

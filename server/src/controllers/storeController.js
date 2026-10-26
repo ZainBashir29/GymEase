@@ -3,6 +3,7 @@ import Cart from "../models/cartModel.js";
 import Order from "../models/orderModel.js";
 import StoreProduct from "../models/storeProductModel.js";
 import Payment from "../models/paymentModel.js";
+import Member from "../models/memberModel.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
@@ -366,7 +367,9 @@ const checkout = asyncHandler(async (req, res) => {
     subtotal += product.price * item.quantity;
   }
 
-  const deliveryFee = 200;
+  const fulfillmentMethod =
+    req.query.fulfillmentMethod === "pickup" ? "pickup" : "delivery";
+  const deliveryFee = fulfillmentMethod === "pickup" ? 0 : 200;
   const totalAmount = subtotal + deliveryFee;
 
   res
@@ -374,7 +377,7 @@ const checkout = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        { subtotal, deliveryFee, totalAmount },
+        { subtotal, deliveryFee, totalAmount, fulfillmentMethod },
         "Checkout preview generated successfully",
       ),
     );
@@ -382,6 +385,35 @@ const checkout = asyncHandler(async (req, res) => {
 
 const createOrder = asyncHandler(async (req, res) => {
   const memberId = req.user?._id;
+  const {
+    fulfillmentMethod = "delivery",
+    recipientName,
+    phone,
+    address,
+    city,
+    notes,
+  } = req.body || {};
+
+  if (!["delivery", "pickup"].includes(fulfillmentMethod)) {
+    throw new ApiError(400, "Invalid fulfillment method");
+  }
+
+  const trimmedPhone = phone?.trim();
+  const trimmedName = recipientName?.trim() || req.user?.fullName || "";
+  const trimmedAddress = address?.trim() || "";
+  const trimmedCity = city?.trim() || "";
+  const trimmedNotes = notes?.trim() || "";
+
+  if (!trimmedPhone) {
+    throw new ApiError(400, "Contact phone number is required");
+  }
+
+  if (fulfillmentMethod === "delivery" && (!trimmedAddress || !trimmedCity)) {
+    throw new ApiError(
+      400,
+      "Street address and city are required for home delivery",
+    );
+  }
 
   const cart = await Cart.findOne({ memberId }).populate("products.productId");
 
@@ -401,7 +433,7 @@ const createOrder = asyncHandler(async (req, res) => {
     totalAmount += product.price * item.quantity;
   }
 
-  const deliveryFee = 200;
+  const deliveryFee = fulfillmentMethod === "pickup" ? 0 : 200;
   const finalAmount = totalAmount + deliveryFee;
 
   if (finalAmount > 100000) {
@@ -414,6 +446,15 @@ const createOrder = asyncHandler(async (req, res) => {
       productId: item.productId?._id,
       quantity: item.quantity,
     })),
+    fulfillmentMethod,
+    deliveryFee,
+    shippingDetails: {
+      recipientName: trimmedName,
+      phone: trimmedPhone,
+      address: fulfillmentMethod === "delivery" ? trimmedAddress : "",
+      city: fulfillmentMethod === "delivery" ? trimmedCity : "",
+      notes: trimmedNotes,
+    },
     totalAmount: finalAmount,
     orderStatus: "Pending",
     paymentStatus: "pending",
@@ -422,6 +463,15 @@ const createOrder = asyncHandler(async (req, res) => {
   if (!order) {
     throw new ApiError(500, "Could not create order");
   }
+
+  await Member.findByIdAndUpdate(memberId, {
+    $set: {
+      phone: trimmedPhone,
+      ...(fulfillmentMethod === "delivery"
+        ? { address: trimmedAddress, city: trimmedCity }
+        : {}),
+    },
+  });
 
   const session = await createPaymentSession(finalAmount, order._id);
 
@@ -458,9 +508,6 @@ const createOrder = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Could not create payment record in db");
   }
 
-  cart.products = [];
-  await cart.save({ validateBeforeSave: false });
-
   res
     .status(201)
     .json(
@@ -486,7 +533,7 @@ const getMemberOrders = asyncHandler(async (req, res) => {
 
 const getAllOrders = asyncHandler(async (req, res) => {
   const orders = await Order.find({})
-    .populate("memberId", "fullName email")
+    .populate("memberId", "fullName email phone address city")
     .populate("products.productId")
     .sort({ createdAt: -1 });
 

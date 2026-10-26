@@ -10,18 +10,51 @@ export const CartProvider = ({ children }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [checkoutData, setCheckoutData] = useState(null);
+  const [hasActiveMembership, setHasActiveMembership] = useState(false);
+  const [checkingMembership, setCheckingMembership] = useState(false);
 
   const toggleCart = () => setIsCartOpen((prev) => !prev);
   const openCart = () => setIsCartOpen(true);
   const closeCart = () => setIsCartOpen(false);
 
-  const fetchCart = async () => {
-    if (!user) return;
+  const fetchCart = async (force = false) => {
+    if (!force && (!user || user.role !== "Member")) return;
     try {
-      const { data } = await api.get("/store/cart");
+      const { data } = await api.get("/store/cart", {
+        headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
+      });
       setCart(data.data || { products: [] });
     } catch (error) {
-      console.error("Error fetching cart:", error);
+      if (error.response?.status !== 403) {
+        console.error("Error fetching cart:", error);
+      }
+    }
+  };
+
+  const clearLocalCart = async () => {
+    setCart({ products: [] });
+    setCheckoutData(null);
+    await fetchCart(true);
+  };
+
+  const refreshMembershipAndCart = async (optimisticActive = false) => {
+    if (optimisticActive) {
+      setHasActiveMembership(true);
+    }
+    setCheckingMembership(true);
+    try {
+      await api.get("/memberships/current", {
+        headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
+      });
+      setHasActiveMembership(true);
+      await fetchCart(true);
+    } catch {
+      if (!optimisticActive) {
+        setHasActiveMembership(false);
+        setCart({ products: [] });
+      }
+    } finally {
+      setCheckingMembership(false);
     }
   };
 
@@ -59,19 +92,21 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  const fetchCheckoutPreview = async () => {
+  const fetchCheckoutPreview = async (fulfillmentMethod = "delivery") => {
     try {
-      const { data } = await api.get("/store/checkout");
+      const { data } = await api.get("/store/checkout", {
+        params: { fulfillmentMethod },
+      });
       setCheckoutData(data.data);
     } catch (error) {
       console.error("Error fetching checkout preview:", error);
     }
   };
 
-  const handleCheckout = async () => {
+  const handleCheckout = async (checkoutPayload = {}) => {
     try {
       setLoading(true);
-      const { data } = await api.post("/store/orders/create");
+      const { data } = await api.post("/store/orders/create", checkoutPayload);
       if (data.data?.checkoutUrl) {
         window.location.href = data.data.checkoutUrl;
       }
@@ -84,18 +119,51 @@ export const CartProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (user) {
-      fetchCart();
-    } else {
-      setCart({ products: [] });
-    }
+    let isMounted = true;
+
+    const checkMembershipAndCart = async () => {
+      if (!user || user.role !== "Member") {
+        if (isMounted) {
+          setHasActiveMembership(false);
+          setCheckingMembership(false);
+          setCart({ products: [] });
+        }
+        return;
+      }
+
+      setCheckingMembership(true);
+      try {
+        await api.get("/memberships/current", {
+          headers: { "Cache-Control": "no-cache", Pragma: "no-cache" },
+        });
+        if (isMounted) {
+          setHasActiveMembership(true);
+          await fetchCart();
+        }
+      } catch {
+        if (isMounted) {
+          setHasActiveMembership(false);
+          setCart({ products: [] });
+        }
+      } finally {
+        if (isMounted) {
+          setCheckingMembership(false);
+        }
+      }
+    };
+
+    checkMembershipAndCart();
+
+    return () => {
+      isMounted = false;
+    };
   }, [user]);
 
   useEffect(() => {
-    if (cart?.products?.length > 0 && isCartOpen) {
+    if (cart?.products?.length > 0 && isCartOpen && hasActiveMembership) {
       fetchCheckoutPreview();
     }
-  }, [cart, isCartOpen]);
+  }, [cart, isCartOpen, hasActiveMembership]);
 
   const itemCount = cart?.products?.length || 0;
 
@@ -109,12 +177,17 @@ export const CartProvider = ({ children }) => {
         openCart,
         closeCart,
         fetchCart,
+        clearLocalCart,
+        refreshMembershipAndCart,
         addToCart,
         updateQuantity,
         removeItem,
         checkoutData,
+        fetchCheckoutPreview,
         handleCheckout,
         loading,
+        hasActiveMembership,
+        checkingMembership,
       }}
     >
       {children}

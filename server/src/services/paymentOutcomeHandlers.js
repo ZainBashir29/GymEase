@@ -74,6 +74,12 @@ const handleSuccessfulPayment = async (trackerToken) => {
             paymentId: existingPayment._id,
           });
         }
+      } else if (existingPayment.type === "StoreOrder") {
+        const memberId = existingPayment.memberId?._id || existingPayment.memberId;
+        await Cart.findOneAndUpdate(
+          { memberId },
+          { $set: { products: [] } },
+        );
       }
       return existingPayment;
     }
