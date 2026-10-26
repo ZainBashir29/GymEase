@@ -13,7 +13,7 @@ const navbarLinks = [
 
 const Navbar = () => {
   const { user, logout } = useAuth();
-  const { itemCount, toggleCart } = useCart();
+  const { itemCount, toggleCart, hasActiveMembership, checkingMembership } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -25,12 +25,21 @@ const Navbar = () => {
     }
   }, [location.pathname]);
 
+  const isUnsubscribedMember =
+    user?.role === "Member" && !checkingMembership && !hasActiveMembership;
+
   const dashboardPath =
     user?.role === "Trainer"
       ? "/trainer/dashboard"
       : user?.role === "Admin"
         ? "/admin/dashboard"
-        : "/member/dashboard";
+        : isUnsubscribedMember
+          ? "/pricing"
+          : "/member/dashboard";
+
+  const primaryActionLabel = isUnsubscribedMember
+    ? "Activate Plan"
+    : "Dashboard";
 
   const handleLogout = async () => {
     await logout();
@@ -72,7 +81,7 @@ const Navbar = () => {
         <div className="flex items-center gap-3">
           {user ? (
             <>
-              {user.role === "Member" && (
+              {user.role === "Member" && hasActiveMembership && (
                 <button
                   onClick={toggleCart}
                   className="relative flex h-10 w-10 items-center justify-center rounded-full text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer dark:text-slate-300 dark:hover:bg-slate-800"
@@ -88,7 +97,7 @@ const Navbar = () => {
               <Link
                 to={dashboardPath}
                 className="sm:hidden flex h-10 w-10 items-center justify-center rounded-full text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer dark:text-slate-300 dark:hover:bg-slate-800"
-                title="Dashboard"
+                title={primaryActionLabel}
               >
                 <LayoutDashboard className="h-5 w-5 text-brand-600 dark:text-brand-400" />
               </Link>
@@ -108,7 +117,7 @@ const Navbar = () => {
                     user?.fullName?.charAt(0).toUpperCase()
                   )}
                 </div>
-                Dashboard
+                {primaryActionLabel}
               </Link>
               <button
                 onClick={handleLogout}
@@ -157,7 +166,7 @@ const Navbar = () => {
                 className="flex items-center gap-3 text-base font-semibold px-6 py-4 border-b border-slate-100 text-brand-600 hover:bg-brand-50/50 transition-colors dark:border-slate-800 dark:text-brand-400 dark:hover:bg-brand-900/20"
               >
                 <LayoutDashboard className="h-5 w-5 shrink-0" />
-                <span>Dashboard</span>
+                <span>{primaryActionLabel}</span>
               </NavLink>
             )}
 

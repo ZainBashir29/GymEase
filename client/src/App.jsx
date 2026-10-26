@@ -5,16 +5,18 @@ import Footer from "./components/Layout/Footer.jsx";
 import CartDrawer from "./components/Store/CartDrawer.jsx";
 import ChatWidget from "./components/Chat/ChatWidget.jsx";
 import { useAuth } from "./context/AuthContext.jsx";
+import { useCart } from "./context/CartContext.jsx";
 
 function App() {
   const location = useLocation();
   const { user } = useAuth();
+  const { hasActiveMembership } = useCart();
   
   const isDashboardRoute = 
     location.pathname.startsWith("/member") || 
     location.pathname.startsWith("/trainer") ||
     location.pathname.startsWith("/payment") ||
-    (user?.role === "Member" && location.pathname.startsWith("/store"));
+    (user?.role === "Member" && hasActiveMembership && location.pathname.startsWith("/store"));
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-950">

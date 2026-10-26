@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { Loader2, CheckCircle2 } from "lucide-react";
 import api from "../../lib/axios.js";
+import { useAuth } from "../../context/AuthContext.jsx";
+import { useCart } from "../../context/CartContext.jsx";
 import AuthLayout from "./AuthLayout.jsx";
 import FormInput from "./FormInput.jsx";
 import GoogleAuthButton from "./GoogleAuthButton.jsx";
@@ -19,6 +21,8 @@ const initialForm = {
 
 const Register = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { hasActiveMembership } = useCart();
 
   const [formData, setFormData] = useState(initialForm);
   const [fieldErrors, setFieldErrors] = useState({});
@@ -151,6 +155,18 @@ const Register = () => {
       setIsSubmitting(false);
     }
   };
+
+  if (user && !isSuccess) {
+    const target =
+      user.role === "Admin"
+        ? "/admin/dashboard"
+        : user.role === "Trainer"
+          ? "/trainer/dashboard"
+          : hasActiveMembership
+            ? "/member/dashboard"
+            : "/pricing";
+    return <Navigate to={target} replace />;
+  }
 
   if (isSuccess) {
     return (

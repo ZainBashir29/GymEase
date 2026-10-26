@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { useAuth } from "../../context/AuthContext.jsx";
+import { useCart } from "../../context/CartContext.jsx";
 
 const trustPoints = [
   "No setup fees",
@@ -8,6 +10,18 @@ const trustPoints = [
 ];
 
 const Hero = () => {
+  const { user } = useAuth();
+  const { hasActiveMembership } = useCart();
+
+  const dashboardPath =
+    user?.role === "Trainer"
+      ? "/trainer/dashboard"
+      : user?.role === "Admin"
+        ? "/admin/dashboard"
+        : "/member/dashboard";
+
+  const isUnsubscribedMember = user?.role === "Member" && !hasActiveMembership;
+
   return (
     <section className="relative overflow-hidden bg-white">
       <div
@@ -18,7 +32,9 @@ const Hero = () => {
       <div className="relative z-10 mx-auto max-w-7xl px-6 py-24 text-center sm:py-32">
         <div className="mx-auto mb-6 inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-4 py-1.5 text-sm font-medium text-brand-700">
           <span className="h-1.5 w-1.5 rounded-full bg-brand-600" />
-          Everything your gym needs, one place
+          {isUnsubscribedMember
+            ? `Welcome, ${user.fullName.split(" ")[0]} — Activate a plan to unlock your member dashboard`
+            : "Everything your gym needs, one place"}
         </div>
 
         <h1 className="mx-auto max-w-3xl text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
@@ -33,19 +49,55 @@ const Hero = () => {
         </p>
 
         <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <Link
-            to="/register"
-            className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-6 py-3.5 text-base font-semibold text-white shadow-md shadow-brand-600/20 transition-all hover:bg-brand-700 hover:shadow-lg hover:shadow-brand-600/30"
-          >
-            Start your membership
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-          <Link
-            to="/pricing"
-            className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-6 py-3.5 text-base font-semibold text-slate-700 transition-colors hover:border-slate-400 hover:bg-slate-50"
-          >
-            View pricing
-          </Link>
+          {!user ? (
+            <>
+              <Link
+                to="/register"
+                className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-6 py-3.5 text-base font-semibold text-white shadow-md shadow-brand-600/20 transition-all hover:bg-brand-700 hover:shadow-lg hover:shadow-brand-600/30"
+              >
+                Start your membership
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                to="/pricing"
+                className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-6 py-3.5 text-base font-semibold text-slate-700 transition-colors hover:border-slate-400 hover:bg-slate-50"
+              >
+                View pricing
+              </Link>
+            </>
+          ) : isUnsubscribedMember ? (
+            <>
+              <Link
+                to="/pricing"
+                className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-6 py-3.5 text-base font-semibold text-white shadow-md shadow-brand-600/20 transition-all hover:bg-brand-700 hover:shadow-lg hover:shadow-brand-600/30"
+              >
+                Choose a membership plan
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                to="/store"
+                className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-6 py-3.5 text-base font-semibold text-slate-700 transition-colors hover:border-slate-400 hover:bg-slate-50"
+              >
+                Browse gym store
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link
+                to={dashboardPath}
+                className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-6 py-3.5 text-base font-semibold text-white shadow-md shadow-brand-600/20 transition-all hover:bg-brand-700 hover:shadow-lg hover:shadow-brand-600/30"
+              >
+                Go to Dashboard
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                to="/store"
+                className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-6 py-3.5 text-base font-semibold text-slate-700 transition-colors hover:border-slate-400 hover:bg-slate-50"
+              >
+                Visit Store
+              </Link>
+            </>
+          )}
         </div>
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">

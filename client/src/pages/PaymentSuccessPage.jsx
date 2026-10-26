@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import api from "../lib/axios.js";
 import { useCart } from "../context/CartContext.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
 const getMembershipSuccessMessage = (membershipPaymentType) => {
   switch (membershipPaymentType) {
@@ -45,9 +46,12 @@ const PaymentSuccessPage = () => {
   const [message, setMessage] = useState("Confirming your payment...");
   const [paymentType, setPaymentType] = useState(null);
   const [membershipPaymentType, setMembershipPaymentType] = useState(null);
-  const { fetchCart } = useCart();
+  const { clearLocalCart, refreshMembershipAndCart } = useCart();
+  const { isLoading: isAuthLoading } = useAuth();
 
   useEffect(() => {
+    if (isAuthLoading) return;
+
     if (!trackerToken) {
       setState("error");
       setMessage("Safepay did not return a valid payment tracker.");
@@ -73,9 +77,10 @@ const PaymentSuccessPage = () => {
           setMessage(
             "Thank you for your purchase! Your payment has been confirmed and your store order is now being processed.",
           );
-          fetchCart?.();
+          await clearLocalCart?.();
         } else if (paymentType === "MembershipSubscription") {
           setMessage(getMembershipSuccessMessage(resolvedMembershipType));
+          await refreshMembershipAndCart?.(true);
         } else {
           setMessage(data.message || "Payment processed successfully.");
         }
@@ -89,7 +94,7 @@ const PaymentSuccessPage = () => {
     };
 
     verifyPayment();
-  }, [trackerToken]);
+  }, [trackerToken, isAuthLoading]);
 
   const isSuccess = state === "success";
 

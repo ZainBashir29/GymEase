@@ -7,6 +7,10 @@ import { Package,
   Eye,
   Trash2,
   X,
+  Truck,
+  Store,
+  Phone,
+  MapPin,
   ShoppingBag, ShieldAlert } from "lucide-react";
 
 const AdminOrdersPage = () => {
@@ -219,11 +223,32 @@ const [orders, setOrders] = useState([]);
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <p className="font-medium text-slate-900 dark:text-white">
-                          {order.memberId?.fullName || "Unknown User"}
+                          {order.shippingDetails?.recipientName ||
+                            order.memberId?.fullName ||
+                            "Unknown User"}
                         </p>
                         <p className="text-xs text-slate-500 dark:text-slate-400">
-                          {order.memberId?.email || ""}
+                          {order.shippingDetails?.phone ||
+                            order.memberId?.email ||
+                            ""}
                         </p>
+                        <span
+                          className={`mt-1 inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${
+                            order.fulfillmentMethod === "pickup"
+                              ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400"
+                              : "bg-indigo-50 text-indigo-700 dark:bg-indigo-950/40 dark:text-indigo-400"
+                          }`}
+                        >
+                          {order.fulfillmentMethod === "pickup" ? (
+                            <>
+                              <Store className="h-3 w-3" /> Gym Pickup
+                            </>
+                          ) : (
+                            <>
+                              <Truck className="h-3 w-3" /> Home Delivery
+                            </>
+                          )}
+                        </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <button
@@ -362,6 +387,75 @@ const [orders, setOrders] = useState([]);
                 </div>
               </div>
 
+              <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 space-y-2 dark:bg-slate-800/50 dark:border-slate-700">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider dark:text-slate-500">
+                    Fulfillment & Shipping Details
+                  </p>
+                  <span
+                    className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                      selectedOrder.fulfillmentMethod === "pickup"
+                        ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300"
+                        : "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/40 dark:text-indigo-300"
+                    }`}
+                  >
+                    {selectedOrder.fulfillmentMethod === "pickup" ? (
+                      <>
+                        <Store className="h-3.5 w-3.5" /> Gym Pickup (Free)
+                      </>
+                    ) : (
+                      <>
+                        <Truck className="h-3.5 w-3.5" /> Home Delivery
+                      </>
+                    )}
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-700 dark:text-slate-300 pt-1">
+                  <p className="flex items-center gap-1.5">
+                    <span className="font-semibold text-slate-900 dark:text-white">
+                      Recipient:
+                    </span>{" "}
+                    {selectedOrder.shippingDetails?.recipientName ||
+                      selectedOrder.memberId?.fullName ||
+                      "N/A"}
+                  </p>
+                  <p className="flex items-center gap-1.5">
+                    <Phone className="h-3.5 w-3.5 text-slate-400" />
+                    <span className="font-semibold text-slate-900 dark:text-white">
+                      Phone:
+                    </span>{" "}
+                    {selectedOrder.shippingDetails?.phone ||
+                      selectedOrder.memberId?.phone ||
+                      "Not provided"}
+                  </p>
+                </div>
+                {selectedOrder.fulfillmentMethod === "pickup" ? (
+                  <p className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400">
+                    <MapPin className="h-3.5 w-3.5 shrink-0 text-emerald-600 mt-0.5" />
+                    <span>
+                      Collect at GymEase Front Desk (No delivery required)
+                    </span>
+                  </p>
+                ) : (
+                  <p className="flex items-start gap-1.5 text-xs text-slate-600 dark:text-slate-400">
+                    <MapPin className="h-3.5 w-3.5 shrink-0 text-brand-600 mt-0.5" />
+                    <span>
+                      {[
+                        selectedOrder.shippingDetails?.address,
+                        selectedOrder.shippingDetails?.city,
+                      ]
+                        .filter(Boolean)
+                        .join(", ") || "No delivery address recorded"}
+                    </span>
+                  </p>
+                )}
+                {selectedOrder.shippingDetails?.notes && (
+                  <p className="text-xs italic text-slate-500 dark:text-slate-400 border-t border-slate-200/70 pt-2 dark:border-slate-700">
+                    Note: &ldquo;{selectedOrder.shippingDetails.notes}&rdquo;
+                  </p>
+                )}
+              </div>
+
               <div>
                 <h4 className="text-sm font-bold text-slate-900 mb-3 flex items-center justify-between dark:text-white">
                   <span>Ordered Items</span>
@@ -442,8 +536,19 @@ const [orders, setOrders] = useState([]);
                   </span>
                 </div>
                 <div className="flex justify-between text-slate-600 dark:text-slate-400">
-                  <span>Delivery Fee</span>
-                  <span>Rs. 200</span>
+                  <span>
+                    {selectedOrder.fulfillmentMethod === "pickup"
+                      ? "Gym Pickup"
+                      : "Delivery Fee"}
+                  </span>
+                  <span>
+                    {(selectedOrder.deliveryFee ??
+                      (selectedOrder.fulfillmentMethod === "pickup"
+                        ? 0
+                        : 200)) === 0
+                      ? "Free"
+                      : `Rs. ${(selectedOrder.deliveryFee ?? 200).toLocaleString()}`}
+                  </span>
                 </div>
                 <div className="pt-2 border-t border-slate-200 flex justify-between font-bold text-base text-slate-900 dark:border-slate-700 dark:text-white">
                   <span>Total Amount</span>
