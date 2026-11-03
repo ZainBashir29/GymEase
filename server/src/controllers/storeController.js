@@ -161,7 +161,9 @@ const deleteProduct = asyncHandler(async (req, res) => {
 
   await StoreProduct.findByIdAndDelete(id);
 
-  res.status(200).json(new ApiResponse(200, {}, "Product deleted successfully"));
+  res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Product deleted successfully"));
 });
 
 const reactivateProduct = asyncHandler(async (req, res) => {
@@ -251,7 +253,10 @@ const addToCart = asyncHandler(async (req, res) => {
 
     if (existingProduct) {
       if (existingProduct.quantity + requestedQuantity > product.stock) {
-        throw new ApiError(400, "Adding this quantity would exceed available stock");
+        throw new ApiError(
+          400,
+          "Adding this quantity would exceed available stock",
+        );
       }
       existingProduct.quantity += requestedQuantity;
     } else {
@@ -437,7 +442,10 @@ const createOrder = asyncHandler(async (req, res) => {
   const finalAmount = totalAmount + deliveryFee;
 
   if (finalAmount > 100000) {
-    throw new ApiError(400, "Maximum order value of Rs. 100,000 exceeded. Please remove some items.");
+    throw new ApiError(
+      400,
+      "Maximum order value of Rs. 100,000 exceeded. Please remove some items.",
+    );
   }
 
   const order = await Order.create({
