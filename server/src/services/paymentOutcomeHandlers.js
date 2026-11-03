@@ -11,6 +11,7 @@ import {
   getStoreOrderEmail,
 } from "../utils/emailTemplates.js";
 import { resumePausedMemberPlan } from "../controllers/gymPlanController.js";
+import { fetchSafepayChargedAmount } from "./safepay.js";
 
 const safepay = Safepay(process.env.SAFEPAY_SECRET_KEY, {
   authType: "secret",
@@ -42,7 +43,76 @@ const getMembershipPaymentType = async (memberId, planId) => {
   return "new_membership";
 };
 
+const verifyPaymentBeforeFulfilment = async (payment) => {
+  let charged;
+  try {
+    charged = await fetchSafepayChargedAmount(payment.trackerToken);
+  } catch (error) {
+    throw new Error(
+      `Could not fetch SafePay amount for tracker ${payment.trackerToken}: ${error?.message}`,
+    );
+  }
+
+  if (!charged) {
+    return "SafePay did not report a charged amount for this tracker";
+  }
+
+  const expectedPaisa = Math.round(Number(payment.amount) * 100);
+  if (charged.amount !== expectedPaisa) {
+    return `SafePay charged amount ${charged.amount} paisa does not match expected ${expectedPaisa} paisa`;
+  }
+
+  if (charged.currency && charged.currency !== "PKR") {
+    return `Unexpected SafePay currency ${charged.currency}`;
+  }
+
+  if (payment.type === "StoreOrder") {
+    const order = await Order.findById(payment.paymentCauseId).select(
+      "memberId paymentStatus totalAmount",
+    );
+
+    if (!order) {
+      return `Order ${payment.paymentCauseId} not found`;
+    }
+
+    if (String(order.memberId) !== String(payment.memberId)) {
+      return `Order ${order._id} does not belong to paying member ${payment.memberId}`;
+    }
+
+    if (order.paymentStatus !== "pending") {
+      return `Order ${order._id} is not awaiting payment (paymentStatus: ${order.paymentStatus})`;
+    }
+
+    if (Math.round(order.totalAmount * 100) !== expectedPaisa) {
+      return `Payment amount ${payment.amount} does not match order total ${order.totalAmount}`;
+    }
+  }
+
+  return null;
+};
+
 const handleSuccessfulPayment = async (trackerToken) => {
+  const pendingPayment = await Payment.findOne({
+    trackerToken,
+    status: "pending",
+  });
+
+  if (pendingPayment) {
+    const reviewReason = await verifyPaymentBeforeFulfilment(pendingPayment);
+
+    if (reviewReason) {
+      const flaggedPayment = await Payment.findOneAndUpdate(
+        { _id: pendingPayment._id, status: "pending" },
+        { $set: { status: "review", reviewReason } },
+        { returnDocument: "after" },
+      );
+      console.error(
+        `[PAYMENT REVIEW] Payment ${pendingPayment._id} (tracker ${trackerToken}) flagged: ${reviewReason}`,
+      );
+      return flaggedPayment || (await Payment.findOne({ trackerToken }));
+    }
+  }
+
   const updatedPayment = await Payment.findOneAndUpdate(
     { trackerToken, status: "pending" },
     { $set: { status: "successful" } },
@@ -50,16 +120,21 @@ const handleSuccessfulPayment = async (trackerToken) => {
   ).populate("memberId");
 
   if (!updatedPayment) {
-    const existingPayment = await Payment.findOne({ trackerToken }).populate("memberId");
+    const existingPayment = await Payment.findOne({ trackerToken }).populate(
+      "memberId",
+    );
     if (existingPayment && existingPayment.status === "successful") {
       if (existingPayment.type === "MembershipSubscription") {
-        const memberId = existingPayment.memberId?._id || existingPayment.memberId;
+        const memberId =
+          existingPayment.memberId?._id || existingPayment.memberId;
         const activeSub = await MembershipSubscription.findOne({
           memberId,
           status: "active",
         });
         if (!activeSub) {
-          const plan = await MembershipPlan.findById(existingPayment.paymentCauseId);
+          const plan = await MembershipPlan.findById(
+            existingPayment.paymentCauseId,
+          );
           const durationDays = plan?.duration || 30;
           const startDate = new Date();
           const endDate = new Date(
@@ -75,11 +150,9 @@ const handleSuccessfulPayment = async (trackerToken) => {
           });
         }
       } else if (existingPayment.type === "StoreOrder") {
-        const memberId = existingPayment.memberId?._id || existingPayment.memberId;
-        await Cart.findOneAndUpdate(
-          { memberId },
-          { $set: { products: [] } },
-        );
+        const memberId =
+          existingPayment.memberId?._id || existingPayment.memberId;
+        await Cart.findOneAndUpdate({ memberId }, { $set: { products: [] } });
       }
       return existingPayment;
     }
@@ -97,9 +170,9 @@ const handleSuccessfulPayment = async (trackerToken) => {
 
     const hasPreviousMembership = !existingActiveSub
       ? await MembershipSubscription.exists({
-        memberId: updatedPayment.memberId._id,
-        status: { $in: ["expired", "cancelled"] },
-      })
+          memberId: updatedPayment.memberId._id,
+          status: { $in: ["expired", "cancelled"] },
+        })
       : false;
 
     await MembershipSubscription.updateMany(
@@ -203,18 +276,25 @@ const handleSuccessfulPayment = async (trackerToken) => {
       ...emailContent,
     }).catch((err) => console.error("Failed to send membership email:", err));
 
-    resumePausedMemberPlan(updatedPayment.memberId._id).catch(err =>
-      console.error("Failed to auto-resume member gym plan after payment:", err)
+    resumePausedMemberPlan(updatedPayment.memberId._id).catch((err) =>
+      console.error(
+        "Failed to auto-resume member gym plan after payment:",
+        err,
+      ),
     );
   }
 
   if (updatedPayment.type === "StoreOrder") {
-    const order = await Order.findById(updatedPayment.paymentCauseId).populate(
-      "products.productId",
-    );
+    const order = await Order.findOne({
+      _id: updatedPayment.paymentCauseId,
+      memberId: updatedPayment.memberId._id,
+      paymentStatus: "pending",
+    }).populate("products.productId");
 
     if (!order) {
-      console.error(`Order not found for payment ${updatedPayment._id}`);
+      console.error(
+        `Pending order not found for payment ${updatedPayment._id} (missing, not owned by payer, or already processed)`,
+      );
       return updatedPayment;
     }
 

@@ -28,7 +28,13 @@ const paymentSchema = new mongoose.Schema(
     status: {
       type: String,
       required: true,
-      enum: ["pending", "successful", "failed", "refunded"],
+      // "review": gateway reported completion but verification (charged amount /
+      // order ownership / order state) failed. NOT fulfilled; needs admin review.
+      enum: ["pending", "successful", "failed", "refunded", "review"],
+    },
+    reviewReason: {
+      type: String,
+      default: null,
     },
     trackerToken: {
       type: String,

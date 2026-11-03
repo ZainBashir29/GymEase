@@ -45,4 +45,22 @@ function getCheckoutUrl(trackerToken, tbt) {
   });
 }
 
-export { createPaymentSession, createAuthenticationToken, getCheckoutUrl };
+async function fetchSafepayChargedAmount(trackerToken) {
+  const response = await safepay.reporter.payments.fetch(trackerToken);
+  const data = response?.data;
+  const quote =
+    data?.purchase_totals?.quote_amount ||
+    data?.tracker?.purchase_totals?.quote_amount;
+
+  const amount = Number(quote?.amount);
+  if (!Number.isFinite(amount)) return null;
+
+  return { amount, currency: quote?.currency || null };
+}
+
+export {
+  createPaymentSession,
+  createAuthenticationToken,
+  getCheckoutUrl,
+  fetchSafepayChargedAmount,
+};

@@ -48,45 +48,38 @@ const determineMembershipPaymentType = async (memberId, planId) => {
 };
 
 const createCheckoutUrl = asyncHandler(async (req, res) => {
-  const { type, paymentCauseId, amount } = req.body;
+  const { type, paymentCauseId } = req.body;
 
   if (!type) {
     throw new ApiError(400, "Payment type is required");
   }
 
-  if (!["MembershipSubscription", "StoreOrder"].includes(type)) {
+  if (type === "StoreOrder") {
+    throw new ApiError(
+      400,
+      "Store orders must be checked out via /store/orders/create",
+    );
+  }
+
+  if (type !== "MembershipSubscription") {
     throw new ApiError(400, "Invalid payment type");
   }
 
-  if (!paymentCauseId) {
-    throw new ApiError(400, "Id of cause of payment is required");
+  if (!paymentCauseId || !mongoose.isValidObjectId(paymentCauseId)) {
+    throw new ApiError(400, "A valid membership plan id is required");
   }
 
-  if (type === "StoreOrder" && !amount) {
-    throw new ApiError(400, "Payment amount is required");
+  const membershipPlan = await MembershipPlan.findById(paymentCauseId);
+
+  if (!membershipPlan || !membershipPlan.isActive) {
+    throw new ApiError(404, "Invalid or inactive membership plan");
   }
 
-  let chargeAmount = Number(amount);
-
-  if (type === "StoreOrder" && chargeAmount <= 0) {
-    throw new ApiError(400, "Invalid payment amount");
-  }
-
-  let membershipPaymentType = null;
-
-  if (type === "MembershipSubscription") {
-    const membershipPlan = await MembershipPlan.findById(paymentCauseId);
-
-    if (!membershipPlan || !membershipPlan.isActive) {
-      throw new ApiError(404, "Invalid or inactive membership plan");
-    }
-
-    chargeAmount = membershipPlan.price;
-    membershipPaymentType = await determineMembershipPaymentType(
-      req.user?._id,
-      paymentCauseId,
-    );
-  }
+  const chargeAmount = membershipPlan.price;
+  const membershipPaymentType = await determineMembershipPaymentType(
+    req.user?._id,
+    paymentCauseId,
+  );
 
   const session = await createPaymentSession(
     chargeAmount,
@@ -212,15 +205,12 @@ const verifyPaymentStatus = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Could not process successful payment");
   }
 
-  res
-    .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        updatedPaymentStatus,
-        "Payment is processed successfully",
-      ),
-    );
+  const message =
+    updatedPaymentStatus.status === "review"
+      ? "Payment received but is under review. Our team will contact you shortly."
+      : "Payment is processed successfully";
+
+  res.status(200).json(new ApiResponse(200, updatedPaymentStatus, message));
 });
 
 const verifyWebhookSignature = asyncHandler(async (req, res) => {
