@@ -36,6 +36,34 @@ const paymentSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    // Audit trail for payments resolved from the admin review queue.
+    resolution: {
+      action: {
+        type: String,
+        enum: ["approve", "refund", "reject", null],
+        default: null,
+      },
+      resolvedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: null,
+      },
+      resolvedAt: {
+        type: Date,
+        default: null,
+      },
+      note: {
+        type: String,
+        trim: true,
+        maxLength: 500,
+        default: "",
+      },
+      // Lock to prevent concurrent resolutions (e.g. double refunds).
+      inProgress: {
+        type: Boolean,
+        default: false,
+      },
+    },
     trackerToken: {
       type: String,
       required: true,
@@ -45,6 +73,8 @@ const paymentSchema = new mongoose.Schema(
     timestamps: true,
   },
 );
+
+paymentSchema.index({ status: 1, createdAt: -1 });
 
 const Payment = mongoose.model("Payment", paymentSchema);
 
