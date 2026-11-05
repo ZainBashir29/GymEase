@@ -9,6 +9,11 @@ import {
   revokeSubAdmin,
 } from "../controllers/subAdminController.js";
 import { Router } from "express";
+import {
+  listReviewPayments,
+  getReviewPaymentsCount,
+  resolveReviewPayment,
+} from "../controllers/paymentReviewController.js";
 import verifyJwt from "../middlewares/authMiddleware.js";
 import role from "../middlewares/roleMiddleware.js";
 import upload from "../middlewares/multerMiddleware.js";
@@ -144,6 +149,17 @@ router
   );
 
 router.route("/sub-admins").get(requireSystemAdmin, listSubAdmins);
+
+// Payment review queue (system admin only: these actions move money)
+router
+  .route("/payments/review")
+  .get(requireSystemAdmin, listReviewPayments);
+router
+  .route("/payments/review/count")
+  .get(requireSystemAdmin, getReviewPaymentsCount);
+router
+  .route("/payments/review/:id")
+  .post(requireSystemAdmin, resolveReviewPayment);
 router.route("/sub-admins/invite").post(requireSystemAdmin, inviteSubAdmin);
 router
   .route("/sub-admins/:id/permissions")
