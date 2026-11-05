@@ -351,6 +351,8 @@ const verifyWebhookSignature = asyncHandler(async (req, res) => {
 
       const updatedPayment = await handleSuccessfulPayment(tracker.token);
 
+      console.log("Webhook Verification Successful");
+
       if (!updatedPayment) {
         console.error("Could not process successful payment from webhook");
       }
