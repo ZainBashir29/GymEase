@@ -13,7 +13,9 @@ import {
   ChevronLeft,
   MessageSquare,
   ShieldCheck,
+  ShieldAlert,
 } from "lucide-react";
+import api from "../../lib/axios.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useChat } from "../../context/ChatContext.jsx";
 import ChatWidget from "../Chat/ChatWidget.jsx";
@@ -24,6 +26,28 @@ const AdminLayout = () => {
   const { logout, hasPermission, isSystemAdmin } = useAuth();
   const { toggleChatWindow, unreadCount } = useChat();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [reviewCount, setReviewCount] = useState(0);
+
+  // Number of payments awaiting review (system admin only). Refreshed on
+  // navigation and whenever the review page resolves a payment.
+  useEffect(() => {
+    if (!isSystemAdmin) return;
+    let cancelled = false;
+    const loadCount = async () => {
+      try {
+        const { data } = await api.get("/admin/payments/review/count");
+        if (!cancelled) setReviewCount(data.data?.count || 0);
+      } catch {
+        // Badge is best-effort; ignore failures.
+      }
+    };
+    loadCount();
+    window.addEventListener("payment-review-updated", loadCount);
+    return () => {
+      cancelled = true;
+      window.removeEventListener("payment-review-updated", loadCount);
+    };
+  }, [isSystemAdmin, pathname]);
 
   const navItems = [
     {
@@ -75,6 +99,12 @@ const AdminLayout = () => {
       name: "Sub-Admins",
       path: "/admin/sub-admins",
       icon: ShieldCheck,
+    });
+    navItems.push({
+      name: "Payment Review",
+      path: "/admin/payments-review",
+      icon: ShieldAlert,
+      badge: reviewCount,
     });
   }
 
@@ -144,7 +174,12 @@ const AdminLayout = () => {
                 <Icon
                   className={`w-5 h-5 ${isActive ? "text-brand-700 dark:text-brand-300" : "text-slate-400"}`}
                 />
-                {item.name}
+                <span className="flex-1">{item.name}</span>
+                {item.badge > 0 && (
+                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-bold text-white">
+                    {item.badge > 9 ? "9+" : item.badge}
+                  </span>
+                )}
               </Link>
             );
           })}

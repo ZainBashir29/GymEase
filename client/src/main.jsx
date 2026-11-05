@@ -48,6 +48,7 @@ const MemberPricingPage = lazy(() => import("./pages/Member/MemberPricingPage.js
 const MemberSettingsPage = lazy(() => import("./pages/Member/MemberSettingsPage.jsx"));
 const AcceptInvitationPage = lazy(() => import("./pages/AcceptInvitationPage.jsx"));
 const AdminSubAdminsPage = lazy(() => import("./pages/Admin/AdminSubAdminsPage.jsx"));
+const AdminPaymentReviewPage = lazy(() => import("./pages/Admin/AdminPaymentReviewPage.jsx"));
 const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage.jsx"));
 const ChangePasswordPage = lazy(() => import("./pages/ChangePasswordPage.jsx"));
 const CompleteProfilePage = lazy(() => import("./pages/CompleteProfilePage.jsx"));
@@ -243,6 +244,10 @@ const router = createBrowserRouter([
       {
         path: "sub-admins",
         element: <AdminSubAdminsPage />,
+      },
+      {
+        path: "payments-review",
+        element: <AdminPaymentReviewPage />,
       },
     ],
   },
