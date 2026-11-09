@@ -400,6 +400,7 @@ const refundPayment = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Only successful payments can be refunded");
   }
 
+  // this function refunds payment back to  safepay
   const refundPayment = await safepay.orders.payments.refund({
     tracker: paymentRecord?.trackerToken,
     payload: {
