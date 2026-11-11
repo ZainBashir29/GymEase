@@ -2,7 +2,8 @@ import Safepay from "@sfpy/node-core";
 
 const safepay = Safepay(process.env.SAFEPAY_SECRET_KEY, {
   authType: "secret",
-  host: "https://sandbox.api.getsafepay.com",
+  host:
+    process.env.SAFEPAY_HOST || "https://sandbox.api.getsafepay.com",
 });
 
 async function createPaymentSession(amount, paymentCauseId) {
@@ -36,7 +37,7 @@ async function createAuthenticationToken() {
 
 function getCheckoutUrl(trackerToken, tbt) {
   return safepay.checkout.createCheckoutUrl({
-    env: "sandbox",
+    env: process.env.SAFEPAY_ENV || "sandbox",
     tracker: trackerToken,
     tbt,
     source: "hosted",
@@ -45,6 +46,11 @@ function getCheckoutUrl(trackerToken, tbt) {
   });
 }
 
+/**
+ * Fetches the amount SafePay actually recorded for a tracker, in the smallest
+ * currency unit (paisa), straight from the Reporter API (source of truth).
+ * Returns { amount, currency } or null if it cannot be determined.
+ */
 async function fetchSafepayChargedAmount(trackerToken) {
   const response = await safepay.reporter.payments.fetch(trackerToken);
   const data = response?.data;
@@ -58,9 +64,29 @@ async function fetchSafepayChargedAmount(trackerToken) {
   return { amount, currency: quote?.currency || null };
 }
 
+/**
+ * Issues a refund on SafePay for `trackerToken`.
+ * `amountInPaisa` must be an integer in the smallest currency unit.
+ */
+async function refundSafepayPayment(
+  trackerToken,
+  amountInPaisa,
+  currency = "PKR",
+) {
+  return safepay.orders.payments.refund({
+    tracker: trackerToken,
+    payload: {
+      currency,
+      amount: Math.round(Number(amountInPaisa)),
+    },
+  });
+}
+
 export {
+  safepay,
   createPaymentSession,
   createAuthenticationToken,
   getCheckoutUrl,
   fetchSafepayChargedAmount,
+  refundSafepayPayment,
 };
